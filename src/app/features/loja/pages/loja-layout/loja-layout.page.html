@@ -1,4 +1,4 @@
-<section
+﻿<section
   class="page-shell container-fluid px-0"
   [style.--store-accent]="form.controls.accent_color.value"
   [style.--store-button]="form.controls.button_color.value"
@@ -1023,6 +1023,41 @@
               </div>
             </div>
 
+            <div class="d-grid gap-3 mb-4">
+              <div>
+                <label class="native-field-label">Rotulo superior</label>
+                <input
+                  class="form-control manual-input"
+                  type="text"
+                  [value]="institutionalSectionConfig().eyebrow"
+                  placeholder="Ex.: Beneficios da compra"
+                  (input)="updateInstitutionalSectionField('eyebrow', $event)"
+                />
+              </div>
+
+              <div>
+                <label class="native-field-label">Titulo</label>
+                <input
+                  class="form-control manual-input"
+                  type="text"
+                  [value]="institutionalSectionConfig().title"
+                  placeholder="Ex.: Informacoes institucionais"
+                  (input)="updateInstitutionalSectionField('title', $event)"
+                />
+              </div>
+
+              <div>
+                <label class="native-field-label">Descricao</label>
+                <textarea
+                  class="form-control manual-textarea"
+                  rows="3"
+                  [value]="institutionalSectionConfig().description"
+                  placeholder="Texto opcional para contextualizar os cards."
+                  (input)="updateInstitutionalSectionField('description', $event)"
+                ></textarea>
+              </div>
+            </div>
+
             <div class="banner-toolbar">
               <div class="banner-toolbar-copy">
                 <strong>{{ menuLinks().length }} link(s) no menu</strong>
@@ -1524,14 +1559,91 @@
           <section class="content-card">
             <div class="section-heading">
               <span class="section-eyebrow">Destaques Padronizados</span>
-              <h2>Cards institucionais</h2>
-              <p>Esses cards ficam entre os produtos destaque e os produtos em promoção.</p>
+              <h2>Bloco institucional da loja</h2>
+              <p>Edite aqui os cards institucionais da loja. A visibilidade e a ordem do bloco continuam sendo controladas na aba de Layout.</p>
+            </div>
+
+            <div class="d-grid gap-3 mb-4">
+              <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                  <label class="native-field-label">Estilo visual do bloco</label>
+                  <select
+                    class="form-select manual-select"
+                    [formControl]="form.controls.institutional_section_display_mode"
+                    (change)="updateInstitutionalSectionField('display_mode', $event)"
+                  >
+                    @for (option of institutionalSectionDisplayModeOptions; track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                  <label class="native-field-label">Largura da secao</label>
+                  <select
+                    class="form-select manual-select"
+                    [formControl]="form.controls.institutional_section_width_mode"
+                    [disabled]="isBannerWidthLockedToLayout()"
+                    (change)="updateInstitutionalSectionField('width_mode', $event)"
+                  >
+                    @for (option of institutionalSectionWidthModeOptions; track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <app-store-color-field
+                label="Cor de fundo da faixa"
+                description="Escolha a cor de fundo usada quando a seção estiver em faixa contínua."
+                usage="Use uma cor que contraste com os ícones e textos dos cards institucionais."
+                [control]="form.controls.institutional_section_background_color"
+                [invalid]="hasFieldError('institutional_section_background_color')"
+                [errorText]="getFieldError('institutional_section_background_color')"
+                [required]="true"
+                placeholder="#0F172A"
+                previewLabel="Faixa institucional"
+                previewMode="surface"
+              />
+
+              <div>
+                <label class="native-field-label">Rotulo superior</label>
+                <input
+                  class="form-control manual-input"
+                  type="text"
+                  [value]="institutionalSectionConfig().eyebrow"
+                  placeholder="Ex.: Beneficios da compra"
+                  (input)="updateInstitutionalSectionField('eyebrow', $event)"
+                />
+              </div>
+
+              <div>
+                <label class="native-field-label">Titulo</label>
+                <input
+                  class="form-control manual-input"
+                  type="text"
+                  [value]="institutionalSectionConfig().title"
+                  placeholder="Ex.: Informacoes institucionais"
+                  (input)="updateInstitutionalSectionField('title', $event)"
+                />
+              </div>
+
+              <div>
+                <label class="native-field-label">Descricao</label>
+                <textarea
+                  class="form-control manual-textarea"
+                  rows="3"
+                  [value]="institutionalSectionConfig().description"
+                  placeholder="Texto opcional para contextualizar os cards."
+                  (input)="updateInstitutionalSectionField('description', $event)"
+                ></textarea>
+              </div>
             </div>
 
             <div class="banner-toolbar">
               <div class="banner-toolbar-copy">
                 <strong>{{ featureHighlights().length }} card(s) institucionais</strong>
-                <span>Use ícones simples como `shield`, `truck`, `headset`, `credit-card` ou texto livre.</span>
+                <span>Escolha icone, alinhamento, tamanho e fonte de cada card. Voce pode adicionar ou remover quantos quiser.</span>
               </div>
 
               <button type="button" class="section-action" (click)="addFeatureHighlight()">Adicionar card</button>
@@ -1541,8 +1653,8 @@
               @for (item of featureHighlights(); track $index) {
                 <article class="banner-card">
                   <div class="row g-3">
-                    <div class="col-12 col-lg-4">
-                      <label class="native-field-label">Título</label>
+                    <div class="col-12 col-lg-6">
+                      <label class="native-field-label">Titulo</label>
                       <input
                         class="form-control manual-input"
                         type="text"
@@ -1552,26 +1664,66 @@
                       />
                     </div>
 
-                    <div class="col-12 col-lg-3">
-                      <label class="native-field-label">Ícone</label>
-                      <input
-                        class="form-control manual-input"
-                        type="text"
+                    <div class="col-12 col-lg-6">
+                      <label class="native-field-label">Icone</label>
+                      <app-form-icon-select
+                        label=""
                         [value]="item.icon"
-                        placeholder="shield"
-                        (input)="updateFeatureHighlightField($index, 'icon', $event)"
+                        [options]="featureHighlightIconSelectOptions"
+                        placeholder="Selecione um icone"
+                        (valueChange)="selectFeatureHighlightIcon($index, $event)"
                       />
                     </div>
 
-                    <div class="col-12 col-lg-5">
+                    <div class="col-12">
                       <label class="native-field-label">Texto</label>
                       <textarea
                         class="form-control manual-textarea"
                         rows="3"
                         [value]="item.text"
-                        placeholder="Explique o benefício institucional."
+                        placeholder="Explique o beneficio institucional."
                         (input)="updateFeatureHighlightField($index, 'text', $event)"
                       ></textarea>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                      <label class="native-field-label">Fonte do card</label>
+                      <select
+                        class="form-select manual-select"
+                        [value]="item.font_family"
+                        (change)="updateFeatureHighlightField($index, 'font_family', $event)"
+                      >
+                        <option value="" [selected]="!item.font_family">Usar fonte padrao da loja</option>
+                        @for (option of detectedFontOptions(); track option.value) {
+                          <option [value]="option.value" [selected]="item.font_family === option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                      <label class="native-field-label">Alinhamento do texto</label>
+                      <select
+                        class="form-select manual-select"
+                        [value]="item.text_align"
+                        (change)="updateFeatureHighlightField($index, 'text_align', $event)"
+                      >
+                        @for (option of featureHighlightTextAlignOptions; track option.value) {
+                          <option [value]="option.value" [selected]="item.text_align === option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                      <label class="native-field-label">Tamanho do icone</label>
+                      <select
+                        class="form-select manual-select"
+                        [value]="item.icon_size"
+                        (change)="updateFeatureHighlightField($index, 'icon_size', $event)"
+                      >
+                        @for (option of featureHighlightIconSizeOptions; track option.value) {
+                          <option [value]="option.value" [selected]="item.icon_size === option.value">{{ option.label }}</option>
+                        }
+                      </select>
                     </div>
 
                     <div class="col-12">
@@ -1585,7 +1737,6 @@
             </div>
           </section>
         }
-
         @if (activeTab() === 'produtos') {
           <section class="content-card">
             <div class="section-heading">

@@ -11,6 +11,10 @@ import { StoreColorFieldComponent } from '../../components/store-color-field/sto
 import { ButtonComponent } from '../../../../shared/components/actions/button/button.component';
 import { ModalComponent } from '../../../../shared/components/feedback/modal/modal.component';
 import { FormInputComponent } from '../../../../shared/components/forms/input/form-input.component';
+import {
+  FormIconSelectComponent,
+  FormIconSelectOption,
+} from '../../../../shared/components/forms/icon-select/form-icon-select.component';
 import { ImageUploadComponent } from '../../../../shared/components/forms/image-upload/image-upload.component';
 import { FormSelectComponent, FormSelectOption } from '../../../../shared/components/forms/select/form-select.component';
 import { FormTextareaComponent } from '../../../../shared/components/forms/textarea/form-textarea.component';
@@ -31,6 +35,7 @@ import {
   StoreContentWidthMode,
   StoreCornerStyle,
   StoreFeatureHighlightPayload,
+  StoreInstitutionalSectionPayload,
   StoreImagePayload,
   StoreNavigationLinkPayload,
   StoreNavigationLinkKind,
@@ -97,6 +102,9 @@ type LayoutField =
   | 'custom_block_html'
   | 'custom_block_css'
   | 'custom_block_js'
+  | 'institutional_section_display_mode'
+  | 'institutional_section_width_mode'
+  | 'institutional_section_background_color'
   | 'footer_contact_title'
   | 'footer_contact_text';
 
@@ -135,6 +143,18 @@ interface EditableHighlight {
   title: string;
   text: string;
   icon: string;
+  text_align: 'left' | 'center' | 'right';
+  icon_size: 'small' | 'medium' | 'large';
+  font_family: string;
+}
+
+interface EditableInstitutionalSectionConfig {
+  eyebrow: string;
+  title: string;
+  description: string;
+  display_mode: 'cards' | 'continuous';
+  width_mode: 'contained' | 'full_width';
+  background_color: string;
 }
 
 interface EditableSectionOrderItem {
@@ -177,6 +197,7 @@ const FIXED_MENU_LINKS: ReadonlyArray<EditableLink> = [
     PageHeaderComponent,
     StoreColorFieldComponent,
     FormInputComponent,
+    FormIconSelectComponent,
     FormSelectComponent,
     FormTextareaComponent,
     ImageUploadComponent,
@@ -221,6 +242,14 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly previewMenuLinks = computed(() => this.menuLinks().filter((item) => item.visible).slice(0, 4));
   protected readonly footerLinks = signal<EditableLink[]>([]);
   protected readonly featureHighlights = signal<EditableHighlight[]>([]);
+  protected readonly institutionalSectionConfig = signal<EditableInstitutionalSectionConfig>({
+    eyebrow: 'Destaques padronizados',
+    title: 'Informacoes institucionais',
+    description: 'Cards fixos para beneficios, seguranca, atendimento e comunicacao da loja.',
+    display_mode: 'cards',
+    width_mode: 'contained',
+    background_color: '#0F172A',
+  });
   protected readonly sectionOrder = signal<EditableSectionOrderItem[]>([]);
   protected readonly activeSectionEditor = signal<ConfigurableProductSectionKey | null>(null);
   protected readonly installFontModalOpen = signal(false);
@@ -311,6 +340,9 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     custom_block_html: [''],
     custom_block_css: [''],
     custom_block_js: [''],
+    institutional_section_display_mode: ['cards' as 'cards' | 'continuous'],
+    institutional_section_width_mode: ['contained' as 'contained' | 'full_width'],
+    institutional_section_background_color: ['#0F172A', Validators.required],
     footer_contact_title: ['Fale com a loja'],
     footer_contact_text: ['Use este espaço para telefone, WhatsApp, e-mail e horários de atendimento.'],
   });
@@ -385,6 +417,51 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly productSectionDisplayModeOptions: FormSelectOption[] = [
     { value: 'wrap', label: 'Quebra de linha' },
     { value: 'horizontal_scroll', label: 'Rolagem horizontal' },
+  ];
+  protected readonly featureHighlightIconOptions: FormSelectOption[] = [
+    { value: 'shield', label: 'Escudo / Seguranca' },
+    { value: 'truck', label: 'Entrega / Frete' },
+    { value: 'headset', label: 'Atendimento' },
+    { value: 'credit-card', label: 'Cartao / Pagamento' },
+    { value: 'badge-percent', label: 'Desconto' },
+    { value: 'tag', label: 'Oferta' },
+    { value: 'money-bill-wave', label: 'Dinheiro' },
+    { value: 'pix', label: 'PIX' },
+    { value: 'wallet', label: 'Carteira' },
+    { value: 'receipt', label: 'Comprovante' },
+    { value: 'box', label: 'Produto' },
+    { value: 'boxes-stacked', label: 'Estoque' },
+    { value: 'gift', label: 'Presente' },
+    { value: 'star', label: 'Destaque' },
+    { value: 'medal', label: 'Qualidade' },
+    { value: 'rotate-left', label: 'Troca / Devolucao' },
+    { value: 'lock', label: 'Privacidade' },
+    { value: 'check-circle', label: 'Garantia' },
+    { value: 'store', label: 'Loja oficial' },
+    { value: 'clock', label: 'Agilidade' },
+  ];
+  protected readonly featureHighlightIconSelectOptions: FormIconSelectOption[] = this.featureHighlightIconOptions.map((option) => ({
+    value: option.value,
+    label: option.label,
+    iconClass: resolveFeatureHighlightIconClass(option.value),
+  }));
+  protected readonly featureHighlightTextAlignOptions: FormSelectOption[] = [
+    { value: 'left', label: 'Esquerda' },
+    { value: 'center', label: 'Centro' },
+    { value: 'right', label: 'Direita' },
+  ];
+  protected readonly featureHighlightIconSizeOptions: FormSelectOption[] = [
+    { value: 'small', label: 'Pequeno' },
+    { value: 'medium', label: 'Medio' },
+    { value: 'large', label: 'Grande' },
+  ];
+  protected readonly institutionalSectionDisplayModeOptions: FormSelectOption[] = [
+    { value: 'cards', label: 'Blocos separados' },
+    { value: 'continuous', label: 'Faixa continua' },
+  ];
+  protected readonly institutionalSectionWidthModeOptions: FormSelectOption[] = [
+    { value: 'contained', label: 'Conteudo centralizado' },
+    { value: 'full_width', label: 'Largura total' },
   ];
   protected readonly bannerContentHorizontalOptions: FormSelectOption[] = [
     { value: 'left', label: 'Esquerda' },
@@ -1016,9 +1093,62 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     field: keyof EditableHighlight,
     event: Event
   ): void {
-    const value = (event.target as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? '';
+    const value = (event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value ?? '';
     this.featureHighlights.update((items) =>
       items.map((item, currentIndex) => (currentIndex === index ? { ...item, [field]: value } : item))
+    );
+  }
+
+  protected updateInstitutionalSectionField(
+    field: keyof EditableInstitutionalSectionConfig,
+    event: Event
+  ): void {
+    const value = (event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value ?? '';
+    this.institutionalSectionConfig.update((current) => ({
+      ...current,
+      [field]: value,
+    }));
+
+    if (field === 'display_mode') {
+      this.form.controls.institutional_section_display_mode.setValue(value as 'cards' | 'continuous');
+    }
+
+    if (field === 'width_mode') {
+      this.form.controls.institutional_section_width_mode.setValue(value as 'contained' | 'full_width');
+    }
+
+    if (field === 'background_color') {
+      this.form.controls.institutional_section_background_color.setValue(value);
+    }
+  }
+
+  protected effectiveInstitutionalSectionWidthMode(): 'contained' | 'full_width' {
+    return this.isBannerWidthLockedToLayout()
+      ? 'full_width'
+      : this.form.controls.institutional_section_width_mode.value;
+  }
+
+  protected featureHighlightIconClass(icon: string | undefined): string {
+    const normalized = this.normalizeFeatureHighlightIcon(icon);
+
+    switch (normalized) {
+      case 'badge-percent':
+        return 'fa-solid fa-percent';
+      case 'check-circle':
+        return 'fa-solid fa-circle-check';
+      case 'pix':
+        return 'fa-brands fa-pix';
+      default:
+        return `fa-solid fa-${normalized}`;
+    }
+  }
+
+  protected selectFeatureHighlightIcon(index: number, value: string): void {
+    const normalizedValue = this.normalizeFeatureHighlightIcon(value);
+    this.featureHighlights.update((items) =>
+      items.map((item, currentIndex) =>
+        currentIndex === index ? { ...item, icon: normalizedValue } : item
+      )
     );
   }
 
@@ -1130,6 +1260,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         custom_block_css: value.custom_block_css,
         custom_block_js: value.custom_block_js,
         feature_highlights: this.featureHighlights().map((item) => this.toFeatureHighlightPayload(item)),
+        institutional_section: this.toInstitutionalSectionPayload(),
         footer_links: this.footerLinks().map((item) => this.toNavigationLinkPayload(item)),
         footer_contact_title: value.footer_contact_title.trim(),
         footer_contact_text: value.footer_contact_text.trim(),
@@ -1227,6 +1358,11 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         custom_block_html: config.custom_block_html || '',
         custom_block_css: config.custom_block_css || '',
         custom_block_js: config.custom_block_js || '',
+        institutional_section_display_mode:
+          config.institutional_section?.display_mode === 'continuous' ? 'continuous' : 'cards',
+        institutional_section_width_mode:
+          config.institutional_section?.width_mode === 'full_width' ? 'full_width' : 'contained',
+        institutional_section_background_color: config.institutional_section?.background_color || '#0F172A',
         footer_contact_title: config.footer_contact_title || 'Fale com a loja',
         footer_contact_text:
           config.footer_contact_text ||
@@ -1251,6 +1387,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       this.sectionOrder.set(this.mapSectionOrder(config.section_order, config.visible_sections));
       this.footerLinks.set(this.mapFooterLinks(config.footer_links));
       this.featureHighlights.set(this.mapFeatureHighlights(config.feature_highlights));
+      this.institutionalSectionConfig.set(this.mapInstitutionalSection(config.institutional_section));
       this.refreshInstalledFontSets();
       this.syncFontConfiguration();
       this.syncPreviewFontAsset();
@@ -1704,7 +1841,10 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     return {
       title: '',
       text: '',
-      icon: '',
+      icon: 'shield',
+      text_align: 'left',
+      icon_size: 'medium',
+      font_family: '',
     };
   }
 
@@ -1757,6 +1897,21 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       title: item.title.trim(),
       text: item.text.trim(),
       icon: item.icon.trim(),
+      text_align: item.text_align,
+      icon_size: item.icon_size,
+      font_family: item.font_family.trim(),
+    };
+  }
+
+  private toInstitutionalSectionPayload(): StoreInstitutionalSectionPayload {
+    const section = this.institutionalSectionConfig();
+    return {
+      eyebrow: section.eyebrow.trim(),
+      title: section.title.trim(),
+      description: section.description.trim(),
+      display_mode: this.form.controls.institutional_section_display_mode.value,
+      width_mode: this.effectiveInstitutionalSectionWidthMode(),
+      background_color: this.form.controls.institutional_section_background_color.value,
     };
   }
 
@@ -1931,6 +2086,9 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         title: item.title || '',
         text: item.text || '',
         icon: item.icon || '',
+        text_align: item.text_align === 'center' || item.text_align === 'right' ? item.text_align : 'left',
+        icon_size: item.icon_size === 'small' || item.icon_size === 'large' ? item.icon_size : 'medium',
+        font_family: item.font_family || '',
       }));
     }
 
@@ -1939,18 +2097,38 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         title: 'Compra segura',
         text: 'Pagamento protegido e processo de compra confiável.',
         icon: 'shield',
+        text_align: 'left',
+        icon_size: 'medium',
+        font_family: '',
       },
       {
         title: 'Atendimento próximo',
         text: 'Contato direto para dúvidas, pedidos e suporte editorial.',
         icon: 'headset',
+        text_align: 'left',
+        icon_size: 'medium',
+        font_family: '',
       },
       {
         title: 'Envio nacional',
         text: 'Entrega para todo o Brasil com cálculo de frete no checkout.',
         icon: 'truck',
+        text_align: 'left',
+        icon_size: 'medium',
+        font_family: '',
       },
     ];
+  }
+
+  private mapInstitutionalSection(value?: StoreInstitutionalSectionPayload): EditableInstitutionalSectionConfig {
+    return {
+      eyebrow: value?.eyebrow ?? 'Destaques padronizados',
+      title: value?.title ?? 'Informacoes institucionais',
+      description: value?.description ?? 'Cards fixos para beneficios, seguranca, atendimento e comunicacao da loja.',
+      display_mode: value?.display_mode === 'continuous' ? 'continuous' : 'cards',
+      width_mode: value?.width_mode === 'full_width' ? 'full_width' : 'contained',
+      background_color: value?.background_color || '#0F172A',
+    };
   }
 
   private mapProductSectionConfig(
@@ -2072,5 +2250,26 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
           display_mode: 'wrap',
         };
     }
+  }
+
+  private normalizeFeatureHighlightIcon(icon: string | undefined): string {
+    const normalized = (icon || '').trim().toLowerCase();
+    const allowed = new Set(this.featureHighlightIconOptions.map((item) => item.value));
+    return allowed.has(normalized) ? normalized : 'shield';
+  }
+}
+
+function resolveFeatureHighlightIconClass(icon: string | undefined): string {
+  const normalized = (icon || '').trim().toLowerCase();
+
+  switch (normalized) {
+    case 'badge-percent':
+      return 'fa-solid fa-percent';
+    case 'check-circle':
+      return 'fa-solid fa-circle-check';
+    case 'pix':
+      return 'fa-brands fa-pix';
+    default:
+      return `fa-solid fa-${normalized || 'shield'}`;
   }
 }

@@ -1,0 +1,137 @@
+:host {
+  display: block;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  display: inline-flex;
+  margin-bottom: 0.5rem;
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.form-label.field-label-invalid {
+  color: #f87171;
+}
+
+.icon-select-shell {
+  position: relative;
+}
+
+.icon-select-trigger {
+  width: 100%;
+  min-height: calc(1.5em + 0.75rem + 2px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 0.95rem;
+  background: rgba(30, 41, 59, 0.78);
+  color: #f8fafc;
+}
+
+.icon-select-trigger:focus,
+.icon-select-trigger:hover {
+  border-color: rgba(129, 140, 248, 0.5);
+  background: rgba(30, 41, 59, 0.88);
+  box-shadow: 0 0 0 0.18rem rgba(129, 140, 248, 0.18);
+}
+
+.icon-select-trigger.is-invalid,
+.icon-select-trigger.is-invalid:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 0.18rem rgba(239, 68, 68, 0.18);
+}
+
+.icon-select-value,
+.icon-select-option {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.icon-select-value {
+  min-width: 0;
+}
+
+.icon-select-value i,
+.icon-select-option i {
+  width: 1rem;
+  color: var(--store-accent, #22c55e);
+  text-align: center;
+}
+
+.icon-select-value span,
+.icon-select-option span {
+  text-align: left;
+}
+
+.icon-select-placeholder {
+  color: #94a3b8;
+}
+
+.icon-select-caret {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.icon-select-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.icon-select-menu {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 0;
+  right: 0;
+  z-index: 31;
+  max-height: 18rem;
+  overflow-y: auto;
+  padding: 0.45rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 0.95rem;
+  background: #1e293b;
+  box-shadow: 0 18px 36px rgba(2, 6, 23, 0.35);
+}
+
+.icon-select-option {
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: #e2e8f0;
+}
+
+.icon-select-option:hover,
+.icon-select-option.is-active {
+  background: rgba(99, 102, 241, 0.16);
+}
+
+.validation-helper,
+.field-helper {
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.validation-helper {
+  color: #f87171;
+}
+
+.field-helper {
+  color: #94a3b8;
+}

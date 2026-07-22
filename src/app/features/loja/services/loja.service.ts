@@ -44,6 +44,18 @@ export interface StoreFeatureHighlightPayload {
   title: string;
   text: string;
   icon: string;
+  text_align?: 'left' | 'center' | 'right';
+  icon_size?: 'small' | 'medium' | 'large';
+  font_family?: string;
+}
+
+export interface StoreInstitutionalSectionPayload {
+  eyebrow: string;
+  title: string;
+  description: string;
+  display_mode?: 'cards' | 'continuous';
+  width_mode?: StoreBannerWidthMode;
+  background_color?: string;
 }
 
 export type StoreProductSectionDisplayMode = 'wrap' | 'horizontal_scroll';
@@ -177,6 +189,7 @@ export interface StoreSettingsPayload {
   custom_block_css?: string;
   custom_block_js?: string;
   feature_highlights?: StoreFeatureHighlightPayload[];
+  institutional_section?: StoreInstitutionalSectionPayload;
   footer_links?: StoreNavigationLinkPayload[];
   footer_contact_title?: string;
   footer_contact_text?: string;

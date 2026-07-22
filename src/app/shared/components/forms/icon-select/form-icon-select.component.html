@@ -1,0 +1,57 @@
+<div class="form-field">
+  <label class="form-label" [class.field-label-invalid]="invalid" [attr.for]="inputId">
+    {{ label }}@if (required) { * }
+  </label>
+
+  <div class="icon-select-shell">
+    <button
+      [id]="inputId"
+      type="button"
+      class="icon-select-trigger"
+      [class.is-invalid]="invalid"
+      [attr.aria-expanded]="open"
+      (click)="toggleOpen($event)"
+    >
+      <span class="icon-select-value">
+        @if (selectedOption; as selected) {
+          <i [class]="selected.iconClass" aria-hidden="true"></i>
+          <span>{{ selected.label }}</span>
+        } @else {
+          <span class="icon-select-placeholder">{{ placeholder }}</span>
+        }
+      </span>
+
+      <span class="icon-select-caret" aria-hidden="true">▾</span>
+    </button>
+
+    @if (open) {
+      <button
+        type="button"
+        class="icon-select-backdrop"
+        aria-label="Fechar lista"
+        (click)="close()"
+      ></button>
+
+      <div class="icon-select-menu">
+        @for (option of options; track option.value) {
+          <button
+            type="button"
+            class="icon-select-option"
+            [class.is-active]="option.value === value"
+            (mousedown)="select(option.value, $event)"
+            (click)="select(option.value, $event)"
+          >
+            <i [class]="option.iconClass" aria-hidden="true"></i>
+            <span>{{ option.label }}</span>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (errorText) {
+    <div class="validation-helper">{{ errorText }}</div>
+  } @else if (helperText) {
+    <div class="field-helper">{{ helperText }}</div>
+  }
+</div>
