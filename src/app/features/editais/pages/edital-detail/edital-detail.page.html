@@ -1,0 +1,101 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header eyebrow="Editais" title="Visualizar edital">
+    <div class="header-actions">
+      <a class="btn btn-outline-secondary" routerLink="/editais">Voltar</a>
+      @if (edital()) {
+        <a class="btn btn-primary" [routerLink]="['/editais', edital()!.id, 'editar']">Editar</a>
+      }
+    </div>
+  </app-page-header>
+
+  @if (loading()) {
+    <article class="state-card">
+      <strong>Carregando edital...</strong>
+    </article>
+  } @else if (errorMessage()) {
+    <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+  } @else if (edital()) {
+    <section class="content-grid row g-4 align-items-start">
+      <div class="col-12 col-xl-4">
+        <article class="info-card cover-card">
+          @if (coverPreviewUrl()) {
+            <img class="cover-image" [src]="coverPreviewUrl()" alt="Arte da capa do edital" />
+          }
+        </article>
+      </div>
+
+      <div class="col-12 col-xl-8">
+        <article class="info-card details-card">
+          <div class="details-head">
+            <div class="details-title-block">
+              <h1>{{ edital()!.titulo }}</h1>
+              <div class="details-timestamps">
+                <span>Criado em {{ formatDateTime(edital()!.criado_em) }}</span>
+                <span>Atualizado em {{ formatDateTime(edital()!.atualizado_em) }}</span>
+              </div>
+            </div>
+
+            <span class="status-chip" [ngClass]="getStatusClass(edital()!.status)">
+              {{ getStatusLabel(edital()!.status) }}
+            </span>
+          </div>
+
+          <div class="description-card">
+            <p>{{ edital()!.descricao }}</p>
+          </div>
+
+          <div class="meta-grid row g-3">
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="meta-item h-100">
+                <span>Data de início</span>
+                <strong>{{ formatDate(edital()!.data_inicio) }}</strong>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="meta-item h-100">
+                <span>Data de fim</span>
+                <strong>{{ formatDate(edital()!.data_fim) }}</strong>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="meta-item h-100">
+                <span>Publicação prevista</span>
+                <strong>{{ formatDate(edital()!.data_prevista_publicacao) }}</strong>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="meta-item h-100">
+                <span>Total de vagas</span>
+                <strong>{{ edital()!.total_vagas ?? '-' }}</strong>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="meta-item h-100">
+                <span>Taxa de inscrição</span>
+                <strong>{{ formatCurrency(edital()!.taxa_inscricao) }}</strong>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+              <div class="meta-item h-100">
+                <span>Taxa de publicação</span>
+                <strong>{{ formatCurrency(edital()!.taxa_publicacao) }}</strong>
+              </div>
+            </div>
+          </div>
+
+          @if (edital()!.anexo) {
+            <a
+              class="attachment-card attachment-link"
+              [href]="edital()!.anexo!.url"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span>Anexo do edital</span>
+              <strong>{{ edital()!.anexo!.nome_arquivo }}</strong>
+            </a>
+          }
+        </article>
+      </div>
+    </section>
+  }
+</section>

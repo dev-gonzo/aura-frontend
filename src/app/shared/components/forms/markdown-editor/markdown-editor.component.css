@@ -1,0 +1,127 @@
+:host {
+  display: block;
+}
+
+.markdown-editor-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-label {
+  display: inline-flex;
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.form-label.field-label-invalid {
+  color: #f87171;
+}
+
+.editor-shell {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.92);
+}
+
+.editor-shell.is-invalid {
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+.editor-host {
+  min-height: 11rem;
+}
+
+:host ::ng-deep .pell {
+  display: grid;
+}
+
+:host ::ng-deep .pell-actionbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.94);
+}
+
+:host ::ng-deep .pell-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 0.75rem;
+  background: rgba(30, 41, 59, 0.68);
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+
+:host ::ng-deep .pell-button:hover,
+:host ::ng-deep .pell-button.pell-button-selected {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(129, 140, 248, 0.4);
+  color: #f8fafc;
+}
+
+:host ::ng-deep .pell-content {
+  min-height: 11rem;
+  padding: 1rem 1rem 1.1rem;
+  background: rgba(30, 41, 59, 0.78);
+  color: #f8fafc;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+:host ::ng-deep .pell-content:empty::before {
+  content: attr(data-placeholder);
+  color: #64748b;
+  pointer-events: none;
+}
+
+:host ::ng-deep .pell-content a {
+  color: #a5b4fc;
+  text-decoration: underline;
+}
+
+:host ::ng-deep .pell-content ul,
+:host ::ng-deep .pell-content ol {
+  padding-left: 1.2rem;
+}
+
+:host ::ng-deep .pell-content p,
+:host ::ng-deep .pell-content div,
+:host ::ng-deep .pell-content ul,
+:host ::ng-deep .pell-content ol {
+  margin-bottom: 0.75rem;
+}
+
+:host ::ng-deep .pell-content p:last-child,
+:host ::ng-deep .pell-content div:last-child,
+:host ::ng-deep .pell-content ul:last-child,
+:host ::ng-deep .pell-content ol:last-child {
+  margin-bottom: 0;
+}
+
+.validation-helper,
+.field-helper {
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.validation-helper {
+  color: #f87171;
+}
+
+.field-helper {
+  color: #94a3b8;
+}

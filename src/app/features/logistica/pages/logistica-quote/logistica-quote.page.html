@@ -1,0 +1,319 @@
+<app-page-header
+  eyebrow="Logística"
+  title="Consulta de frete"
+  description="Consulte opções de envio usando a origem configurada, o destino, o peso e as dimensões do pacote."
+/>
+
+<div class="container pb-4">
+  <div class="row g-4">
+    <div class="col-12 col-xl-8">
+      @if (errorMessage()) {
+        <div class="alert alert-danger mb-3">{{ errorMessage() }}</div>
+      }
+
+      @if (loading()) {
+        <section class="quote-card">
+          <p class="placeholder-copy">Carregando dados da cotação...</p>
+        </section>
+      } @else {
+        <form class="row g-4" [formGroup]="form" (ngSubmit)="submit()">
+          <div class="col-12">
+            <section class="quote-card">
+              <div class="section-heading">
+                <div>
+                  <h2>Origem da cotação</h2>
+                  <p>Esta origem vem da configuração administrativa da logística.</p>
+                </div>
+                <a class="btn btn-outline-light quick-link" routerLink="/logistica/configuracao">
+                  Editar configuração
+                </a>
+              </div>
+
+              <div class="origin-summary">
+                <span class="origin-badge">Origem atual</span>
+                <strong>{{ originSummary() || 'Origem não configurada.' }}</strong>
+              </div>
+            </section>
+          </div>
+
+          <div class="col-12">
+            <section class="quote-card">
+              <h2>Destino e opções</h2>
+              <div class="row g-3">
+                <div class="col-12">
+                  <app-form-input
+                    label="CEP de destino"
+                    [control]="form.controls.cep_destino"
+                    inputmode="numeric"
+                    [maxlength]="9"
+                    [invalid]="hasFieldError('cep_destino')"
+                    [errorText]="getFieldError('cep_destino')"
+                    [required]="true"
+                    (inputEvent)="formatCepInput($event)"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <div class="provider-picker">
+                    <button
+                      type="button"
+                      class="provider-option-card"
+                      [class.is-selected]="isProviderSelected('')"
+                      (click)="selectProvider('')"
+                    >
+                      <strong>Todos os providers habilitados</strong>
+                      <span>Consulta todas as integrações ativas e configuradas.</span>
+                    </button>
+
+                    @for (provider of providerCards(); track provider.code) {
+                      <button
+                        type="button"
+                        class="provider-option-card"
+                        [class.is-selected]="isProviderSelected(provider.code)"
+                        (click)="selectProvider(provider.code)"
+                      >
+                        <strong>{{ provider.label }}</strong>
+                        <span>{{ provider.code }}</span>
+                      </button>
+                    }
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <app-form-checkbox
+                    label="Recebimento próprio"
+                    [control]="form.controls.recebimento_proprio"
+                  />
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <app-form-checkbox
+                    label="Mãos próprias"
+                    [control]="form.controls.maos_proprias"
+                  />
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <app-form-checkbox
+                    label="Aviso de recebimento"
+                    [control]="form.controls.aviso_recebimento"
+                  />
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="col-12">
+            <section class="quote-card">
+              <div class="section-heading">
+                <div>
+                  <h2>Dimensões do pacote</h2>
+                  <p>Informe o pacote final que será enviado para calcular o frete.</p>
+                </div>
+                <span class="summary-badge">{{ selectedProviderLabel() }}</span>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12 col-md-6 col-xl-3">
+                  <app-form-input
+                    label="Peso (kg)"
+                    [control]="form.controls.peso_kg"
+                    type="number"
+                    [min]="0.001"
+                    [step]="0.001"
+                    [invalid]="hasFieldError('peso_kg')"
+                    [errorText]="getFieldError('peso_kg')"
+                    [required]="true"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                  <app-form-input
+                    label="Largura (cm)"
+                    [control]="form.controls.largura_cm"
+                    type="number"
+                    [min]="0.1"
+                    [step]="0.1"
+                    [invalid]="hasFieldError('largura_cm')"
+                    [errorText]="getFieldError('largura_cm')"
+                    [required]="true"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                  <app-form-input
+                    label="Altura (cm)"
+                    [control]="form.controls.altura_cm"
+                    type="number"
+                    [min]="0.1"
+                    [step]="0.1"
+                    [invalid]="hasFieldError('altura_cm')"
+                    [errorText]="getFieldError('altura_cm')"
+                    [required]="true"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                  <app-form-input
+                    label="Comprimento (cm)"
+                    [control]="form.controls.comprimento_cm"
+                    type="number"
+                    [min]="0.1"
+                    [step]="0.1"
+                    [invalid]="hasFieldError('comprimento_cm')"
+                    [errorText]="getFieldError('comprimento_cm')"
+                    [required]="true"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    label="Valor declarado"
+                    [control]="form.controls.valor_declarado"
+                    type="number"
+                    [min]="0"
+                    [step]="0.01"
+                    [invalid]="hasFieldError('valor_declarado')"
+                    [errorText]="getFieldError('valor_declarado')"
+                  />
+                </div>
+              </div>
+            </section>
+          </div>
+        </form>
+
+        @if (quoteResponse()) {
+          <section class="quote-card mt-4">
+            <div class="section-heading">
+              <div>
+                <h2>Opções de frete</h2>
+                <p>Resultado da consulta com base na origem configurada e no CEP informado.</p>
+              </div>
+              <span class="summary-badge">
+                Base da cotação: {{ formatCurrency(quoteResponse()!.subtotal_fisico) }}
+              </span>
+            </div>
+
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span>CEP de origem</span>
+                <strong>{{ quoteResponse()!.cep_origem }}</strong>
+              </div>
+              <div class="summary-item">
+                <span>CEP de destino</span>
+                <strong>{{ quoteResponse()!.cep_destino }}</strong>
+              </div>
+              <div class="summary-item">
+                <span>Provider</span>
+                <strong>{{ formatProviderName(quoteResponse()!.provider) }}</strong>
+              </div>
+              <div class="summary-item">
+                <span>Peso</span>
+                <strong>{{ form.getRawValue().peso_kg }} kg</strong>
+              </div>
+              <div class="summary-item">
+                <span>Dimensões</span>
+                <strong>
+                  {{ form.getRawValue().largura_cm }} x {{ form.getRawValue().altura_cm }} x
+                  {{ form.getRawValue().comprimento_cm }} cm
+                </strong>
+              </div>
+            </div>
+
+            @if (quoteOptions().length) {
+              <div class="result-list">
+                @for (option of quoteOptions(); track option.service_code + option.carrier_name) {
+                  <article class="result-card" [class.has-error]="!!option.error">
+                    <div class="result-main">
+                      <div class="carrier-block">
+                        @if (option.carrier_picture_url) {
+                          <img
+                            class="carrier-logo"
+                            [src]="option.carrier_picture_url"
+                            [alt]="option.carrier_name"
+                          />
+                        }
+                        <div>
+                          <strong>{{ option.service_name || option.carrier_name }}</strong>
+                          <span>{{ option.carrier_name }}</span>
+                        </div>
+                      </div>
+
+                      <div class="result-metrics">
+                        <span>{{ formatCurrency(option.price) }}</span>
+                        <small>
+                          @if (option.delivery_days) {
+                            {{ option.delivery_days }} dias
+                          } @else {
+                            Prazo indisponível
+                          }
+                        </small>
+                      </div>
+                    </div>
+
+                    <div class="result-meta">
+                      <span>{{ option.service_code || 'Serviço sem código' }}</span>
+                      <span>{{ formatProviderLabel(option) }}</span>
+                    </div>
+
+                    @if (option.error) {
+                      <div class="result-error">{{ option.error }}</div>
+                    }
+                  </article>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">Nenhuma opção de frete foi retornada para esta consulta.</div>
+            }
+          </section>
+        }
+      }
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="sticky-column">
+        <section class="quote-card">
+          <h2>Status dos providers</h2>
+          <div class="provider-status-list">
+            @for (provider of providerStatuses(); track provider.code) {
+              <div class="provider-status-item">
+                <div>
+                  <strong>{{ provider.label }}</strong>
+                  <span>{{ provider.code }}</span>
+                </div>
+                <div class="status-chips">
+                  <span class="status-chip" [class.is-active]="provider.enabled">
+                    {{ provider.enabled ? 'Ativo' : 'Desativado' }}
+                  </span>
+                  <span class="status-chip" [class.is-ready]="provider.configured">
+                    {{ provider.configured ? 'Configurado' : 'Incompleto' }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="quote-card">
+          <h2>Ações</h2>
+          <div class="action-stack">
+            <app-button
+              type="button"
+              [block]="true"
+              [disabled]="loading() || quoting()"
+              (click)="submit()"
+            >
+              {{ quoting() ? 'Consultando...' : 'Consultar frete' }}
+            </app-button>
+            <a class="btn btn-outline-light action-link" routerLink="/logistica/configuracao">
+              Configuração da logística
+            </a>
+            <a class="btn btn-outline-light action-link" routerLink="/">
+              Voltar ao painel
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

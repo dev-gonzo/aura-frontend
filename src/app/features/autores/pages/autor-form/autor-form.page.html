@@ -1,0 +1,256 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header eyebrow="Autores" [title]="title()">
+    <a class="btn btn-outline-secondary" routerLink="/autores">Voltar para autores</a>
+  </app-page-header>
+
+  <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="col-12 col-xl-8 order-2 order-xl-1">
+      <div class="content-stack">
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <h2 class="h5 mb-3">Dados do autor</h2>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <app-form-select
+                  label="Usuário vinculado"
+                  [control]="form.controls.usuario_id"
+                  [options]="userOptions()"
+                  [invalid]="hasFieldError('usuario_id')"
+                  [errorText]="getFieldError('usuario_id')"
+                  placeholder="Selecione um usuário"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Nome completo"
+                  [control]="form.controls.nome_completo"
+                  [required]="true"
+                  [invalid]="hasFieldError('nome_completo')"
+                  [errorText]="getFieldError('nome_completo')"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Nome público"
+                  [control]="form.controls.nome_publico"
+                  [invalid]="hasFieldError('nome_publico')"
+                  [errorText]="getFieldError('nome_publico')"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Nacionalidade"
+                  [control]="form.controls.nacionalidade"
+                  [invalid]="hasFieldError('nacionalidade')"
+                  [errorText]="getFieldError('nacionalidade')"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-select
+                  label="Status"
+                  [control]="form.controls.status"
+                  [required]="true"
+                  [options]="statusOptions"
+                  [invalid]="hasFieldError('status')"
+                  [errorText]="getFieldError('status')"
+                />
+              </div>
+
+              <div class="col-12">
+                <app-form-textarea
+                  label="Biografia"
+                  [control]="form.controls.biografia"
+                  [rows]="6"
+                  [invalid]="hasFieldError('biografia')"
+                  [errorText]="getFieldError('biografia')"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <h2 class="h5 mb-3">Contatos e redes sociais</h2>
+
+            <div class="row g-3">
+              <div class="col-md-8">
+                <app-form-input
+                  label="Email"
+                  type="email"
+                  [control]="form.controls.email"
+                  [invalid]="hasFieldError('email')"
+                  [errorText]="getFieldError('email')"
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.email_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="WhatsApp"
+                  [control]="form.controls.whatsapp"
+                  [invalid]="hasFieldError('whatsapp')"
+                  [errorText]="getFieldError('whatsapp')"
+                  inputmode="numeric"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.whatsapp_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="Instagram"
+                  [control]="form.controls.instagram"
+                  [invalid]="hasFieldError('instagram')"
+                  [errorText]="getFieldError('instagram')"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.instagram_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="Wattpad"
+                  [control]="form.controls.wattpad"
+                  [invalid]="hasFieldError('wattpad')"
+                  [errorText]="getFieldError('wattpad')"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.wattpad_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="Facebook"
+                  [control]="form.controls.facebook"
+                  [invalid]="hasFieldError('facebook')"
+                  [errorText]="getFieldError('facebook')"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.facebook_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="X / Twitter"
+                  [control]="form.controls.x_twitter"
+                  [invalid]="hasFieldError('x_twitter')"
+                  [errorText]="getFieldError('x_twitter')"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.x_twitter_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="TikTok"
+                  [control]="form.controls.tiktok"
+                  [invalid]="hasFieldError('tiktok')"
+                  [errorText]="getFieldError('tiktok')"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.tiktok_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="YouTube"
+                  [control]="form.controls.youtube"
+                  [invalid]="hasFieldError('youtube')"
+                  [errorText]="getFieldError('youtube')"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.youtube_privado" />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="LinkedIn"
+                  [control]="form.controls.linkedin"
+                  [invalid]="hasFieldError('linkedin')"
+                  [errorText]="getFieldError('linkedin')"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <app-form-checkbox label="Privado" [control]="form.controls.linkedin_privado" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-4 order-1 order-xl-2">
+      <div class="aside-stack">
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <app-image-upload
+              label="Foto do autor"
+              [invalid]="hasPhotoError()"
+              [errorText]="getPhotoError()"
+              [previewUrl]="shouldShowPhotoPreview() ? currentPhotoPreview() : null"
+              placeholderTitle="Autor sem foto"
+              placeholderSubtitle="Clique para enviar"
+              ariaLabel="Selecionar foto do autor"
+              [fullWidth]="true"
+              (fileSelected)="onPhotoSelected($event)"
+              (previewLoad)="handlePhotoPreviewLoad()"
+              (previewError)="handlePhotoPreviewError($event)"
+            />
+          </div>
+        </div>
+
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <h2 class="h5 mb-2">Base editorial</h2>
+            <p class="aside-copy mb-0">
+              Vincule o autor a um perfil do sistema quando ele também participar de fluxos internos.
+            </p>
+          </div>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+        }
+
+        @if (successMessage()) {
+          <div class="alert alert-success mb-0">{{ successMessage() }}</div>
+        }
+
+        <app-button class="w-100 sticky-submit" type="submit" [block]="true" [disabled]="loading() || saving() || processingPhoto()">
+          @if (processingPhoto()) {
+            Processando foto...
+          } @else if (saving()) {
+            {{ editingId() ? 'Salvando alterações...' : 'Salvando autor...' }}
+          } @else {
+            {{ editingId() ? 'Salvar alterações' : 'Cadastrar autor' }}
+          }
+        </app-button>
+      </div>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,120 @@
+<section class="page-shell">
+  <app-page-header
+    eyebrow="Editais"
+    title="Upload de arquivo"
+    description="Tela inicial para testar envio de arquivos do módulo de edital para o storage configurado no Supabase."
+  />
+
+  <section class="content-grid">
+    <article class="panel-card">
+      <div class="panel-head">
+        <div>
+          <h2>Selecionar arquivo</h2>
+          <p>Escolha um arquivo local e envie para o bucket de editais.</p>
+        </div>
+      </div>
+
+      <input
+        #fileInput
+        class="hidden-file-input"
+        type="file"
+        (change)="onFileSelected($event)"
+      />
+
+      <button type="button" class="file-trigger" (click)="openFileSelector()">
+        @if (selectedFile()) {
+          <div class="file-selected">
+            <strong>{{ selectedFile()?.name }}</strong>
+            <span>{{ formatFileSize(selectedFile()!.size) }}</span>
+          </div>
+        } @else {
+          <div class="file-placeholder">
+            <strong>Selecionar arquivo</strong>
+            <span>Clique para abrir o seletor</span>
+          </div>
+        }
+      </button>
+
+      <div class="action-row">
+        <app-button type="button" variant="secondary" [outline]="true" (click)="openFileSelector()">
+          Escolher arquivo
+        </app-button>
+
+        <app-button
+          type="button"
+          variant="secondary"
+          [outline]="true"
+          [disabled]="sending() || !selectedFile()"
+          (click)="clearSelectedFile()"
+        >
+          Limpar
+        </app-button>
+
+        <app-button
+          type="button"
+          [disabled]="sending() || !selectedFile()"
+          (click)="sendFile()"
+        >
+          @if (sending()) {
+            Enviando...
+          } @else {
+            Enviar arquivo
+          }
+        </app-button>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success mb-0">{{ successMessage() }}</div>
+      }
+    </article>
+
+    <article class="panel-card">
+      <div class="panel-head">
+        <div>
+          <h2>Resultado do upload</h2>
+          <p>Dados retornados pelo backend após o envio para o storage.</p>
+        </div>
+      </div>
+
+      @if (uploadResult()) {
+        <div class="result-grid">
+          <div class="result-item">
+            <span>Arquivo</span>
+            <strong>{{ uploadResult()?.nome_arquivo }}</strong>
+          </div>
+          <div class="result-item">
+            <span>Bucket</span>
+            <strong>{{ uploadResult()?.bucket }}</strong>
+          </div>
+          <div class="result-item">
+            <span>Tipo</span>
+            <strong>{{ uploadResult()?.content_type || '-' }}</strong>
+          </div>
+          <div class="result-item">
+            <span>Tamanho</span>
+            <strong>{{ formatFileSize(uploadResult()!.tamanho_bytes) }}</strong>
+          </div>
+          <div class="result-item result-item-full">
+            <span>Chave</span>
+            <strong>{{ uploadResult()?.key }}</strong>
+          </div>
+          <div class="result-item result-item-full">
+            <span>URL pública</span>
+            <a [href]="uploadResult()?.url" target="_blank" rel="noreferrer">
+              {{ uploadResult()?.url }}
+            </a>
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <strong>Nenhum upload realizado</strong>
+          <span>Após enviar um arquivo, o retorno do storage aparece aqui.</span>
+        </div>
+      }
+    </article>
+  </section>
+</section>

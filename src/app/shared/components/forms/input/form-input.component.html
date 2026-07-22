@@ -1,0 +1,31 @@
+    <div class="form-field">
+      <label class="form-label" [class.field-label-invalid]="invalid" [attr.for]="inputId">
+        {{ label }}@if (required) { * }
+      </label>
+
+      <input
+        class="form-control"
+        [class.is-invalid]="invalid"
+        [id]="inputId"
+        [type]="type"
+        [formControl]="control"
+        [placeholder]="placeholder"
+        [readonly]="readonly"
+        [disabled]="disabled"
+        [inputMode]="inputmode"
+        [attr.maxlength]="maxlength ?? null"
+        [attr.min]="min ?? null"
+        [attr.max]="max ?? null"
+        [attr.step]="step ?? null"
+        [autocomplete]="autocomplete"
+        [attr.aria-invalid]="invalid"
+        (input)="inputEvent.emit($event)"
+      />
+
+      @if (errorText) {
+        <div class="validation-helper">{{ errorText }}</div>
+      } @else if (helperText) {
+        <div class="field-helper">{{ helperText }}</div>
+      }
+    </div>
+  

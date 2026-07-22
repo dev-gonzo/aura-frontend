@@ -1,0 +1,45 @@
+<article class="palette-row">
+  <div class="palette-copy">
+    <div class="palette-copy-head">
+      <h3>{{ label }}@if (required) { <span>*</span> }</h3>
+      <span class="palette-usage-label">Como preencher</span>
+    </div>
+
+    @if (description) {
+      <p class="palette-description">{{ description }}</p>
+    }
+
+    @if (usage) {
+      <p class="palette-usage">{{ usage }}</p>
+    }
+  </div>
+
+  <div class="palette-controls">
+    <input
+      class="color-picker"
+      type="color"
+      [value]="currentColor"
+      [attr.aria-label]="'Seletor de cor para ' + label"
+      (input)="control.setValue(($any($event.target)?.value || currentColor).toUpperCase())"
+    />
+
+    <app-form-input
+      label="Hexadecimal"
+      [control]="control"
+      [invalid]="invalid"
+      [errorText]="errorText"
+      [helperText]="helperText"
+      [required]="required"
+      [placeholder]="placeholder"
+    />
+  </div>
+
+  <div class="palette-preview">
+    <span class="palette-preview-label">Prévia</span>
+    <div class="palette-preview-shell">
+      <span class="palette-preview-chip" [class.is-text]="previewMode === 'text'" [class.is-button]="previewMode === 'button'" [class.is-badge]="previewMode === 'badge'" [ngStyle]="previewStyles">
+        {{ previewLabel }}
+      </span>
+    </div>
+  </div>
+</article>

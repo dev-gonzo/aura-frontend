@@ -1,0 +1,446 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header eyebrow="Livros" [title]="title()">
+    <a class="btn btn-outline-secondary" routerLink="/livros">Voltar para livros</a>
+  </app-page-header>
+
+  <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="col-12 col-xl-8 order-2 order-xl-1">
+      <div class="content-stack">
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <h2 class="h5 mb-3">Catálogo editorial</h2>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <app-form-select
+                  label="Autor"
+                  [control]="form.controls.autor_id"
+                  [required]="true"
+                  [options]="authorOptions()"
+                  [invalid]="hasFieldError('autor_id')"
+                  [errorText]="getFieldError('autor_id')"
+                  placeholder="Selecione um autor"
+                />
+              </div>
+
+              <div class="col-md-8">
+                <app-form-input
+                  label="Título"
+                  [control]="form.controls.titulo"
+                  [required]="true"
+                  [invalid]="hasFieldError('titulo')"
+                  [errorText]="getFieldError('titulo')"
+                />
+              </div>
+
+              <div class="col-md-4">
+                <app-form-select
+                  label="Status"
+                  [control]="form.controls.status"
+                  [required]="true"
+                  [options]="statusOptions"
+                  [invalid]="hasFieldError('status')"
+                  [errorText]="getFieldError('status')"
+                />
+              </div>
+
+              <div class="col-12">
+                <app-form-input
+                  label="Subtítulo"
+                  [control]="form.controls.subtitulo"
+                  [invalid]="hasFieldError('subtitulo')"
+                  [errorText]="getFieldError('subtitulo')"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Gênero"
+                  [control]="form.controls.genero"
+                  [invalid]="hasFieldError('genero')"
+                  [errorText]="getFieldError('genero')"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <app-form-input
+                  label="Idioma"
+                  [control]="form.controls.idioma"
+                  [invalid]="hasFieldError('idioma')"
+                  [errorText]="getFieldError('idioma')"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <app-form-input
+                  label="Edição"
+                  [control]="form.controls.edicao"
+                  [invalid]="hasFieldError('edicao')"
+                  [errorText]="getFieldError('edicao')"
+                />
+              </div>
+
+              <div class="col-md-4">
+                <app-form-input
+                  label="ISBN-13"
+                  [control]="form.controls.isbn"
+                  [invalid]="hasFieldError('isbn')"
+                  [errorText]="getFieldError('isbn')"
+                  inputmode="numeric"
+                  [maxlength]="13"
+                  (inputEvent)="normalizeDigitField('isbn', $event)"
+                />
+              </div>
+
+              <div class="col-md-4">
+                <app-form-input
+                  label="Código de barras"
+                  [control]="form.controls.codigo_barra"
+                  [invalid]="hasFieldError('codigo_barra')"
+                  [errorText]="getFieldError('codigo_barra')"
+                  inputmode="numeric"
+                  [maxlength]="13"
+                  (inputEvent)="normalizeDigitField('codigo_barra', $event)"
+                />
+              </div>
+
+              <div class="col-md-4">
+                <app-form-input
+                  label="Número de páginas"
+                  [control]="form.controls.numero_paginas"
+                  [invalid]="hasFieldError('numero_paginas')"
+                  [errorText]="getFieldError('numero_paginas')"
+                  inputmode="numeric"
+                  (inputEvent)="normalizeIntegerField('numero_paginas', $event)"
+                />
+              </div>
+
+              <div class="col-12">
+                <div class="form-field">
+                  <label class="form-label" [class.field-label-invalid]="hasFieldError('sinopse')" for="livro-sinopse">
+                    Sinopse
+                  </label>
+
+                  <div class="markdown-toolbar">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="applySynopsisMarkdown('title')">
+                      Título
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="applySynopsisMarkdown('subtitle')">
+                      Subtítulo
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="applySynopsisMarkdown('bold')">
+                      Negrito
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="applySynopsisMarkdown('italic')">
+                      Itálico
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="applySynopsisMarkdown('link')">
+                      Link
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="applySynopsisMarkdown('list')">
+                      Lista
+                    </button>
+                  </div>
+
+                  <textarea
+                    #synopsisEditor
+                    id="livro-sinopse"
+                    class="form-control markdown-textarea"
+                    [class.is-invalid]="hasFieldError('sinopse')"
+                    rows="8"
+                    formControlName="sinopse"
+                    aria-label="Sinopse do livro"
+                  ></textarea>
+
+                  @if (getFieldError('sinopse')) {
+                    <div class="validation-helper">{{ getFieldError('sinopse') }}</div>
+                  } @else {
+                    <div class="field-helper">Editor básico em Markdown para títulos, links, listas e destaques.</div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <h2 class="h5 mb-3">Formatos e preços</h2>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <app-form-checkbox
+                  label="Disponível no formato físico"
+                  [control]="form.controls.possui_formato_fisico"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-checkbox
+                  label="Disponível no formato digital"
+                  [control]="form.controls.possui_formato_digital"
+                />
+              </div>
+
+              <div class="col-12">
+                @if (hasFieldError('possui_formato_fisico')) {
+                  <div class="invalid-feedback d-block">{{ getFieldError('possui_formato_fisico') }}</div>
+                }
+              </div>
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Preço de venda físico"
+                  [control]="form.controls.preco_venda_fisico"
+                  [invalid]="hasFieldError('preco_venda_fisico')"
+                  [errorText]="getFieldError('preco_venda_fisico')"
+                  inputmode="decimal"
+                  (inputEvent)="formatMoneyField('preco_venda_fisico', $event)"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Preço de venda digital"
+                  [control]="form.controls.preco_venda_digital"
+                  [invalid]="hasFieldError('preco_venda_digital')"
+                  [errorText]="getFieldError('preco_venda_digital')"
+                  inputmode="decimal"
+                  (inputEvent)="formatMoneyField('preco_venda_digital', $event)"
+                />
+              </div>
+
+              @if (shouldShowDigitalSalesFields()) {
+                <div class="col-md-6">
+                  <app-form-select
+                    label="Canal de venda digital"
+                    [control]="form.controls.canal_venda_digital"
+                    [options]="digitalChannelOptions"
+                    [invalid]="hasFieldError('canal_venda_digital')"
+                    [errorText]="getFieldError('canal_venda_digital')"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <app-form-input
+                    label="Link de compra digital"
+                    [control]="form.controls.url_compra_digital"
+                    [invalid]="hasFieldError('url_compra_digital')"
+                    [errorText]="getFieldError('url_compra_digital')"
+                    placeholder="https://www.amazon.com.br/..."
+                  />
+                </div>
+
+                <div class="col-12">
+                  <p class="stock-helper mb-0">
+                    Quando o canal for Amazon, o site público poderá exibir o botão Comprar agora na Amazon.
+                  </p>
+                </div>
+              }
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Data de publicação"
+                  type="date"
+                  [control]="form.controls.data_publicacao"
+                  [invalid]="hasFieldError('data_publicacao')"
+                  [errorText]="getFieldError('data_publicacao')"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <app-form-input
+                  label="Publicação prevista"
+                  type="date"
+                  [control]="form.controls.data_publicacao_prevista"
+                  [invalid]="hasFieldError('data_publicacao_prevista')"
+                  [errorText]="getFieldError('data_publicacao_prevista')"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <h2 class="h5 mb-3">Características físicas</h2>
+
+            @if (shouldShowPhysicalDetails()) {
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <app-form-select
+                    label="Tipo de capa"
+                    [control]="form.controls.tipo_capa"
+                    [options]="coverTypeOptions"
+                    [invalid]="hasFieldError('tipo_capa')"
+                    [errorText]="getFieldError('tipo_capa')"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <app-form-input
+                    label="Custo de impressão"
+                    [control]="form.controls.custo_impressao"
+                    [invalid]="hasFieldError('custo_impressao')"
+                    [errorText]="getFieldError('custo_impressao')"
+                    inputmode="decimal"
+                    (inputEvent)="formatMoneyField('custo_impressao', $event)"
+                  />
+                </div>
+
+                <div class="col-md-3">
+                  <app-form-input
+                    label="Peso (g)"
+                    [control]="form.controls.peso_gramas"
+                    [invalid]="hasFieldError('peso_gramas')"
+                    [errorText]="getFieldError('peso_gramas')"
+                    inputmode="numeric"
+                    (inputEvent)="normalizeIntegerField('peso_gramas', $event)"
+                  />
+                </div>
+
+                <div class="col-md-3">
+                  <app-form-input
+                    label="Largura (cm)"
+                    [control]="form.controls.largura_cm"
+                    [invalid]="hasFieldError('largura_cm')"
+                    [errorText]="getFieldError('largura_cm')"
+                    inputmode="decimal"
+                    (inputEvent)="normalizeDecimalField('largura_cm', $event)"
+                  />
+                </div>
+
+                <div class="col-md-3">
+                  <app-form-input
+                    label="Altura (cm)"
+                    [control]="form.controls.altura_cm"
+                    [invalid]="hasFieldError('altura_cm')"
+                    [errorText]="getFieldError('altura_cm')"
+                    inputmode="decimal"
+                    (inputEvent)="normalizeDecimalField('altura_cm', $event)"
+                  />
+                </div>
+
+                <div class="col-md-3">
+                  <app-form-input
+                    label="Profundidade (cm)"
+                    [control]="form.controls.profundidade_cm"
+                    [invalid]="hasFieldError('profundidade_cm')"
+                    [errorText]="getFieldError('profundidade_cm')"
+                    inputmode="decimal"
+                    (inputEvent)="normalizeDecimalField('profundidade_cm', $event)"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <app-form-textarea
+                    label="Detalhes da edição"
+                    [control]="form.controls.detalhes_edicao"
+                    [rows]="3"
+                    [invalid]="hasFieldError('detalhes_edicao')"
+                    [errorText]="getFieldError('detalhes_edicao')"
+                  />
+                </div>
+              </div>
+            } @else {
+              <p class="stock-helper mb-0">Este cadastro está configurado apenas para venda digital.</p>
+            }
+          </div>
+        </div>
+
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <div class="d-flex flex-column gap-2 mb-3">
+              <h2 class="h5 mb-0">Estoque</h2>
+              <p class="stock-helper mb-0">{{ getInventoryHelperText() }}</p>
+            </div>
+
+            @if (shouldShowStockFields()) {
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <app-form-input
+                    label="Estoque disponível"
+                    [control]="form.controls.estoque_disponivel"
+                    [invalid]="hasFieldError('estoque_disponivel')"
+                    [errorText]="getFieldError('estoque_disponivel')"
+                    inputmode="numeric"
+                    (inputEvent)="normalizeIntegerField('estoque_disponivel', $event)"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <app-form-input
+                    label="Estoque mínimo"
+                    [control]="form.controls.estoque_minimo"
+                    [invalid]="hasFieldError('estoque_minimo')"
+                    [errorText]="getFieldError('estoque_minimo')"
+                    inputmode="numeric"
+                    (inputEvent)="normalizeIntegerField('estoque_minimo', $event)"
+                  />
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-4 order-1 order-xl-2">
+      <div class="aside-stack">
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <app-image-upload
+              label="Capa do livro"
+              [invalid]="hasCoverError()"
+              [errorText]="getCoverError()"
+              [previewUrl]="shouldShowCoverPreview() ? currentCoverPreview() : null"
+              placeholderTitle="Livro sem capa"
+              placeholderSubtitle="Clique para enviar"
+              ariaLabel="Selecionar capa do livro"
+              [fullWidth]="true"
+              (fileSelected)="onCoverSelected($event)"
+              (previewLoad)="handleCoverPreviewLoad()"
+              (previewError)="handleCoverPreviewError($event)"
+            />
+          </div>
+        </div>
+
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-4 p-lg-4">
+            <h2 class="h5 mb-3">Operação</h2>
+
+            <div class="checklist">
+              <app-form-checkbox label="Controlar estoque do formato físico" [control]="form.controls.controlar_estoque" />
+              <app-form-checkbox label="Livro ativo" [control]="form.controls.ativo" />
+            </div>
+          </div>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+        }
+
+        @if (successMessage()) {
+          <div class="alert alert-success mb-0">{{ successMessage() }}</div>
+        }
+
+        <app-button
+          class="w-100 sticky-submit"
+          type="submit"
+          [block]="true"
+          [disabled]="loading() || saving() || processingCover() || validatingIdentifiers()"
+        >
+          @if (processingCover()) {
+            Processando capa...
+          } @else if (validatingIdentifiers()) {
+            Validando identificadores...
+          } @else if (saving()) {
+            {{ editingId() ? 'Salvando alterações...' : 'Salvando livro...' }}
+          } @else {
+            {{ editingId() ? 'Salvar alterações' : 'Cadastrar livro' }}
+          }
+        </app-button>
+      </div>
+    </div>
+  </form>
+</section>

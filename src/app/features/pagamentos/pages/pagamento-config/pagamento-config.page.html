@@ -1,0 +1,281 @@
+<app-page-header
+  eyebrow="Pagamentos"
+  title="Configuração de pagamentos"
+  description="Gerencie os providers de pagamento da editora e mantenha o Mercado Pago como integração recomendada."
+/>
+
+<div class="container pb-4">
+  <div class="row g-4">
+    <div class="col-12 col-xl-8">
+      @if (errorMessage()) {
+        <div class="alert alert-danger mb-3">{{ errorMessage() }}</div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success mb-3">{{ successMessage() }}</div>
+      }
+
+      <form class="row g-4" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="col-12">
+          <section class="config-card">
+            <h2>Operação de pagamentos</h2>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <app-form-select
+                  label="Provider padrão"
+                  [control]="form.controls.default_provider"
+                  [options]="providerOptions"
+                  [invalid]="hasFieldError('default_provider')"
+                  [errorText]="getFieldError('default_provider')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-6">
+                <app-form-input
+                  label="Timeout (segundos)"
+                  [control]="form.controls.timeout_seconds"
+                  type="number"
+                  [min]="5"
+                  [max]="120"
+                  [invalid]="hasFieldError('timeout_seconds')"
+                  [errorText]="getFieldError('timeout_seconds')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12">
+                <app-form-input
+                  label="Email de contato"
+                  [control]="form.controls.contact_email"
+                  type="email"
+                  autocomplete="email"
+                  [invalid]="hasFieldError('contact_email')"
+                  [errorText]="getFieldError('contact_email')"
+                  [required]="true"
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="config-card">
+            <div class="provider-panel" [class.is-expanded]="isProviderExpanded('MERCADO_PAGO')">
+              <div class="provider-panel-header">
+                <button
+                  type="button"
+                  class="provider-toggle"
+                  (click)="toggleProviderPanel('MERCADO_PAGO')"
+                >
+                  <div>
+                    <h2>Mercado Pago</h2>
+                    <p>Provider recomendado para iniciar o fluxo de checkout da Aura.</p>
+                  </div>
+                </button>
+
+                <div class="provider-summary">
+                  <span class="status-chip" [class.is-active]="isProviderEnabled('MERCADO_PAGO')">
+                    {{ isProviderEnabled('MERCADO_PAGO') ? 'Habilitado' : 'Desabilitado' }}
+                  </span>
+                  @if (isDefaultProvider('MERCADO_PAGO')) {
+                    <span class="status-chip is-default">Padrão</span>
+                    <span class="status-chip is-recommended">Recomendado</span>
+                  }
+                  <button
+                    type="button"
+                    class="collapse-trigger"
+                    (click)="toggleProviderPanel('MERCADO_PAGO')"
+                  >
+                    {{ isProviderExpanded('MERCADO_PAGO') ? 'Ocultar' : 'Expandir' }}
+                  </button>
+                </div>
+              </div>
+
+              @if (isProviderExpanded('MERCADO_PAGO')) {
+                <div class="provider-panel-body row g-3">
+                  <div class="col-12">
+                    <app-form-checkbox
+                      label="Habilitar provider"
+                      [control]="form.controls.mercado_pago_enabled"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-checkbox
+                      label="Usar credenciais de teste"
+                      [control]="form.controls.mercado_pago_sandbox"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-8">
+                    <app-form-input
+                      label="Base URL"
+                      [control]="form.controls.mercado_pago_base_url"
+                      [invalid]="hasFieldError('mercado_pago_base_url')"
+                      [errorText]="getFieldError('mercado_pago_base_url')"
+                      [required]="mercadoPagoEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Public key"
+                      [control]="form.controls.mercado_pago_public_key"
+                      [invalid]="hasFieldError('mercado_pago_public_key')"
+                      [errorText]="getFieldError('mercado_pago_public_key')"
+                      [required]="mercadoPagoEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Máximo de parcelas"
+                      [control]="form.controls.mercado_pago_installments"
+                      type="number"
+                      [min]="1"
+                      [max]="24"
+                      [invalid]="hasFieldError('mercado_pago_installments')"
+                      [errorText]="getFieldError('mercado_pago_installments')"
+                      [required]="mercadoPagoEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Access token"
+                      [control]="form.controls.mercado_pago_access_token"
+                      [invalid]="hasFieldError('mercado_pago_access_token')"
+                      [errorText]="getFieldError('mercado_pago_access_token')"
+                      [required]="mercadoPagoEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Descriptor da fatura"
+                      [control]="form.controls.mercado_pago_statement_descriptor"
+                      [invalid]="hasFieldError('mercado_pago_statement_descriptor')"
+                      [errorText]="getFieldError('mercado_pago_statement_descriptor')"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-checkbox
+                      label="Forçar aprovação binária"
+                      [control]="form.controls.mercado_pago_binary_mode"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-checkbox
+                      label="Usar wallet purchase"
+                      [control]="form.controls.mercado_pago_wallet_purchase"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    @if (getProviderStatus('MERCADO_PAGO'); as status) {
+                      <div class="provider-meta">
+                        <span [class.text-success]="status.configured" [class.text-warning]="!status.configured">
+                          {{ status.configured ? 'Configuração completa' : 'Configuração incompleta' }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-input
+                      label="URL de sucesso"
+                      [control]="form.controls.mercado_pago_success_url"
+                      [invalid]="hasFieldError('mercado_pago_success_url')"
+                      [errorText]="getFieldError('mercado_pago_success_url')"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-input
+                      label="URL de falha"
+                      [control]="form.controls.mercado_pago_failure_url"
+                      [invalid]="hasFieldError('mercado_pago_failure_url')"
+                      [errorText]="getFieldError('mercado_pago_failure_url')"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-input
+                      label="URL pendente"
+                      [control]="form.controls.mercado_pago_pending_url"
+                      [invalid]="hasFieldError('mercado_pago_pending_url')"
+                      [errorText]="getFieldError('mercado_pago_pending_url')"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Webhook"
+                      [control]="form.controls.mercado_pago_webhook_url"
+                      [invalid]="hasFieldError('mercado_pago_webhook_url')"
+                      [errorText]="getFieldError('mercado_pago_webhook_url')"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="sidebar-stack">
+        <section class="sidebar-card">
+          <h3>Status do provider</h3>
+          @if (getProviderStatus('MERCADO_PAGO'); as status) {
+            <div class="status-card">
+              <strong>{{ status.label }}</strong>
+              <span>{{ status.code }}</span>
+              <div class="status-row">
+                <span class="status-chip" [class.is-active]="status.enabled">
+                  {{ status.enabled ? 'Habilitado' : 'Desabilitado' }}
+                </span>
+                <span class="status-chip" [class.is-default]="status.is_default">
+                  {{ status.is_default ? 'Padrão' : 'Secundário' }}
+                </span>
+              </div>
+            </div>
+          } @else {
+            <p class="empty-text">O status do provider aparece após o carregamento da configuração.</p>
+          }
+        </section>
+
+        <section class="sidebar-card">
+          <h3>Ações</h3>
+          <div class="action-stack">
+            <app-button
+              type="submit"
+              variant="primary"
+              [block]="true"
+              [disabled]="loading() || saving()"
+              (click)="submit()"
+            >
+              {{ saving() ? 'Salvando...' : 'Salvar configuração' }}
+            </app-button>
+
+            <app-button type="button" variant="secondary" [outline]="true" [block]="true" routerLink="/pagamentos/checkout">
+              Testar checkout
+            </app-button>
+
+            <app-button type="button" variant="secondary" [outline]="true" [block]="true" routerLink="/">
+              Voltar ao painel
+            </app-button>
+          </div>
+
+          @if (updatedAt()) {
+            <p class="helper-text">Última atualização: {{ updatedAt() | date: 'dd/MM/yyyy HH:mm' }}</p>
+          }
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

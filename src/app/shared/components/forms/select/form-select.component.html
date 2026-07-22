@@ -1,0 +1,29 @@
+<div class="form-field">
+  <label class="form-label" [class.field-label-invalid]="invalid" [attr.for]="inputId">
+    {{ label }}@if (required) { * }
+  </label>
+
+  <select
+    class="form-select"
+    [class.is-invalid]="invalid"
+    [id]="inputId"
+    [formControl]="control"
+    [attr.aria-invalid]="invalid"
+  >
+    @if (showPlaceholderOption) {
+      <option value="">{{ placeholder }}</option>
+    }
+
+    @for (option of options; track option.value) {
+      <option [value]="option.value" [class.imported-option]="option.imported">
+        {{ option.label }}
+      </option>
+    }
+  </select>
+
+  @if (errorText) {
+    <div class="validation-helper">{{ errorText }}</div>
+  } @else if (helperText) {
+    <div class="field-helper">{{ helperText }}</div>
+  }
+</div>

@@ -1,0 +1,20 @@
+<header class="page-header container-fluid px-0">
+  <div class="row g-3 align-items-start align-items-lg-center">
+    <div class="col-12 col-lg">
+      <div class="page-copy-block">
+        <span class="page-eyebrow">{{ eyebrow }}</span>
+        <h1>{{ title }}</h1>
+        @if (description) {
+          <p class="page-copy">{{ description }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-auto">
+      <div class="page-actions">
+        <ng-content />
+      </div>
+    </div>
+  </div>
+</header>
+  

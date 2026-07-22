@@ -1,0 +1,13 @@
+    <button
+      class="app-button"
+      [class.is-block]="block"
+      [class.is-outline]="outline"
+      [class.is-danger]="variant === 'danger'"
+      [class.is-secondary]="variant === 'secondary'"
+      [class.is-primary]="variant === 'primary'"
+      [attr.type]="type"
+      [disabled]="disabled"
+    >
+      <ng-content />
+    </button>
+  

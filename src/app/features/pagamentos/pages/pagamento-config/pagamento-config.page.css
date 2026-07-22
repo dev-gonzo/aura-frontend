@@ -1,0 +1,134 @@
+:host {
+  display: block;
+}
+
+.config-card,
+.sidebar-card {
+  background: rgba(5, 11, 35, 0.92);
+  border: 1px solid rgba(75, 104, 255, 0.28);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.config-card h2,
+.sidebar-card h3 {
+  color: #f5f7ff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.sidebar-stack,
+.action-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.provider-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.provider-toggle,
+.collapse-trigger {
+  background: transparent;
+  border: 0;
+  color: inherit;
+}
+
+.provider-toggle {
+  flex: 1;
+  padding: 0;
+  text-align: left;
+}
+
+.provider-toggle h2 {
+  margin-bottom: 0.35rem;
+}
+
+.provider-toggle p,
+.empty-text,
+.helper-text,
+.provider-meta {
+  color: rgba(223, 230, 255, 0.72);
+  margin: 0;
+}
+
+.provider-summary,
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.32rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(227, 234, 255, 0.72);
+  background: rgba(128, 143, 196, 0.18);
+}
+
+.status-chip.is-active,
+.status-chip.is-default,
+.status-chip.is-recommended {
+  color: #ffffff;
+}
+
+.status-chip.is-active {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+.status-chip.is-default {
+  background: rgba(99, 102, 241, 0.34);
+}
+
+.status-chip.is-recommended {
+  background: rgba(245, 158, 11, 0.34);
+}
+
+.collapse-trigger {
+  color: #dbe3ff;
+  font-weight: 700;
+}
+
+.provider-panel-body {
+  padding-top: 1.25rem;
+}
+
+.status-card {
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid rgba(75, 104, 255, 0.22);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: rgba(11, 18, 48, 0.72);
+}
+
+.status-card strong {
+  color: #ffffff;
+}
+
+.status-card span {
+  color: rgba(223, 230, 255, 0.72);
+}
+
+@media (max-width: 991.98px) {
+  .provider-panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .provider-summary {
+    justify-content: flex-start;
+  }
+}

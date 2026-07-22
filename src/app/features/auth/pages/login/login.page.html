@@ -1,0 +1,89 @@
+    <main class="page-shell py-5">
+      <section class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-5">
+            <div class="card border-0 rounded-4">
+              <div class="card-body p-4 p-lg-5">
+                <span class="badge text-bg-primary mb-3">Aura Editora</span>
+                <h1 class="h3 fw-semibold mb-2">Entrar no sistema</h1>
+                <p class="page-copy mb-4">
+                  Use email ou CPF com senha para acessar a gestão de usuários.
+                </p>
+
+                <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+                  <div class="form-grid">
+                    <div class="form-field" (mousedown)="focusField(loginInput)" (click)="focusField(loginInput)">
+                      <label
+                        class="form-label"
+                        [class.field-label-invalid]="hasFieldError('login')"
+                        for="login-input"
+                        (mousedown)="focusField(loginInput)"
+                        (click)="focusField(loginInput)"
+                      >
+                        Email ou CPF *
+                      </label>
+                      <input
+                        #loginInput
+                        class="form-control"
+                        [class.is-invalid]="hasFieldError('login')"
+                        id="login-input"
+                        type="text"
+                        formControlName="login"
+                        autocomplete="username"
+                        autofocus
+                        (pointerdown)="focusField(loginInput)"
+                        (mousedown)="focusField(loginInput)"
+                        (click)="focusField(loginInput)"
+                      />
+                      @if (hasFieldError('login')) {
+                        <div class="validation-helper">{{ getFieldError('login') }}</div>
+                      }
+                    </div>
+
+                    <div class="form-field" (mousedown)="focusField(passwordInput)" (click)="focusField(passwordInput)">
+                      <label
+                        class="form-label"
+                        [class.field-label-invalid]="hasFieldError('senha')"
+                        for="password-input"
+                        (mousedown)="focusField(passwordInput)"
+                        (click)="focusField(passwordInput)"
+                      >
+                        Senha *
+                      </label>
+                      <input
+                        #passwordInput
+                        class="form-control"
+                        [class.is-invalid]="hasFieldError('senha')"
+                        id="password-input"
+                        type="password"
+                        formControlName="senha"
+                        autocomplete="current-password"
+                        (pointerdown)="focusField(passwordInput)"
+                        (mousedown)="focusField(passwordInput)"
+                        (click)="focusField(passwordInput)"
+                      />
+                      @if (hasFieldError('senha')) {
+                        <div class="validation-helper">{{ getFieldError('senha') }}</div>
+                      }
+                    </div>
+                  </div>
+
+                  @if (errorMessage()) {
+                    <div class="alert alert-danger py-2 mt-3">{{ errorMessage() }}</div>
+                  }
+
+                  <app-button class="mt-3 w-100" type="submit" [block]="true" [disabled]="loading()">
+                    @if (loading()) {
+                      Entrando...
+                    } @else {
+                      Entrar
+                    }
+                  </app-button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  

@@ -1,0 +1,200 @@
+    <div class="dashboard-shell container-fluid px-0">
+      <button
+        type="button"
+        class="dashboard-overlay"
+        [class.is-open]="sidebarOpen()"
+        (click)="closeSidebar()"
+        aria-label="Fechar menu lateral"
+      ></button>
+
+      <div class="row g-0 flex-nowrap dashboard-frame">
+        <aside class="dashboard-sidebar col-12 col-xl-auto" [class.is-open]="sidebarOpen()">
+          <div class="brand-row">
+            <a routerLink="/" class="brand-mark" (click)="closeSidebar()">A</a>
+            <div class="brand-copy">
+              <strong>Aura</strong>
+              <span>Admin da Editora</span>
+            </div>
+          </div>
+
+          @for (section of navSections(); track section.title) {
+            <section class="sidebar-group">
+              <span class="sidebar-label">{{ section.title }}</span>
+
+              @for (item of section.items; track item.route) {
+                <a
+                  class="sidebar-link"
+                  [routerLink]="item.route"
+                  routerLinkActive="is-active"
+                  [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                  (click)="closeSidebar()"
+                >
+                  <span>{{ item.label }}</span>
+                  @if (item.badge) {
+                    <small>{{ item.badge }}</small>
+                  }
+                </a>
+              }
+            </section>
+          }
+
+        </aside>
+
+        <div class="dashboard-main col min-vh-100">
+          <header class="dashboard-topbar">
+            <div class="topbar-leading">
+              <button type="button" class="icon-button" (click)="toggleSidebar()" aria-label="Abrir menu">
+                ☰
+              </button>
+
+              <div class="search-shell">
+                <span>⌕</span>
+                <span class="search-copy">Buscar módulo, usuário ou edital</span>
+                <kbd>⌘K</kbd>
+              </div>
+            </div>
+
+            <div class="topbar-actions">
+              <div class="profile-menu-shell">
+                <button
+                  class="avatar-button"
+                  type="button"
+                  (click)="toggleProfileMenu()"
+                  aria-label="Abrir menu do perfil"
+                  [attr.aria-expanded]="profileMenuOpen()"
+                >
+                  @if (shouldShowAvatarPhoto()) {
+                    <img
+                      class="avatar-image"
+                      [src]="currentUserPhotoUrl()"
+                      [alt]="currentUserName()"
+                      (error)="handleAvatarError()"
+                    />
+                  } @else {
+                    <div class="avatar-fallback">
+                      {{ currentUserInitials() }}
+                    </div>
+                  }
+                </button>
+
+                @if (profileMenuOpen()) {
+                  <div class="profile-menu">
+                    <div class="profile-menu-head">
+                      @if (shouldShowAvatarPhoto()) {
+                        <img
+                          class="profile-menu-avatar"
+                          [src]="currentUserPhotoUrl()"
+                          [alt]="currentUserName()"
+                          (error)="handleAvatarError()"
+                        />
+                      } @else {
+                        <div class="profile-menu-avatar profile-menu-avatar-fallback">
+                          {{ currentUserInitials() }}
+                        </div>
+                      }
+                      <div class="profile-menu-copy">
+                        <strong>{{ currentUserName() }}</strong>
+                        <span>{{ currentUserRoles() }}</span>
+                      </div>
+                    </div>
+
+                    <button type="button" class="profile-menu-item" (click)="goToProfile()">
+                      Editar perfil
+                    </button>
+                    <button type="button" class="profile-menu-item" (click)="openPasswordModal()">
+                      Alterar senha
+                    </button>
+                    <button type="button" class="profile-menu-item is-danger" (click)="logout()">Sair</button>
+                  </div>
+                }
+              </div>
+            </div>
+          </header>
+
+          @if (passwordModalOpen()) {
+            <app-modal
+              title="Alterar senha"
+              subtitle="Atualize sua senha sem sair do painel."
+              (close)="closePasswordModal()"
+            >
+              <form
+                modal-body
+                id="password-modal-form"
+                class="password-modal-form"
+                [formGroup]="passwordForm"
+                (ngSubmit)="submitPasswordChange()"
+              >
+                <div class="password-field">
+                  <label class="password-label" [class.is-invalid]="hasPasswordFieldError('senha_atual')">
+                    Senha atual
+                  </label>
+                  <input
+                    class="password-input"
+                    [class.is-invalid]="hasPasswordFieldError('senha_atual')"
+                    type="password"
+                    formControlName="senha_atual"
+                  />
+                  @if (hasPasswordFieldError('senha_atual')) {
+                    <div class="validation-helper">{{ getPasswordFieldError('senha_atual') }}</div>
+                  }
+                </div>
+
+                <div class="password-field">
+                  <label class="password-label" [class.is-invalid]="hasPasswordFieldError('nova_senha')">
+                    Nova senha
+                  </label>
+                  <input
+                    class="password-input"
+                    [class.is-invalid]="hasPasswordFieldError('nova_senha')"
+                    type="password"
+                    formControlName="nova_senha"
+                  />
+                  @if (hasPasswordFieldError('nova_senha')) {
+                    <div class="validation-helper">{{ getPasswordFieldError('nova_senha') }}</div>
+                  }
+                </div>
+
+                <div class="password-field">
+                  <label class="password-label" [class.is-invalid]="hasPasswordFieldError('confirmacao_senha')">
+                    Confirmar nova senha
+                  </label>
+                  <input
+                    class="password-input"
+                    [class.is-invalid]="hasPasswordFieldError('confirmacao_senha')"
+                    type="password"
+                    formControlName="confirmacao_senha"
+                  />
+                  @if (hasPasswordFieldError('confirmacao_senha')) {
+                    <div class="validation-helper">{{ getPasswordFieldError('confirmacao_senha') }}</div>
+                  }
+                </div>
+
+                @if (passwordSuccessMessage()) {
+                  <div class="alert alert-success py-2 mb-0">{{ passwordSuccessMessage() }}</div>
+                }
+
+                @if (passwordErrorMessage()) {
+                  <div class="alert alert-danger py-2 mb-0">{{ passwordErrorMessage() }}</div>
+                }
+              </form>
+
+              <div modal-footer class="password-modal-actions">
+                <button type="button" class="password-action is-outline" (click)="closePasswordModal()">Cancelar</button>
+                <button type="submit" form="password-modal-form" class="password-action" [disabled]="passwordSaving()">
+                  @if (passwordSaving()) {
+                    Salvando...
+                  } @else {
+                    Atualizar senha
+                  }
+                </button>
+              </div>
+            </app-modal>
+          }
+
+          <main class="dashboard-content">
+            <router-outlet />
+          </main>
+        </div>
+      </div>
+    </div>
+  

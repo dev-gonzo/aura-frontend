@@ -1,0 +1,190 @@
+@use "bootstrap/scss/bootstrap";
+
+:root {
+  --aura-primary: #818cf8;
+  --aura-primary-rgb: 129, 140, 248;
+  --aura-primary-contrast: #0f172a;
+  --aura-surface: #111827;
+  --aura-surface-muted: #1f2937;
+  --aura-background: #030712;
+  --aura-text: #f9fafb;
+  --aura-text-muted: #cbd5e1;
+  --aura-border: #374151;
+  --font-size-base: 15px;
+}
+
+html[data-theme="light"] {
+  --aura-primary: #4f46e5;
+  --aura-primary-rgb: 79, 70, 229;
+  --aura-primary-contrast: #ffffff;
+  --aura-surface: #ffffff;
+  --aura-surface-muted: #eef2ff;
+  --aura-background: #f5f7fb;
+  --aura-text: #111827;
+  --aura-text-muted: #6b7280;
+  --aura-border: #dbe2f0;
+}
+
+html[data-theme="dark"] {
+  --aura-primary: #818cf8;
+  --aura-primary-rgb: 129, 140, 248;
+  --aura-primary-contrast: #0f172a;
+  --aura-surface: #111827;
+  --aura-surface-muted: #1f2937;
+  --aura-background: #030712;
+  --aura-text: #f9fafb;
+  --aura-text-muted: #cbd5e1;
+  --aura-border: #374151;
+}
+
+html[data-font="sm"] {
+  --font-size-base: 13px;
+}
+
+html[data-font="md"] {
+  --font-size-base: 15px;
+}
+
+html[data-font="lg"] {
+  --font-size-base: 17px;
+}
+
+html[data-font="xl"] {
+  --font-size-base: 19px;
+}
+
+html,
+body {
+  min-height: 100%;
+  font-size: var(--font-size-base);
+}
+
+body {
+  margin: 0;
+  background: var(--aura-background);
+  color: var(--aura-text);
+  font-family: Inter, "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+.theme-background {
+  background: var(--aura-background);
+  color: var(--aura-text);
+}
+
+.theme-surface {
+  background: var(--aura-surface);
+  color: var(--aura-text);
+}
+
+.theme-muted {
+  background: var(--aura-surface-muted);
+  color: var(--aura-text);
+}
+
+.theme-primary {
+  background: var(--aura-primary);
+  color: var(--aura-primary-contrast);
+}
+
+.theme-border {
+  border: 1px solid var(--aura-border);
+}
+
+.text-muted-custom {
+  color: var(--aura-text-muted);
+}
+
+.surface-card {
+  background: var(--aura-surface);
+  border: 1px solid var(--aura-border);
+  border-radius: 1rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.btn-aura {
+  --bs-btn-bg: var(--aura-primary);
+  --bs-btn-border-color: var(--aura-primary);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--aura-primary) 90%, #000);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--aura-primary) 90%, #000);
+  --bs-btn-color: var(--aura-primary-contrast);
+}
+
+.bg-light {
+  background-color: var(--aura-background) !important;
+}
+
+.card {
+  background: var(--aura-surface);
+  color: var(--aura-text);
+  border: 1px solid var(--aura-border) !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25) !important;
+}
+
+.text-secondary,
+.form-text,
+.text-body-secondary {
+  color: var(--aura-text-muted) !important;
+}
+
+.form-control,
+.form-select,
+.form-control:focus,
+.form-select:focus {
+  background: var(--aura-surface-muted);
+  color: var(--aura-text);
+  border-color: var(--aura-border);
+  box-shadow: none;
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+  color: color-mix(in srgb, var(--aura-text-muted) 85%, transparent);
+}
+
+.form-check-input {
+  background-color: var(--aura-surface-muted);
+  border-color: var(--aura-border);
+}
+
+.form-check-input:checked {
+  background-color: var(--aura-primary);
+  border-color: var(--aura-primary);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--aura-primary);
+  --bs-btn-border-color: var(--aura-primary);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--aura-primary) 90%, #000);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--aura-primary) 90%, #000);
+  --bs-btn-color: var(--aura-primary-contrast);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--aura-text);
+  --bs-btn-border-color: var(--aura-border);
+  --bs-btn-hover-bg: var(--aura-surface-muted);
+  --bs-btn-hover-border-color: var(--aura-border);
+  --bs-btn-hover-color: var(--aura-text);
+}
+
+.alert-info {
+  color: #dbeafe;
+  background: rgba(59, 130, 246, 0.18);
+  border-color: rgba(96, 165, 250, 0.28);
+}
+
+.alert-success {
+  color: #dcfce7;
+  background: rgba(34, 197, 94, 0.18);
+  border-color: rgba(74, 222, 128, 0.28);
+}
+
+.alert-danger {
+  color: #fee2e2;
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(248, 113, 113, 0.28);
+}

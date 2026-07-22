@@ -1,0 +1,296 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header eyebrow="Editais" [title]="title()">
+    <a class="btn btn-outline-secondary" routerLink="/editais">Voltar para editais</a>
+  </app-page-header>
+
+  @if (loading()) {
+    <article class="state-card">
+      <strong>Carregando dados do edital...</strong>
+    </article>
+  } @else {
+    <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="col-12 col-xl-8 order-2 order-xl-1">
+        <div class="content-stack">
+          <div class="card border-0 rounded-4">
+            <div class="card-body p-4 p-lg-4">
+              <h2 class="h5 mb-3">Dados principais</h2>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <app-form-input
+                    label="Título do edital"
+                    [control]="form.controls.titulo"
+                    [required]="true"
+                    [invalid]="hasFieldError('titulo')"
+                    [errorText]="getFieldError('titulo')"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <app-form-textarea
+                    label="Descrição do edital"
+                    [control]="form.controls.descricao"
+                    [required]="true"
+                    [invalid]="hasFieldError('descricao')"
+                    [errorText]="getFieldError('descricao')"
+                    [rows]="5"
+                  />
+                </div>
+
+                <div class="col-12 col-xl-6">
+                  <div class="fee-card" [class.is-invalid]="hasFieldError('taxa_inscricao')">
+                    <div class="fee-head">
+                      <label class="fee-label" for="taxaInscricao">Taxa de inscrição</label>
+                      <button
+                        type="button"
+                        class="fee-help-button"
+                        aria-label="Ajuda da taxa de inscrição"
+                        (click)="toggleFeeTooltip('inscricao')"
+                      >
+                        ?
+                      </button>
+                      @if (isFeeTooltipOpen('inscricao')) {
+                        <div class="fee-tooltip">
+                          Valor cobrado para efetivar a inscrição do participante no edital. Marque como gratuita quando não houver cobrança nesta etapa.
+                        </div>
+                      }
+                    </div>
+
+                    <app-form-input
+                      label="Valor"
+                      id="taxaInscricao"
+                      type="text"
+                      [control]="form.controls.taxa_inscricao"
+                      [invalid]="hasFieldError('taxa_inscricao')"
+                      [errorText]="getFieldError('taxa_inscricao')"
+                      [disabled]="form.controls.taxa_inscricao_gratis.value"
+                      placeholder="0,00"
+                      inputmode="decimal"
+                      (inputEvent)="onFeeInput('taxa_inscricao', $event)"
+                    />
+
+                    <label class="fee-check">
+                      <input
+                        type="checkbox"
+                        [checked]="form.controls.taxa_inscricao_gratis.value"
+                        (change)="toggleFreeFee('taxa_inscricao', $any($event.target).checked)"
+                      />
+                      <span>Gratuita</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                  <div class="fee-card" [class.is-invalid]="hasFieldError('taxa_publicacao')">
+                    <div class="fee-head">
+                      <label class="fee-label" for="taxaPublicacao">Taxa de publicação</label>
+                      <button
+                        type="button"
+                        class="fee-help-button"
+                        aria-label="Ajuda da taxa de publicação"
+                        (click)="toggleFeeTooltip('publicacao')"
+                      >
+                        ?
+                      </button>
+                      @if (isFeeTooltipOpen('publicacao')) {
+                        <div class="fee-tooltip">
+                          Valor cobrado apenas após a aprovação, para continuidade do processo de publicação. Marque como gratuita quando essa etapa não tiver custo.
+                        </div>
+                      }
+                    </div>
+
+                    <app-form-input
+                      label="Valor"
+                      id="taxaPublicacao"
+                      type="text"
+                      [control]="form.controls.taxa_publicacao"
+                      [invalid]="hasFieldError('taxa_publicacao')"
+                      [errorText]="getFieldError('taxa_publicacao')"
+                      [disabled]="form.controls.taxa_publicacao_gratis.value"
+                      placeholder="0,00"
+                      inputmode="decimal"
+                      (inputEvent)="onFeeInput('taxa_publicacao', $event)"
+                    />
+
+                    <label class="fee-check">
+                      <input
+                        type="checkbox"
+                        [checked]="form.controls.taxa_publicacao_gratis.value"
+                        (change)="toggleFreeFee('taxa_publicacao', $any($event.target).checked)"
+                      />
+                      <span>Gratuita</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <app-form-select
+                    label="Status"
+                    [control]="form.controls.status"
+                    [options]="statusOptions"
+                    [required]="true"
+                    [invalid]="hasFieldError('status')"
+                    [errorText]="getFieldError('status')"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <app-form-input
+                    label="Total de vagas"
+                    type="number"
+                    [control]="form.controls.total_vagas"
+                    [invalid]="hasFieldError('total_vagas')"
+                    [errorText]="getFieldError('total_vagas')"
+                    inputmode="numeric"
+                  />
+                </div>
+
+                <div class="col-md-4">
+                  <app-form-input
+                    label="Data de início"
+                    type="date"
+                    [control]="form.controls.data_inicio"
+                    [invalid]="hasFieldError('data_inicio')"
+                    [errorText]="getFieldError('data_inicio')"
+                  />
+                </div>
+
+                <div class="col-md-4">
+                  <app-form-input
+                    label="Data de fim"
+                    type="date"
+                    [control]="form.controls.data_fim"
+                    [invalid]="hasFieldError('data_fim')"
+                    [errorText]="getFieldError('data_fim')"
+                  />
+                </div>
+
+                <div class="col-md-4">
+                  <app-form-input
+                    label="Data prevista de publicação"
+                    type="date"
+                    [control]="form.controls.data_prevista_publicacao"
+                    [invalid]="hasFieldError('data_prevista_publicacao')"
+                    [errorText]="getFieldError('data_prevista_publicacao')"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-0 rounded-4">
+            <div class="card-body p-4 p-lg-4">
+              <div class="attachment-head">
+                <div>
+                  <h2 class="h5 mb-1">Anexo do edital</h2>
+                  <p class="attachment-copy">Selecione o arquivo oficial que será vinculado ao edital.</p>
+                </div>
+              </div>
+
+              <input
+                #attachmentInput
+                class="visually-hidden"
+                type="file"
+                accept=".pdf,.doc,.docx,image/*"
+                (change)="onAttachmentSelected($event)"
+              />
+
+              <button type="button" class="attachment-trigger" (click)="attachmentInput.click()">
+                @if (selectedAttachment()) {
+                  <div class="attachment-placeholder">
+                    <strong>{{ selectedAttachment()!.name }}</strong>
+                    <span>{{ formatFileSize(selectedAttachment()!.size) }}</span>
+                  </div>
+                } @else if (currentAttachment()) {
+                  <div class="attachment-placeholder">
+                    <strong>{{ currentAttachment()!.nome_arquivo }}</strong>
+                    <span>{{ formatFileSize(currentAttachment()!.tamanho_bytes) }}</span>
+                  </div>
+                } @else {
+                  <div class="attachment-placeholder">
+                    <strong>Nenhum anexo enviado</strong>
+                    <span>Clique para selecionar PDF, DOC, DOCX ou imagem</span>
+                  </div>
+                }
+              </button>
+
+              <div class="attachment-actions">
+                <app-button type="button" variant="secondary" [outline]="true" (click)="attachmentInput.click()">
+                  @if (currentAttachment() || selectedAttachment()) {
+                    Trocar arquivo
+                  } @else {
+                    Escolher arquivo
+                  }
+                </app-button>
+
+                @if (currentAttachment() || selectedAttachment()) {
+                  <app-button
+                    type="button"
+                    variant="secondary"
+                    [outline]="true"
+                    [disabled]="saving()"
+                    (click)="removeAttachment(attachmentInput)"
+                  >
+                    Remover anexo
+                  </app-button>
+                }
+              </div>
+
+              @if (attachmentErrorMessage()) {
+                <div class="alert alert-danger mb-0 mt-3">{{ attachmentErrorMessage() }}</div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-xl-4 order-1 order-xl-2">
+        <div class="aside-stack">
+          <div class="card border-0 rounded-4 cover-card">
+            <div class="card-body p-4 p-lg-4">
+              <app-image-upload
+                label="Arte da capa"
+                [required]="true"
+                [invalid]="hasCoverError()"
+                [errorText]="getCoverError()"
+                [previewUrl]="shouldShowCoverPreview() ? currentCoverPreview() : null"
+                placeholderTitle="Capa sem imagem"
+                placeholderSubtitle="Clique para enviar"
+                ariaLabel="Selecionar arte da capa do edital"
+                [fullWidth]="true"
+                (fileSelected)="onCoverSelected($event)"
+                (previewLoad)="handleCoverPreviewLoad()"
+                (previewError)="handleCoverPreviewError($event)"
+              />
+            </div>
+          </div>
+
+          <div class="card border-0 rounded-4 sticky-submit">
+            <div class="card-body p-4 p-lg-4">
+              <div class="submit-stack">
+                <app-button type="submit" [block]="true" [disabled]="saving() || processingCover()">
+                  @if (saving()) {
+                    Salvando...
+                  } @else if (editingId()) {
+                    Salvar edital
+                  } @else {
+                    Cadastrar edital
+                  }
+                </app-button>
+
+                <a class="btn btn-outline-secondary w-100" routerLink="/editais">Cancelar</a>
+
+                @if (errorMessage()) {
+                  <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+                }
+
+                @if (successMessage()) {
+                  <div class="alert alert-success mb-0">{{ successMessage() }}</div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  }
+</section>

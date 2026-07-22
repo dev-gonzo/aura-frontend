@@ -1,0 +1,173 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Loja"
+    [title]="title()"
+    description="Cadastre as categorias usadas nos produtos da vitrine e mantenha a seleção padronizada no painel."
+  >
+    <a routerLink="/loja/layout" class="header-link">Editar layout</a>
+    <a routerLink="/loja/produtos" class="header-link">Gerenciar produtos</a>
+    <button type="button" class="header-link is-primary" (click)="openCreateModal()">Nova categoria</button>
+  </app-page-header>
+
+  <section class="content-card">
+    <div class="summary-strip">
+      <div>
+        <strong>{{ items().length }}</strong>
+        <span>Categorias cadastradas</span>
+      </div>
+      <div>
+        <strong>{{ activeCount() }}</strong>
+        <span>Categorias ativas</span>
+      </div>
+      <div>
+        <strong>{{ totalLinkedProducts() }}</strong>
+        <span>Produtos vinculados</span>
+      </div>
+    </div>
+  </section>
+
+  @if (successMessage()) {
+    <div class="state-card state-success">
+      <span>{{ successMessage() }}</span>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="state-card">
+      <span>Carregando categorias da loja...</span>
+    </div>
+  } @else if (!items().length) {
+    <div class="empty-card">
+      <strong>Nenhuma categoria cadastrada.</strong>
+      <p>Crie a primeira categoria para padronizar o cadastro dos produtos da vitrine.</p>
+    </div>
+  } @else {
+    <div class="categories-grid">
+      @for (item of items(); track item.id) {
+        <article class="category-card">
+          <div class="category-head">
+            <div class="category-title">
+              <h2>{{ item.nome }}</h2>
+              <span>/{{ item.slug }}</span>
+            </div>
+
+            <div class="category-badges">
+              <span class="tag" [class.is-active]="item.ativa" [class.is-inactive]="!item.ativa">
+                {{ item.ativa ? 'Ativa' : 'Inativa' }}
+              </span>
+              <span class="tag is-count">{{ item.produtos_count }} produto(s)</span>
+            </div>
+          </div>
+
+          <p>{{ item.descricao || 'Sem descrição cadastrada para esta categoria.' }}</p>
+
+          <div class="category-meta">
+            <span>Ordem {{ item.ordem }}</span>
+            <span>Atualizada em {{ item.atualizado_em | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+
+          <div class="category-actions">
+            <button type="button" class="action-button" (click)="editCategory(item)">Editar</button>
+            <button
+              type="button"
+              class="action-button is-danger"
+              [disabled]="isDeleting(item.id)"
+              (click)="deleteCategory(item)"
+            >
+              {{ isDeleting(item.id) ? 'Excluindo...' : 'Excluir' }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  @if (modalOpen()) {
+    <app-modal
+      [title]="modalTitle()"
+      subtitle="Cadastre ou edite uma categoria sem sair da tela de gerenciamento."
+      maxWidth="42rem"
+      (close)="closeModal()"
+    >
+      <div modal-body>
+        <div class="section-heading compact">
+          <span class="section-eyebrow">Cadastro</span>
+          <h2>{{ editingId() ? 'Atualizar categoria' : 'Nova categoria' }}</h2>
+          <p>Use nomes padronizados para que os produtos sejam categorizados de forma consistente.</p>
+        </div>
+
+        <form class="row g-3" [formGroup]="form" (ngSubmit)="submit()">
+          <div class="col-12">
+            <app-form-input
+              label="Nome"
+              [required]="true"
+              [control]="form.controls.nome"
+              [invalid]="hasFieldError('nome')"
+              [errorText]="getFieldError('nome')"
+              placeholder="Ex.: Romance"
+            />
+          </div>
+
+          <div class="col-12">
+            <app-form-input
+              label="Slug"
+              [control]="form.controls.slug"
+              [invalid]="hasFieldError('slug')"
+              [errorText]="getFieldError('slug')"
+              placeholder="Ex.: romance"
+              (inputEvent)="handleSlugInput()"
+            />
+          </div>
+
+          <div class="col-12">
+            <app-form-textarea
+              label="Descrição"
+              [control]="form.controls.descricao"
+              [rows]="4"
+              placeholder="Descreva rapidamente o objetivo da categoria."
+            />
+          </div>
+
+          <div class="col-12 col-md-6">
+            <app-form-input
+              label="Ordem"
+              [required]="true"
+              [control]="form.controls.ordem"
+              [invalid]="hasFieldError('ordem')"
+              [errorText]="getFieldError('ordem')"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="toggle-card">
+              <input class="form-check-input" type="checkbox" [formControl]="form.controls.ativa" />
+              <span class="toggle-title">Categoria ativa</span>
+              <small>Categorias inativas não devem ser usadas em novos produtos.</small>
+            </label>
+          </div>
+
+          @if (errorMessage()) {
+            <div class="col-12">
+              <div class="alert alert-danger py-2 mb-0">{{ errorMessage() }}</div>
+            </div>
+          }
+        </form>
+      </div>
+
+      <div modal-footer>
+        <div class="modal-actions">
+          @if (editingId()) {
+            <app-button type="button" variant="secondary" (click)="cancelEdit()">Cancelar</app-button>
+          }
+          <app-button type="button" [disabled]="saving()" (click)="submit()">
+            {{ saving() ? 'Salvando...' : editingId() ? 'Atualizar categoria' : 'Salvar categoria' }}
+          </app-button>
+        </div>
+      </div>
+    </app-modal>
+  }
+</section>

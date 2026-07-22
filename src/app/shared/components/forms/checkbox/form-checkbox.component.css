@@ -1,0 +1,30 @@
+    :host {
+      display: block;
+    }
+
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .checkbox-field.is-disabled {
+      cursor: not-allowed;
+      color: #94a3b8;
+    }
+
+    .form-check-input {
+      margin: 0;
+      border-color: rgba(148, 163, 184, 0.24);
+      background-color: rgba(30, 41, 59, 0.78);
+    }
+
+    .form-check-input:checked {
+      background-color: #6366f1;
+      border-color: #6366f1;
+    }
+  

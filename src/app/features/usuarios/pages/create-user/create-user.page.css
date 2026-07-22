@@ -1,0 +1,199 @@
+    :host {
+      display: block;
+    }
+
+    .page-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.15rem);
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .page-copy {
+      margin: 0.35rem 0 0;
+      color: #94a3b8;
+      max-width: 42rem;
+    }
+
+    .content-stack,
+    .aside-stack {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .photo-card .card-body {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .photo-card h2,
+    .photo-card p {
+      margin: 0;
+    }
+
+    .photo-trigger {
+      display: block;
+      width: min(12rem, 100%);
+      aspect-ratio: 1 / 1;
+      padding: 0;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 1.15rem;
+      background: transparent;
+      overflow: hidden;
+      transition:
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .photo-trigger:hover {
+      border-color: rgba(129, 140, 248, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.28);
+    }
+
+    .photo-trigger.is-invalid {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 0.18rem rgba(239, 68, 68, 0.18);
+    }
+
+    .photo-preview {
+      display: block;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+
+    .photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      width: 100%;
+      height: 100%;
+      padding: 1rem;
+      background:
+        linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(37, 99, 235, 0.14)),
+        rgba(15, 23, 42, 0.82);
+      color: #e2e8f0;
+      text-align: center;
+    }
+
+    .photo-placeholder strong {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .photo-placeholder span {
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.14) !important;
+    }
+
+    .role-checklist {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .admin-actions-head,
+    .admin-actions-grid,
+    .temporary-password-card {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .admin-actions-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .admin-actions-head {
+      margin-bottom: 1rem;
+    }
+
+    .admin-actions-copy {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .status-chip.is-active {
+      background: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+    }
+
+    .status-chip.is-pending {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fcd34d;
+    }
+
+    .status-chip.is-blocked {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+    }
+
+    .temporary-password-card {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(129, 140, 248, 0.2);
+      background: rgba(30, 41, 59, 0.72);
+    }
+
+    .temporary-password-card span {
+      color: #94a3b8;
+      font-size: 0.82rem;
+    }
+
+    .temporary-password-card strong {
+      color: #f8fafc;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      word-break: break-all;
+    }
+
+    .sticky-submit {
+      position: sticky;
+  top: 1rem;
+}
+
+@media (min-width: 992px) {
+
+      .photo-trigger {
+        width: 100%;
+      }
+
+      .admin-actions-head {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+      }
+
+      .photo-placeholder {
+        min-height: 0;
+      }
+    }
+  

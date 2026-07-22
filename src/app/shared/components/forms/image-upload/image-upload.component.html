@@ -1,0 +1,45 @@
+<div class="image-upload-shell">
+  <h2 class="image-upload-label">
+    {{ label }}@if (required) { * }
+  </h2>
+
+  <input
+    #fileInput
+    class="visually-hidden"
+    [id]="inputId"
+    type="file"
+    [accept]="accept"
+    (change)="handleFileSelected($event)"
+  />
+
+  <button
+    type="button"
+    class="image-trigger"
+    [class.is-invalid]="invalid"
+    [class.is-circle]="shape === 'circle'"
+    [class.is-free]="layout === 'free'"
+    [class.is-full-width]="fullWidth"
+    [attr.aria-label]="ariaLabel"
+    (click)="openPicker()"
+  >
+    @if (previewUrl) {
+      <img
+        class="image-preview"
+        [class.is-contain]="previewFit === 'contain'"
+        [src]="previewUrl"
+        alt="Prévia da imagem"
+        (load)="handlePreviewLoad()"
+        (error)="handlePreviewError($event)"
+      />
+    } @else {
+      <div class="image-placeholder">
+        <strong>{{ placeholderTitle }}</strong>
+        <span>{{ placeholderSubtitle }}</span>
+      </div>
+    }
+  </button>
+
+  @if (errorText) {
+    <div class="validation-helper">{{ errorText }}</div>
+  }
+</div>

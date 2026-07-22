@@ -1,0 +1,84 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Autores"
+    title="Gestão de autores"
+    description="Cadastre autores, vincule perfis de usuário e mantenha a base editorial pronta para o catálogo."
+  >
+    <a class="btn btn-primary" routerLink="/autores/novo">Cadastrar autor</a>
+  </app-page-header>
+
+  <section class="filter-card">
+    <form class="row g-3 align-items-end" [formGroup]="filterForm" (ngSubmit)="load()">
+      <div class="col-12 col-md">
+        <app-form-input label="Busca" [control]="filterForm.controls.search" placeholder="Buscar por nome, e-mail ou nome público" />
+      </div>
+
+      <div class="col-12 col-md-4 col-xl-3">
+        <app-form-select
+          label="Status"
+          [control]="filterForm.controls.status"
+          [options]="statusOptions"
+          placeholder="Todos os status"
+        />
+      </div>
+
+      <div class="col-12 col-xl-auto">
+        <div class="filter-actions">
+          <app-button type="button" variant="secondary" [outline]="true" (click)="clearFilters()">Limpar</app-button>
+          <app-button type="submit" [disabled]="loading()">
+            @if (loading()) { Buscando... } @else { Filtrar }
+          </app-button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="list-grid">
+    <div class="list-head">
+      <span>{{ resultLabel() }}</span>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+    }
+
+    @if (!errorMessage() && items().length === 0 && !loading()) {
+      <article class="empty-card">
+        <h2>Nenhum autor encontrado</h2>
+        <p>Ajuste os filtros ou cadastre o primeiro autor da editora.</p>
+      </article>
+    }
+
+    @for (item of items(); track item.id) {
+      <article class="autor-card">
+        <div class="autor-main">
+          <div class="autor-title-block">
+            <h2>{{ item.nome_exibicao }}</h2>
+            <span>{{ item.nome_completo }}</span>
+          </div>
+
+          <div class="autor-info-block">
+            <span class="meta-label">E-mail</span>
+            <strong>{{ item.email || '-' }}</strong>
+          </div>
+
+          <div class="autor-info-block">
+            <span class="meta-label">Usuário vinculado</span>
+            <strong>{{ item.usuario_nome || '-' }}</strong>
+          </div>
+
+          <div class="autor-info-block">
+            <span class="meta-label">Status</span>
+            <span class="status-chip" [class.is-inactive]="item.status === 'INATIVO'">{{ item.status === 'ATIVO' ? 'Ativo' : 'Inativo' }}</span>
+          </div>
+
+          <div class="autor-action-block">
+            <a class="autor-icon-button" [routerLink]="['/autores', item.id, 'editar']" aria-label="Editar autor">
+              <i class="fa-solid fa-pen"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+    }
+  </section>
+</section>

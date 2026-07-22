@@ -1,0 +1,195 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Configurações"
+    title="Integrações"
+    description="Informe os IDs das plataformas de rastreamento. A loja aplica o funil automaticamente para visualização, busca, categoria, carrinho, checkout e compra paga."
+  >
+    <a routerLink="/loja/layout" class="header-link">Voltar para layout</a>
+  </app-page-header>
+
+  @if (loading()) {
+    <div class="state-card">
+      <span>Carregando integrações da loja...</span>
+    </div>
+  } @else {
+    <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="save()">
+      <div class="col-12 col-xl-8 content-stack">
+        <section class="content-card">
+          <div class="section-heading">
+            <span class="section-eyebrow">Leitura rápida</span>
+            <h2>O que preencher aqui</h2>
+            <p>Use os IDs oficiais das plataformas. Se um campo ficar vazio, essa integração não será carregada na loja.</p>
+          </div>
+
+          <div class="intro-grid">
+            <article class="intro-card">
+              <strong>Google primeiro</strong>
+              <p>Preencha GTM, GA4 e Google Ads com o ID usado na conta de mídia e analytics da loja.</p>
+            </article>
+            <article class="intro-card">
+              <strong>Meta e TikTok</strong>
+              <p>Use os IDs de pixel para ativar rastreamento de navegação, carrinho e compra paga.</p>
+            </article>
+            <article class="intro-card">
+              <strong>Clarity</strong>
+              <p>Informe o Project ID para liberar mapas de calor, sessão e eventos comportamentais.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-card">
+          <div class="section-heading">
+            <span class="section-eyebrow">Google</span>
+            <h2>Medição e mídia</h2>
+            <p>Preencha os campos do Google para campanhas, conversões e hub via Tag Manager.</p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12">
+              <app-form-input
+                label="Google Tag Manager"
+                placeholder="Ex.: GTM-XXXXXXX"
+                [control]="form.controls.google_tag_manager_id"
+                [invalid]="hasFieldError('google_tag_manager_id')"
+                [errorText]="getFieldError('google_tag_manager_id')"
+                helperText="Use o ID do container da loja. Quando existir, ele vira o hub principal dos eventos do Google."
+              />
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <app-form-input
+                label="Google Analytics"
+                placeholder="Ex.: G-XXXXXXXXXX"
+                [control]="form.controls.google_analytics_id"
+                [invalid]="hasFieldError('google_analytics_id')"
+                [errorText]="getFieldError('google_analytics_id')"
+                helperText="Informe o Measurement ID da propriedade GA4 da loja."
+              />
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <app-form-input
+                label="Google Ads"
+                placeholder="Ex.: AW-123456789"
+                [control]="form.controls.google_ads_id"
+                [invalid]="hasFieldError('google_ads_id')"
+                [errorText]="getFieldError('google_ads_id')"
+                helperText="Informe o ID da tag de conversão da conta de anúncios."
+              />
+            </div>
+
+            <div class="col-12">
+              <app-form-input
+                label="Tag de conversão do Google Ads"
+                placeholder="Ex.: AbCdEfGhIjKlMnOpQr"
+                [control]="form.controls.google_ads_conversion_label"
+                [invalid]="hasFieldError('google_ads_conversion_label')"
+                [errorText]="getFieldError('google_ads_conversion_label')"
+                helperText="Preencha a label usada para registrar a conversão principal da loja."
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="content-card">
+          <div class="section-heading">
+            <span class="section-eyebrow">Pixels</span>
+            <h2>Redes e comportamento</h2>
+            <p>Cadastre os IDs das plataformas sociais e do Clarity para ativar rastreamento direto da vitrine.</p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-lg-6">
+              <app-form-input
+                label="Facebook Pixel"
+                placeholder="Ex.: 123456789012345"
+                [control]="form.controls.facebook_pixel_id"
+                [invalid]="hasFieldError('facebook_pixel_id')"
+                [errorText]="getFieldError('facebook_pixel_id')"
+                helperText="Use o Pixel ID da loja no Meta Events Manager."
+              />
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <app-form-input
+                label="TikTok Pixel"
+                placeholder="Ex.: CABCDEFG123456789"
+                [control]="form.controls.tiktok_pixel_id"
+                [invalid]="hasFieldError('tiktok_pixel_id')"
+                [errorText]="getFieldError('tiktok_pixel_id')"
+                helperText="Informe o Pixel ID usado nas campanhas do TikTok."
+              />
+            </div>
+
+            <div class="col-12">
+              <app-form-input
+                label="Microsoft Clarity"
+                placeholder="Ex.: abc123defg"
+                [control]="form.controls.microsoft_clarity_id"
+                [invalid]="hasFieldError('microsoft_clarity_id')"
+                [errorText]="getFieldError('microsoft_clarity_id')"
+                helperText="Preencha o Project ID do Clarity para mapa de calor e gravação de sessão."
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="content-card">
+          <div class="section-heading compact">
+            <span class="section-eyebrow">Eventos automáticos</span>
+            <h2>Funil aplicado na loja</h2>
+            <p>Com os IDs preenchidos, a vitrine envia automaticamente os principais eventos do funil.</p>
+          </div>
+
+          <div class="events-grid">
+            <span class="event-chip">PageView</span>
+            <span class="event-chip">ViewItem</span>
+            <span class="event-chip">Search</span>
+            <span class="event-chip">ViewCategory</span>
+            <span class="event-chip">AddToCart</span>
+            <span class="event-chip">BeginCheckout</span>
+            <span class="event-chip">PaymentInfo</span>
+            <span class="event-chip">Purchase</span>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-4">
+        <div class="sidebar-column">
+          <div class="content-card sticky-card">
+            <div class="section-heading compact">
+              <span class="section-eyebrow">Ações</span>
+              <h2>Aplicação imediata</h2>
+              <p>Ao salvar, os IDs já passam a valer nas integrações da loja sem publicar o restante do rascunho.</p>
+            </div>
+
+            <div class="status-stack">
+              <div class="status-line">
+                <strong>Integrações ativas</strong>
+                <span>{{ hasInstalledIntegrations() ? 'Sim' : 'Não' }}</span>
+              </div>
+            </div>
+
+            <div class="action-stack">
+              <app-button type="submit" [block]="true" [disabled]="saving()">
+                {{ saving() ? 'Salvando...' : 'Salvar integrações' }}
+              </app-button>
+            </div>
+
+            @if (successMessage()) {
+              <div class="state-card is-success">
+                <span>{{ successMessage() }}</span>
+              </div>
+            }
+
+            @if (errorMessage()) {
+              <div class="state-card is-error">
+                <span>{{ errorMessage() }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </form>
+  }
+</section>

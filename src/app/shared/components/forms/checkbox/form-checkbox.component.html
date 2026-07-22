@@ -1,0 +1,10 @@
+    <label class="checkbox-field" [class.is-disabled]="disabled">
+      @if (control) {
+        <input class="form-check-input" type="checkbox" [formControl]="control" [disabled]="disabled" />
+      } @else {
+        <input class="form-check-input" type="checkbox" [checked]="checked" [disabled]="disabled" />
+      }
+
+      <span>{{ label }}</span>
+    </label>
+  

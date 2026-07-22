@@ -1,0 +1,179 @@
+    <section class="page-shell container-fluid px-0">
+      <app-page-header
+        eyebrow="Usuários"
+        title="Gestão de usuários"
+        description="Busca única por nome, CPF, pseudônimo ou WhatsApp com filtro rápido por perfil."
+      >
+        <a class="btn btn-primary" routerLink="/usuarios/novo">Cadastrar usuário</a>
+      </app-page-header>
+
+      <div class="row g-4">
+        <div class="col-12">
+          <section class="search-panel">
+            <label class="search-box" for="user-search">
+              <span class="search-icon">⌕</span>
+              <input
+                id="user-search"
+                type="search"
+                [value]="searchTerm()"
+                (input)="updateSearch($event)"
+                placeholder="Buscar por nome, CPF, pseudônimo ou WhatsApp"
+              />
+              @if (searchTerm()) {
+                <button type="button" class="clear-button" (click)="clearSearch()" aria-label="Limpar busca">
+                  Limpar
+                </button>
+              }
+            </label>
+
+            <div class="role-filter-list">
+              @for (role of roleFilters; track role) {
+                <button
+                  type="button"
+                  class="role-filter"
+                  [class.is-active]="selectedRole() === role"
+                  (click)="selectRole(role)"
+                >
+                  {{ role }}
+                  <small>{{ getRoleCount(role) }}</small>
+                </button>
+              }
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="summary-grid row g-3">
+            <div class="col-12 col-md-4">
+              <article class="summary-card h-100">
+                <span>Total encontrado</span>
+                <strong>{{ total() }}</strong>
+                <small>Resultado paginado retornado pelo backend</small>
+              </article>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <article class="summary-card h-100">
+                <span>Clientes</span>
+                <strong>{{ getRoleCount('CLIENTE') }}</strong>
+                <small>Papel base obrigatório</small>
+              </article>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <article class="summary-card h-100">
+                <span>Administradores</span>
+                <strong>{{ getRoleCount('ADMIN') }}</strong>
+                <small>Acesso total ao sistema</small>
+              </article>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <section class="list-panel">
+        <div class="list-head">
+          <div>
+            <h2>Listagem</h2>
+            <p>{{ resultLabel() }}</p>
+          </div>
+
+          @if (totalPages() > 1) {
+            <div class="pagination-toolbar">
+              <button type="button" class="pagination-button" (click)="previousPage()" [disabled]="page() === 1 || loading()">
+                Anterior
+              </button>
+              <span class="pagination-indicator">Página {{ page() }} de {{ totalPages() }}</span>
+              <button
+                type="button"
+                class="pagination-button"
+                (click)="nextPage()"
+                [disabled]="page() >= totalPages() || loading()"
+              >
+                Próxima
+              </button>
+            </div>
+          }
+        </div>
+
+        @if (loading()) {
+          <div class="empty-state">
+            <strong>Carregando usuários...</strong>
+            <span>Preparando dados para exibição.</span>
+          </div>
+        } @else if (errorMessage()) {
+          <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+        } @else if (users().length === 0) {
+          <div class="empty-state">
+            <strong>Nenhum usuário encontrado.</strong>
+            <span>Ajuste a busca ou altere o filtro de perfis.</span>
+          </div>
+        } @else {
+          <div class="user-list">
+            @for (user of users(); track trackUser(user)) {
+              <article class="user-card">
+                <div class="user-main">
+                  <div class="user-identity">
+                    @if (shouldShowPhoto(user)) {
+                      <img
+                        class="user-photo"
+                        [src]="user.foto_url"
+                        [alt]="user.nome_completo"
+                        (error)="handlePhotoError(user.id)"
+                      />
+                    } @else {
+                      <div class="user-avatar">{{ getInitials(user.nome_completo) }}</div>
+                    }
+
+                    <div class="user-name-block">
+                      <h3>{{ user.nome_completo }}</h3>
+                      @if (user.pseudonimo) {
+                        <p class="user-alias">{{ user.pseudonimo }}</p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="user-info-block">
+                    <span class="meta-label">CPF</span>
+                    <strong>{{ user.cpf }}</strong>
+                  </div>
+
+                  <div class="user-info-block">
+                    <span class="meta-label">WhatsApp</span>
+                    <strong>{{ user.whatsapp }}</strong>
+                  </div>
+
+                  <div class="user-info-block user-info-wide">
+                    <span class="meta-label">Email</span>
+                    <strong class="user-email" [attr.title]="user.email">{{ user.email }}</strong>
+                  </div>
+
+                  <div class="user-role-block">
+                    <span class="status-badge" [ngClass]="getStatusBadgeClass(user)">{{ user.status }}</span>
+
+                    <div class="role-chip-list">
+                      @for (role of user.papeis; track role) {
+                        <span class="role-chip">{{ role }}</span>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="user-action-block">
+                    <a
+                      class="user-icon-button"
+                      routerLink="/usuarios/novo"
+                      [queryParams]="{ editar: user.id }"
+                      [attr.aria-label]="'Editar ' + user.nome_completo"
+                      title="Editar usuário"
+                    >
+                      <i class="fa-solid fa-pen"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    </section>
+  

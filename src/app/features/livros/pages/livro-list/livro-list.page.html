@@ -1,0 +1,174 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Livros"
+    title="Gestão de livros"
+    description="Gerencie os produtos da loja marcados como livro com o mesmo fluxo visual da vitrine."
+  >
+    <a routerLink="/loja/produtos/novo" class="header-link is-primary">Cadastrar livro</a>
+  </app-page-header>
+
+  <section class="filter-card">
+    <form class="row g-3 align-items-end" [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+      <div class="col-12 col-xl-4">
+        <app-form-input
+          label="Buscar"
+          [control]="filterForm.controls.search"
+          placeholder="Nome, slug, categoria, ISBN ou autor"
+        />
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-2">
+        <app-form-select
+          label="Status"
+          [control]="filterForm.controls.status"
+          [options]="statusOptions"
+          placeholder="Todos"
+        />
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-2">
+        <app-form-select
+          label="Categoria"
+          [control]="filterForm.controls.category"
+          [options]="categoryOptions()"
+          placeholder="Todas"
+        />
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-2">
+        <app-form-select
+          label="Destaque"
+          [control]="filterForm.controls.featured"
+          [options]="featuredOptions"
+          placeholder="Todos"
+        />
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-2">
+        <app-form-select
+          label="Promoção"
+          [control]="filterForm.controls.promotion"
+          [options]="promotionOptions"
+          placeholder="Todos"
+        />
+      </div>
+
+      <div class="col-12 col-md-6 col-xl-2">
+        <app-form-select
+          label="Lançamento"
+          [control]="filterForm.controls.launch"
+          [options]="launchOptions"
+          placeholder="Todos"
+        />
+      </div>
+
+      <div class="col-12 col-xl-12">
+        <div class="filter-actions">
+          <app-button type="submit" [block]="true">Filtrar</app-button>
+          <app-button type="button" variant="secondary" [block]="true" (click)="clearFilters()">
+            Limpar
+          </app-button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger py-2 mb-0">{{ errorMessage() }}</div>
+  }
+
+  <section class="results-head">
+    <div>
+      <strong>{{ resultLabel() }}</strong>
+      <span>Exibindo somente produtos marcados como livro.</span>
+    </div>
+  </section>
+
+  @if (loading()) {
+    <div class="state-card">
+      <span>Carregando livros...</span>
+    </div>
+  } @else if (!filteredItems().length) {
+    <div class="empty-card">
+      <strong>Nenhum livro encontrado.</strong>
+      <p>Ajuste os filtros ou cadastre o primeiro livro pelo fluxo de produtos.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <a routerLink="/loja/produtos/novo" class="header-link is-primary">Cadastrar livro</a>
+      </div>
+    </div>
+  } @else {
+    <div class="products-grid">
+      @for (item of filteredItems(); track item.id) {
+        <article class="product-card">
+          <div class="product-cover">
+            @if (getCoverUrl(item); as coverUrl) {
+              <img [src]="coverUrl" [alt]="item.nome_exibicao" />
+            } @else {
+              <div class="cover-placeholder">
+                <span>{{ item.nome_exibicao.charAt(0) || 'L' }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="product-body">
+            <div class="product-top">
+              <div class="product-tags">
+                <span class="tag" [class.is-active]="item.ativo" [class.is-inactive]="!item.ativo">
+                  {{ item.ativo ? 'Ativo' : 'Inativo' }}
+                </span>
+                <span class="tag is-category">Livro</span>
+                @for (category of (item.categorias?.length ? item.categorias : item.categoria ? [item.categoria] : []); track category) {
+                  <span class="tag is-category">{{ category }}</span>
+                }
+                @if (item.destaque) {
+                  <span class="tag is-featured">Destaque</span>
+                }
+                @if (item.em_promocao) {
+                  <span class="tag is-promotion">Promoção</span>
+                }
+                @if (discountPercentLabel(item); as discountLabel) {
+                  <span class="tag is-promotion">{{ discountLabel }}</span>
+                }
+                @if (item.lancamento) {
+                  <span class="tag is-launch">Lançamento</span>
+                }
+              </div>
+
+              <span class="product-order">Ordem {{ item.ordem }}</span>
+            </div>
+
+            <div class="product-copy">
+              <h2>{{ item.nome_exibicao }}</h2>
+              <span class="product-slug">/{{ item.slug }}</span>
+              <p>{{ item.subtitulo || 'Livro da loja' }}</p>
+              <span class="product-author">
+                {{ item.autor_nome || 'Autor não informado' }}
+              </span>
+            </div>
+
+            <div class="product-footer">
+              <div class="product-prices">
+                <strong>{{ formatPrice(item.em_promocao ? item.preco_promocional : item.preco_venda) }}</strong>
+              </div>
+              <div class="product-actions">
+                <button
+                  type="button"
+                  class="edit-link is-secondary"
+                  [disabled]="isDuplicating(item.id)"
+                  (click)="duplicateProduct(item)"
+                >
+                  @if (isDuplicating(item.id)) {
+                    Duplicando...
+                  } @else {
+                    Duplicar
+                  }
+                </button>
+                <a [routerLink]="['/loja/produtos', item.id]" class="edit-link">Editar</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

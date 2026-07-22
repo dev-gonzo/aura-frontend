@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.checkout-card,
+.sidebar-card {
+  background: rgba(5, 11, 35, 0.92);
+  border: 1px solid rgba(75, 104, 255, 0.28);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.checkout-card h2,
+.sidebar-card h3 {
+  color: #f5f7ff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.sidebar-stack,
+.action-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.status-card {
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid rgba(75, 104, 255, 0.22);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: rgba(11, 18, 48, 0.72);
+}
+
+.status-card strong {
+  color: #ffffff;
+}
+
+.status-card span,
+.helper-text {
+  color: rgba(223, 230, 255, 0.72);
+  margin: 0;
+}

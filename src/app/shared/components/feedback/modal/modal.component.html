@@ -1,0 +1,29 @@
+    <div class="modal-backdrop fade show"></div>
+
+    <div class="app-modal-layer" role="dialog" aria-modal="true" [attr.aria-label]="title" (click)="close.emit()">
+      <div class="app-modal-dialog" [style.max-width]="maxWidth" (click)="$event.stopPropagation()">
+        <div class="app-modal-card">
+          <div class="app-modal-header">
+            <div>
+              <h2 class="app-modal-title">{{ title }}</h2>
+              @if (subtitle) {
+                <p class="app-modal-subtitle">{{ subtitle }}</p>
+              }
+            </div>
+
+            <button type="button" class="app-modal-close" aria-label="Fechar" (click)="close.emit()">
+              ×
+            </button>
+          </div>
+
+          <div class="app-modal-body">
+            <ng-content select="[modal-body]" />
+          </div>
+
+          <div class="app-modal-footer">
+            <ng-content select="[modal-footer]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  

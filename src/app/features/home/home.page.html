@@ -1,0 +1,124 @@
+    <section class="page-shell container-fluid px-0">
+      <app-page-header
+        eyebrow="Analytics"
+        title="Painel da Editora"
+        description="Monitoramento da operação da Aura com foco em usuários, cadastros pendentes e fluxo editorial."
+      >
+        <div class="session-pill">
+          <strong>{{ currentUserName() }}</strong>
+          <span>{{ currentUserRoles() }}</span>
+        </div>
+      </app-page-header>
+
+      <section class="metric-grid row g-3">
+        @for (card of metricCards; track card.title) {
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="metric-card h-100" [style.--metric-accent]="card.accent">
+              <span>{{ card.title }}</span>
+              <strong>{{ card.value }}</strong>
+              <small>{{ card.description }}</small>
+            </article>
+          </div>
+        }
+      </section>
+
+      <section class="dashboard-grid row g-4">
+        <div class="col-12 col-xl-8">
+          <article class="dashboard-panel chart-panel h-100">
+            <div class="panel-head">
+              <div>
+                <h2>Visão operacional</h2>
+                <p>Indicadores consolidados do painel administrativo da editora.</p>
+              </div>
+
+              <div class="period-switch">
+                <button type="button">7d</button>
+                <button type="button" class="is-active">30d</button>
+                <button type="button">90d</button>
+              </div>
+            </div>
+
+            <div class="chart-summary">
+              <div>
+                <span>Sessões</span>
+                <strong>47.829</strong>
+              </div>
+              <div>
+                <span>Page Views</span>
+                <strong>186.247</strong>
+              </div>
+            </div>
+
+            <div class="chart-canvas" aria-hidden="true">
+              <div class="chart-grid-lines"></div>
+              <div class="area area-primary"></div>
+              <div class="area area-secondary"></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-xl-4">
+          <article class="dashboard-panel insights-panel h-100">
+            <div class="panel-head">
+              <div>
+                <h2>Acessos por dispositivo</h2>
+                <p>Acessos do painel administrativo</p>
+              </div>
+            </div>
+
+            <div class="device-ring" aria-hidden="true"></div>
+
+            <div class="device-stats">
+              @for (item of deviceStats; track item.label) {
+                <div class="device-row">
+                  <div class="device-label">
+                    <i [style.background]="item.color"></i>
+                    <span>{{ item.label }}</span>
+                  </div>
+                  <strong>{{ item.value }}</strong>
+                </div>
+              }
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-xl-4">
+          <article class="dashboard-panel rules-panel h-100">
+            <div class="panel-head">
+              <div>
+                <h2>Regras Ativas</h2>
+                <p>Controles críticos do módulo de usuários</p>
+              </div>
+            </div>
+
+            <div class="rule-list">
+              @for (rule of activeRules; track rule) {
+                <div class="rule-item">{{ rule }}</div>
+              }
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-xl-8">
+          <article class="dashboard-panel pipeline-panel h-100">
+            <div class="panel-head">
+              <div>
+                <h2>Pipeline Operacional</h2>
+                <p>Base visual para módulos futuros</p>
+              </div>
+            </div>
+
+            <div class="pipeline-list">
+              @for (step of pipeline; track step.title) {
+                <div class="pipeline-item">
+                  <span>{{ step.title }}</span>
+                  <strong>{{ step.value }}</strong>
+                  <small>{{ step.detail }}</small>
+                </div>
+              }
+            </div>
+          </article>
+        </div>
+      </section>
+    </section>
+  

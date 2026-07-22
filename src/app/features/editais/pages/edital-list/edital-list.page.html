@@ -1,0 +1,115 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Editais"
+    title="Gestão de editais"
+    description="Acompanhe os editais cadastrados, acesse os detalhes e entre no fluxo de criação ou edição."
+  >
+    <a class="btn btn-primary" routerLink="/editais/novo">Cadastrar edital</a>
+  </app-page-header>
+
+  <section class="filter-card">
+    <form class="row g-3 align-items-end" [formGroup]="filterForm" (ngSubmit)="load()">
+      <div class="col-12 col-md">
+        <app-form-input
+          label="Busca"
+          [control]="filterForm.controls.search"
+          placeholder="Buscar por título ou descrição"
+        />
+      </div>
+
+      <div class="col-12 col-md-4 col-xl-3">
+        <app-form-select
+          label="Status"
+          [control]="filterForm.controls.status"
+          [options]="statusOptions"
+          placeholder="Todos os status"
+        />
+      </div>
+
+      <div class="col-12 col-xl-auto">
+        <div class="filter-actions">
+          <app-button type="button" variant="secondary" [outline]="true" (click)="clearFilters()">
+            Limpar
+          </app-button>
+          <app-button type="submit" [disabled]="loading()">
+            @if (loading()) {
+              Buscando...
+            } @else {
+              Filtrar
+            }
+          </app-button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="result-head">
+    <strong>{{ resultLabel() }}</strong>
+  </section>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+  }
+
+  <section class="list-grid">
+    <div class="edital-table-head">
+      <span>Edital</span>
+      <span>Período</span>
+      <span>Publicação</span>
+      <span>Status</span>
+      <span class="actions-head">Ações</span>
+    </div>
+
+    @for (item of items(); track item.id) {
+      <article class="edital-card">
+        <div class="edital-main">
+          <div class="edital-title-block">
+            <span class="meta-label">Edital</span>
+            <h2>{{ item.titulo }}</h2>
+          </div>
+
+          <div class="edital-info-block">
+            <span class="meta-label">Período</span>
+            <strong>{{ formatDate(item.data_inicio) }} - {{ formatDate(item.data_fim) }}</strong>
+          </div>
+
+          <div class="edital-info-block">
+            <span class="meta-label">Publicação</span>
+            <strong>{{ formatDate(item.data_prevista_publicacao) }}</strong>
+          </div>
+
+          <div class="edital-info-block">
+            <span class="meta-label">Status</span>
+            <span class="status-chip" [ngClass]="getStatusClass(item.status)">
+              {{ getStatusLabel(item.status) }}
+            </span>
+          </div>
+
+          <div class="edital-action-block">
+            <a
+              class="edital-icon-button"
+              [routerLink]="['/editais', item.id]"
+              [attr.aria-label]="'Visualizar ' + item.titulo"
+              title="Visualizar edital"
+            >
+              <i class="fa-solid fa-eye"></i>
+            </a>
+            <a
+              class="edital-icon-button"
+              [routerLink]="['/editais', item.id, 'editar']"
+              [attr.aria-label]="'Editar ' + item.titulo"
+              title="Editar edital"
+            >
+              <i class="fa-solid fa-pen"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <article class="empty-card">
+        <strong>Nenhum edital cadastrado</strong>
+        <span>Crie o primeiro edital para começar o fluxo da Editora.</span>
+      </article>
+    }
+  </section>
+</section>

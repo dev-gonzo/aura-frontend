@@ -1,0 +1,221 @@
+<app-page-header
+  eyebrow="Pagamentos"
+  title="Checkout de teste"
+  description="Gere uma preferência inicial de pagamento e abra o checkout do provider configurado."
+/>
+
+<div class="container pb-4">
+  <div class="row g-4">
+    <div class="col-12 col-xl-8">
+      @if (errorMessage()) {
+        <div class="alert alert-danger mb-3">{{ errorMessage() }}</div>
+      }
+
+      <form class="row g-4" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="col-12">
+          <section class="checkout-card">
+            <h2>Item do pagamento</h2>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <app-form-select
+                  label="Provider"
+                  [control]="form.controls.provider"
+                  [options]="providerOptions()"
+                  [invalid]="hasFieldError('provider')"
+                  [errorText]="getFieldError('provider')"
+                />
+              </div>
+
+              <div class="col-12 col-md-6">
+                <app-form-input
+                  label="Referência externa"
+                  [control]="form.controls.external_reference"
+                  [invalid]="hasFieldError('external_reference')"
+                  [errorText]="getFieldError('external_reference')"
+                />
+              </div>
+
+              <div class="col-12">
+                <app-form-input
+                  label="Título"
+                  [control]="form.controls.title"
+                  [invalid]="hasFieldError('title')"
+                  [errorText]="getFieldError('title')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-8">
+                <app-form-input
+                  label="Descrição"
+                  [control]="form.controls.description"
+                  [invalid]="hasFieldError('description')"
+                  [errorText]="getFieldError('description')"
+                />
+              </div>
+
+              <div class="col-12 col-md-2">
+                <app-form-input
+                  label="Quantidade"
+                  [control]="form.controls.quantity"
+                  type="number"
+                  [min]="1"
+                  [invalid]="hasFieldError('quantity')"
+                  [errorText]="getFieldError('quantity')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-2">
+                <app-form-input
+                  label="Valor"
+                  [control]="form.controls.unit_price"
+                  type="number"
+                  [min]="0.01"
+                  [step]="0.01"
+                  [invalid]="hasFieldError('unit_price')"
+                  [errorText]="getFieldError('unit_price')"
+                  [required]="true"
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="checkout-card">
+            <h2>Pagador</h2>
+            <div class="row g-3">
+              <div class="col-12 col-md-4">
+                <app-form-input
+                  label="Nome"
+                  [control]="form.controls.payer_name"
+                  [invalid]="hasFieldError('payer_name')"
+                  [errorText]="getFieldError('payer_name')"
+                />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <app-form-input
+                  label="Sobrenome"
+                  [control]="form.controls.payer_surname"
+                  [invalid]="hasFieldError('payer_surname')"
+                  [errorText]="getFieldError('payer_surname')"
+                />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <app-form-input
+                  label="Email"
+                  [control]="form.controls.payer_email"
+                  type="email"
+                  [invalid]="hasFieldError('payer_email')"
+                  [errorText]="getFieldError('payer_email')"
+                />
+              </div>
+
+              <div class="col-12 col-md-6">
+                <app-form-input
+                  label="CPF"
+                  [control]="form.controls.payer_cpf"
+                  inputmode="numeric"
+                  [maxlength]="14"
+                  [invalid]="hasFieldError('payer_cpf')"
+                  [errorText]="getFieldError('payer_cpf')"
+                  (inputEvent)="formatCpfInput($event)"
+                />
+              </div>
+
+              <div class="col-12 col-md-6">
+                <app-form-input
+                  label="CEP"
+                  [control]="form.controls.payer_zip_code"
+                  inputmode="numeric"
+                  [maxlength]="9"
+                  [invalid]="hasFieldError('payer_zip_code')"
+                  [errorText]="getFieldError('payer_zip_code')"
+                  (inputEvent)="formatCepInput($event)"
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="sidebar-stack">
+        <section class="sidebar-card">
+          <h3>Configuração ativa</h3>
+          @if (config(); as current) {
+            <div class="status-card">
+              <strong>Provider padrão</strong>
+              <span>{{ defaultProviderLabel() || current.default_provider }}</span>
+              <strong>Email de contato</strong>
+              <span>{{ current.contact_email || 'Não informado' }}</span>
+            </div>
+          } @else {
+            <p class="helper-text">A configuração do provider aparece após o carregamento.</p>
+          }
+        </section>
+
+        <section class="sidebar-card">
+          <h3>Ações</h3>
+          <div class="action-stack">
+            <app-button
+              type="submit"
+              variant="primary"
+              [block]="true"
+              [disabled]="loading() || processing()"
+              (click)="submit()"
+            >
+              {{ processing() ? 'Gerando checkout...' : 'Gerar checkout' }}
+            </app-button>
+
+            <app-button type="button" variant="secondary" [outline]="true" [block]="true" routerLink="/pagamentos/configuracao">
+              Configuração de pagamentos
+            </app-button>
+          </div>
+        </section>
+
+        @if (checkoutResponse(); as checkout) {
+          <section class="sidebar-card">
+            <h3>Checkout gerado</h3>
+            <div class="status-card">
+              <strong>Provider</strong>
+              <span>{{ checkout.provider }}</span>
+              <strong>Preference ID</strong>
+              <span>{{ checkout.preference_id }}</span>
+              @if (checkout.external_reference) {
+                <strong>Referência externa</strong>
+                <span>{{ checkout.external_reference }}</span>
+              }
+            </div>
+
+            <div class="action-stack mt-3">
+              <a
+                class="btn btn-primary w-100"
+                [href]="preferredCheckoutUrl()"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Abrir checkout
+              </a>
+
+              @if (checkout.checkout_url && checkout.sandbox_checkout_url && checkout.checkout_url !== checkout.sandbox_checkout_url) {
+                <a
+                  class="btn btn-outline-light w-100"
+                  [href]="checkout.checkout_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir link de produção
+                </a>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </div>
+  </div>
+</div>

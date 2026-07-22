@@ -1,0 +1,849 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Loja"
+    [title]="title()"
+    description="Configure o produto da loja em um fluxo único, com marcação de livro, múltiplos autores, categorias, preço e vitrine."
+  >
+    <a routerLink="/loja/produtos" class="header-link">Voltar para produtos</a>
+  </app-page-header>
+
+  @if (loading()) {
+    <div class="state-card">
+      <span>Carregando produto da loja...</span>
+    </div>
+  } @else {
+    <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="col-12 col-xl-8">
+        <div class="row g-4">
+          <div class="col-12">
+            <section class="content-card">
+              <div class="section-heading">
+                <span class="section-eyebrow">Produto</span>
+                <h2>Dados comerciais</h2>
+                <p>Esses dados definem a apresentação do item na vitrine pública.</p>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="toggle-card">
+                    <app-form-checkbox
+                      [control]="form.controls.is_book"
+                      label="Este produto é um livro"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-12 col-lg-8">
+                  <app-form-input
+                    label="Título (Nome do produto)"
+                    [required]="true"
+                    [control]="form.controls.nome_exibicao"
+                    [invalid]="hasFieldError('nome_exibicao')"
+                    [errorText]="getFieldError('nome_exibicao')"
+                    placeholder="Ex.: Edição especial de lançamento"
+                  />
+                </div>
+
+                <div class="col-12 col-lg-4">
+                  <app-form-input
+                    label="Slug público"
+                    [required]="true"
+                    [control]="form.controls.slug"
+                    [invalid]="hasFieldError('slug')"
+                    [errorText]="getFieldError('slug')"
+                    placeholder="edicao-especial"
+                    (inputEvent)="handleSlugInput()"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <app-form-input
+                    label="Marca"
+                    [control]="form.controls.marca"
+                    [invalid]="hasFieldError('marca')"
+                    [errorText]="getFieldError('marca')"
+                    placeholder="Ex.: Fabricante ou marca do produto"
+                  />
+                </div>
+
+                @if (form.controls.is_book.value) {
+                  <div class="col-12">
+                    <div class="category-picker-card">
+                      <div class="category-picker-head">
+                        <label class="native-field-label">Autores</label>
+                        <small>Selecione um ou mais autores para este livro.</small>
+                      </div>
+
+                      @if (selectedAuthorLabels().length) {
+                        <div
+                          cdkDropList
+                          class="selected-category-list is-sortable"
+                          (cdkDropListDropped)="reorderAuthors($event)"
+                        >
+                          @for (author of selectedAuthorLabels(); track author) {
+                            <div class="selected-category-chip is-sortable" cdkDrag>
+                              <button
+                                type="button"
+                                class="author-order-handle"
+                                cdkDragHandle
+                                aria-label="Arrastar autor"
+                                title="Arrastar autor"
+                              >
+                                ::
+                              </button>
+                              <button type="button" class="author-chip-label" (click)="toggleAuthorSelection(author)">
+                                {{ author }}
+                                <span aria-hidden="true">×</span>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <div class="category-picker-empty">
+                          Nenhum autor selecionado.
+                        </div>
+                      }
+
+                      @if (legacyAuthorLabels().length) {
+                        <div class="selected-category-list is-legacy">
+                          @for (author of legacyAuthorLabels(); track author) {
+                            <span class="selected-category-chip is-legacy">{{ author }} (legado)</span>
+                          }
+                        </div>
+                      }
+
+                      <div class="picker-search-row">
+                        <div class="picker-search-shell" (focusout)="closeAuthorDropdown()">
+                          <input
+                            class="picker-search-input"
+                            type="text"
+                            placeholder="Pesquisar autor"
+                            [value]="authorSearchTerm()"
+                            (focus)="openAuthorDropdown()"
+                            (input)="handleAuthorSearchInput($event)"
+                          />
+
+                          @if (authorDropdownOpen() && filteredAuthorOptions().length) {
+                            <div class="picker-dropdown-menu">
+                              @for (option of filteredAuthorOptions(); track option.nome) {
+                                <button
+                                  type="button"
+                                  class="picker-dropdown-item"
+                                  [class.is-inactive]="!option.active"
+                                  (mousedown)="selectAuthorOption($event, option.nome)"
+                                >
+                                  {{ option.nome }}
+                                </button>
+                              }
+                            </div>
+                          }
+                        </div>
+
+                        <button
+                          type="button"
+                          class="header-link picker-add-button"
+                          [disabled]="!canAddPendingAuthor()"
+                          (click)="addPendingAuthor()"
+                        >
+                          Incluir
+                        </button>
+                      </div>
+
+                      @if (selectedAuthorLabels().length > 1) {
+                        <small class="author-order-helper">Arraste os autores para definir a ordem de exibição.</small>
+                      }
+
+                      @if (hasAuthorSelectionError()) {
+                        <div class="selection-error">Selecione ao menos um autor para livros.</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <section class="book-metadata-card">
+                      <div class="section-heading compact">
+                        <span class="section-eyebrow">Livro</span>
+                        <h2>Dados editoriais</h2>
+                        <p>Complete as informações editoriais principais deste livro.</p>
+                      </div>
+
+                      <div class="row g-3">
+                        <div class="col-12">
+                          <app-form-input
+                            label="Editora"
+                            [required]="form.controls.is_book.value"
+                            [control]="form.controls.editora"
+                            [invalid]="hasFieldError('editora') || hasPublisherSelectionError()"
+                            [errorText]="hasPublisherSelectionError() ? 'Informe a editora do livro.' : getFieldError('editora')"
+                            placeholder="Ex.: Aura Editora"
+                          />
+                        </div>
+
+                        <div class="col-12">
+                          <app-form-input
+                            label="Subtítulo"
+                            [control]="form.controls.subtitulo"
+                            [invalid]="hasFieldError('subtitulo')"
+                            [errorText]="getFieldError('subtitulo')"
+                            placeholder="Ex.: Volume 1"
+                          />
+                        </div>
+
+                        <div class="col-12">
+                          <app-form-input
+                            label="Gênero"
+                            [control]="form.controls.genero"
+                            [invalid]="hasFieldError('genero')"
+                            [errorText]="getFieldError('genero')"
+                            placeholder="Ex.: Romance"
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                          <app-form-input
+                            label="Ordem"
+                            [required]="true"
+                            [control]="form.controls.ordem"
+                            [invalid]="hasFieldError('ordem')"
+                            [errorText]="getFieldError('ordem')"
+                            type="number"
+                            inputmode="numeric"
+                            placeholder="0"
+                            min="0"
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                          <app-form-input
+                            label="Tipo de capa"
+                            [control]="form.controls.tipo_capa"
+                            [invalid]="hasFieldError('tipo_capa')"
+                            [errorText]="getFieldError('tipo_capa')"
+                            placeholder="Brochura"
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                          <app-form-input
+                            label="Edição"
+                            [control]="form.controls.edicao"
+                            [invalid]="hasFieldError('edicao')"
+                            [errorText]="getFieldError('edicao')"
+                            placeholder="Ex.: 1a"
+                          />
+                        </div>
+
+                        <div class="col-12">
+                          <app-form-input
+                            label="Número de páginas"
+                            [control]="form.controls.numero_paginas"
+                            [invalid]="hasFieldError('numero_paginas')"
+                            [errorText]="getFieldError('numero_paginas')"
+                            inputmode="numeric"
+                            placeholder="Ex.: 320"
+                            (inputEvent)="normalizeBookIntegerInput('numero_paginas', $event)"
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <app-form-input
+                            label="Idioma"
+                            [control]="form.controls.idioma"
+                            [invalid]="hasFieldError('idioma')"
+                            [errorText]="getFieldError('idioma')"
+                            placeholder="Português"
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <app-form-input
+                            label="Data de publicação"
+                            [control]="form.controls.data_publicacao"
+                            [invalid]="hasFieldError('data_publicacao')"
+                            [errorText]="getFieldError('data_publicacao')"
+                            type="date"
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <app-form-input
+                            label="ISBN-13"
+                            [control]="form.controls.isbn"
+                            [invalid]="hasFieldError('isbn')"
+                            [errorText]="getFieldError('isbn')"
+                            inputmode="numeric"
+                            [maxlength]="13"
+                            placeholder="978..."
+                            (inputEvent)="normalizeBookIdentifierInput('isbn', $event)"
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <app-form-input
+                            label="Código de barras"
+                            [control]="form.controls.codigo_barra"
+                            [invalid]="hasFieldError('codigo_barra')"
+                            [errorText]="getFieldError('codigo_barra')"
+                            inputmode="numeric"
+                            [maxlength]="13"
+                            placeholder="978..."
+                            (inputEvent)="normalizeBookIdentifierInput('codigo_barra', $event)"
+                          />
+                        </div>
+
+                      </div>
+                    </section>
+                  </div>
+                }
+
+                <div class="col-12">
+                  <app-markdown-editor
+                    label="Descrição (Sinopse)"
+                    [control]="form.controls.descricao_curta"
+                    [invalid]="hasFieldError('descricao_curta')"
+                    [errorText]="getFieldError('descricao_curta')"
+                    helperText="Use este campo para a descrição principal e a sinopse do produto."
+                    placeholder="Resumo curto para o card e o detalhe público do produto."
+                  />
+                </div>
+
+                <div class="col-12">
+                  <div class="category-picker-card">
+                    <div class="category-picker-head">
+                      <label class="native-field-label">Categorias</label>
+                      <small>Selecione uma ou mais categorias para o produto.</small>
+                    </div>
+
+                    @if (selectedCategoryLabels().length) {
+                      <div class="selected-category-list">
+                        @for (category of selectedCategoryLabels(); track category) {
+                          <button type="button" class="selected-category-chip" (click)="toggleCategorySelection(category)">
+                            {{ category }}
+                            <span aria-hidden="true">×</span>
+                          </button>
+                        }
+                      </div>
+                    } @else {
+                      <div class="category-picker-empty">
+                        Nenhuma categoria selecionada.
+                      </div>
+                    }
+
+                    @if (legacyCategoryLabels().length) {
+                      <div class="selected-category-list is-legacy">
+                        @for (category of legacyCategoryLabels(); track category) {
+                          <span class="selected-category-chip is-legacy">{{ category }} (legado)</span>
+                        }
+                      </div>
+                    }
+
+                    <div class="picker-search-row">
+                      <div class="picker-search-shell" (focusout)="closeCategoryDropdown()">
+                        <input
+                          class="picker-search-input"
+                          type="text"
+                          placeholder="Pesquisar categoria"
+                          [value]="categorySearchTerm()"
+                          (focus)="openCategoryDropdown()"
+                          (input)="handleCategorySearchInput($event)"
+                        />
+
+                        @if (categoryDropdownOpen() && filteredCategoryOptions().length) {
+                          <div class="picker-dropdown-menu">
+                            @for (option of filteredCategoryOptions(); track option.value) {
+                              <button
+                                type="button"
+                                class="picker-dropdown-item"
+                                [class.is-inactive]="!option.active"
+                                (mousedown)="selectCategoryOption($event, option.value)"
+                              >
+                                {{ option.label }}
+                              </button>
+                            }
+                          </div>
+                        }
+                      </div>
+
+                      <button
+                        type="button"
+                        class="header-link picker-add-button"
+                        [disabled]="!canAddPendingCategory()"
+                        (click)="addPendingCategory()"
+                      >
+                        Incluir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="col-12">
+            <section class="content-card">
+              <div class="section-heading">
+                <span class="section-eyebrow">Preço e status</span>
+                <h2>Preço, ordem e visibilidade</h2>
+                <p>Defina os valores do produto e como ele deve aparecer na vitrine.</p>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    label="Preço de venda"
+                    [required]="true"
+                    [control]="form.controls.preco_venda"
+                    [invalid]="hasFieldError('preco_venda')"
+                    [errorText]="getFieldError('preco_venda')"
+                    inputmode="decimal"
+                    placeholder="0,00"
+                    (inputEvent)="formatPriceInput($event)"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    label="Preço promocional"
+                    [control]="form.controls.preco_promocional"
+                    [disabled]="!form.controls.em_promocao.value"
+                    [invalid]="hasPromotionalPriceError()"
+                    [errorText]="promotionalPriceErrorText()"
+                    inputmode="decimal"
+                    placeholder="0,00"
+                    (inputEvent)="formatPromotionalPriceInput($event)"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    label="Peso (g)"
+                    [control]="form.controls.peso_gramas"
+                    [invalid]="hasFieldError('peso_gramas')"
+                    [errorText]="getFieldError('peso_gramas')"
+                    inputmode="numeric"
+                    placeholder="Ex.: 420"
+                    (inputEvent)="normalizeBookIntegerInput('peso_gramas', $event)"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    label="Largura (cm)"
+                    [control]="form.controls.largura_cm"
+                    [invalid]="hasFieldError('largura_cm')"
+                    [errorText]="getFieldError('largura_cm')"
+                    inputmode="decimal"
+                    placeholder="Ex.: 16,0"
+                    (inputEvent)="normalizeBookDecimalInput('largura_cm', $event)"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    label="Altura (cm)"
+                    [control]="form.controls.altura_cm"
+                    [invalid]="hasFieldError('altura_cm')"
+                    [errorText]="getFieldError('altura_cm')"
+                    inputmode="decimal"
+                    placeholder="Ex.: 23,0"
+                    (inputEvent)="normalizeBookDecimalInput('altura_cm', $event)"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    label="Profundidade (cm)"
+                    [control]="form.controls.profundidade_cm"
+                    [invalid]="hasFieldError('profundidade_cm')"
+                    [errorText]="getFieldError('profundidade_cm')"
+                    inputmode="decimal"
+                    placeholder="Ex.: 2,5"
+                    (inputEvent)="normalizeBookDecimalInput('profundidade_cm', $event)"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="toggle-card">
+                    <app-form-checkbox
+                      [control]="form.controls.em_promocao"
+                      label="Produto em promoção"
+                      (change)="handlePromotionToggle()"
+                    />
+                    <span>Ative para informar um preço promocional e destacar o desconto na loja.</span>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="toggle-card">
+                    <app-form-checkbox
+                      [control]="form.controls.ativo"
+                      label="Produto ativo na loja"
+                    />
+                    <span>Controla se o item aparece no catálogo público.</span>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="toggle-card">
+                    <app-form-checkbox
+                      [control]="form.controls.destaque"
+                      label="Exibir em destaque"
+                    />
+                    <span>Usado para compor a vitrine principal da home.</span>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="toggle-card">
+                    <app-form-checkbox
+                      [control]="form.controls.lancamento"
+                      label="Marcar como lançamento"
+                    />
+                    <span>Permite exibir o item na seção de novidades e lançamentos da loja.</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4">
+        <div class="sidebar-stack">
+          <aside class="content-card">
+            <div class="section-heading compact">
+              <span class="section-eyebrow">Galeria</span>
+              <h2>Fotos do produto</h2>
+              <p>Cadastre até 5 fotos, escolha a principal e organize a ordem da galeria.</p>
+            </div>
+
+            <div class="primary-photo-preview">
+              @if (primaryPhotoPreview(); as previewUrl) {
+                <img [src]="previewUrl" alt="Foto principal do produto" />
+                <span class="primary-photo-badge">Foto principal</span>
+              } @else {
+                <div class="primary-photo-empty">
+                  <strong>Produto sem fotos</strong>
+                  <span>A foto principal aparecerá aqui.</span>
+                </div>
+              }
+            </div>
+
+            <input
+              #productPhotoInput
+              class="visually-hidden"
+              type="file"
+              accept="image/*"
+              [disabled]="!canAddMorePhotos() || processingPhoto()"
+              (change)="handlePhotoSelected($event)"
+            />
+
+            <div class="photo-gallery-toolbar">
+              <button
+                type="button"
+                class="gallery-add-button"
+                [disabled]="!canAddMorePhotos() || processingPhoto()"
+                (click)="productPhotoInput.click()"
+              >
+                Adicionar foto
+              </button>
+
+              @if (productPhotos().length) {
+                <button type="button" class="sidebar-link-button compact-button" (click)="openGalleryModal()">
+                  Organizar fotos
+                </button>
+              }
+            </div>
+
+            <div class="photo-gallery-meta">
+              <span>{{ photoCountLabel() }}</span>
+              @if (processingPhoto()) {
+                <small>Processando foto...</small>
+              } @else if (!canAddMorePhotos()) {
+                <small>Limite máximo atingido.</small>
+              } @else {
+                <small>Você ainda pode adicionar mais {{ 5 - productPhotos().length }} foto(s).</small>
+              }
+            </div>
+
+            @if (photoErrorMessage()) {
+              <div class="alert alert-danger py-2 mb-0">{{ photoErrorMessage() }}</div>
+            }
+
+            @if (productPhotos().length) {
+              <div class="photo-thumb-grid">
+                @for (photo of productPhotos(); track photo.id) {
+                  <button
+                    type="button"
+                    class="photo-thumb"
+                    [class.is-primary]="photo.is_primary"
+                    (click)="openGalleryModal()"
+                  >
+                    <img [src]="photo.previewUrl" [alt]="'Foto ' + ($index + 1) + ' do produto'" />
+                    <span>{{ photo.is_primary ? 'Principal' : 'Foto ' + ($index + 1) }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </aside>
+
+          <aside class="content-card sticky-actions">
+            <div class="section-heading compact">
+              <span class="section-eyebrow">Ações</span>
+              <h2>Salvar produto</h2>
+              <p>Depois de salvo, o item já pode aparecer na loja pública conforme seu status.</p>
+            </div>
+
+            @if (successMessage()) {
+              <div class="alert alert-success py-2 mb-0">{{ successMessage() }}</div>
+            }
+
+            @if (errorMessage()) {
+              <div class="alert alert-danger py-2 mb-0">{{ errorMessage() }}</div>
+            }
+
+            <div class="action-stack">
+              <app-button type="submit" [block]="true" [disabled]="saving()">
+                @if (saving()) {
+                  Salvando produto...
+                } @else {
+                  Salvar produto
+                }
+              </app-button>
+
+              <a routerLink="/loja/produtos" class="sidebar-link-button">Cancelar e voltar</a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </form>
+
+    @if (galleryModalOpen()) {
+      <app-modal
+        title="Organizar fotos do produto"
+        subtitle="Arraste para reordenar, defina a principal e remova o que não quiser manter."
+        maxWidth="52rem"
+        (close)="closeGalleryModal()"
+      >
+        <div modal-body>
+          @if (productPhotos().length) {
+            <div cdkDropList class="gallery-modal-list" (cdkDropListDropped)="reorderPhotos($event)">
+              @for (photo of productPhotos(); track photo.id) {
+                <article class="gallery-modal-item" cdkDrag>
+                  <div class="gallery-modal-handle" cdkDragHandle aria-label="Arrastar foto">::</div>
+
+                  <div class="gallery-modal-preview">
+                    <img [src]="photo.previewUrl" [alt]="'Foto ' + ($index + 1) + ' do produto'" />
+                  </div>
+
+                  <div class="gallery-modal-copy">
+                    <strong>{{ $index + 1 }}. {{ photo.is_primary ? 'Foto principal' : 'Foto secundária' }}</strong>
+                    <span>{{ photo.image.largura }} x {{ photo.image.altura }} px</span>
+                  </div>
+
+                  <div class="gallery-modal-actions">
+                    <button
+                      type="button"
+                      class="gallery-action-button"
+                      [class.is-primary]="photo.is_primary"
+                      (click)="setPrimaryPhoto($index)"
+                    >
+                      {{ photo.is_primary ? 'Principal' : 'Tornar principal' }}
+                    </button>
+                    <button type="button" class="gallery-action-button is-danger" (click)="removePhoto($index)">
+                      Remover
+                    </button>
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="empty-aside">
+              <strong>Nenhuma foto cadastrada.</strong>
+              <p>Feche este modal e use o card de upload para adicionar as imagens do produto.</p>
+            </div>
+          }
+        </div>
+
+        <div modal-footer>
+          <button type="button" class="sidebar-link-button" (click)="closeGalleryModal()">Concluir</button>
+        </div>
+      </app-modal>
+    }
+
+    @if (categoryModalOpen()) {
+      <app-modal
+        [title]="categoryModalTitle()"
+        subtitle="Cadastre, edite ou exclua categorias sem sair do formulário do produto."
+        maxWidth="64rem"
+        (close)="closeCategoryModal()"
+      >
+        <div modal-body>
+          <div class="row g-4">
+            <div class="col-12 col-xl-5">
+              <section class="category-modal-panel">
+                <div class="section-heading compact">
+                  <span class="section-eyebrow">Cadastro</span>
+                  <h2>{{ categoryEditingId() ? 'Atualizar categoria' : 'Nova categoria' }}</h2>
+                  <p>Crie categorias padronizadas para usar nos produtos da vitrine.</p>
+                </div>
+
+                <form class="row g-3" [formGroup]="categoryForm" (ngSubmit)="submitCategory()">
+                  <div class="col-12">
+                    <app-form-input
+                      label="Nome"
+                      [required]="true"
+                      [control]="categoryForm.controls.nome"
+                      [invalid]="hasCategoryFieldError('nome')"
+                      [errorText]="getCategoryFieldError('nome')"
+                      placeholder="Ex.: Romance"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Slug"
+                      [control]="categoryForm.controls.slug"
+                      [invalid]="hasCategoryFieldError('slug')"
+                      [errorText]="getCategoryFieldError('slug')"
+                      placeholder="Ex.: romance"
+                      (inputEvent)="handleCategorySlugInput()"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-textarea
+                      label="Descrição"
+                      [control]="categoryForm.controls.descricao"
+                      [rows]="4"
+                      placeholder="Descreva rapidamente o objetivo da categoria."
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Ordem"
+                      [required]="true"
+                      [control]="categoryForm.controls.ordem"
+                      [invalid]="hasCategoryFieldError('ordem')"
+                      [errorText]="getCategoryFieldError('ordem')"
+                      type="number"
+                      inputmode="numeric"
+                      min="0"
+                      placeholder="0"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="toggle-card">
+                      <input class="form-check-input" type="checkbox" [formControl]="categoryForm.controls.ativa" />
+                      <strong>Categoria ativa</strong>
+                      <span>Categorias inativas não devem ser usadas em novos produtos.</span>
+                    </label>
+                  </div>
+
+                  @if (categorySuccessMessage()) {
+                    <div class="col-12">
+                      <div class="alert alert-success py-2 mb-0">{{ categorySuccessMessage() }}</div>
+                    </div>
+                  }
+
+                  @if (categoryErrorMessage()) {
+                    <div class="col-12">
+                      <div class="alert alert-danger py-2 mb-0">{{ categoryErrorMessage() }}</div>
+                    </div>
+                  }
+
+                  <div class="col-12">
+                    <div class="action-stack">
+                      <app-button type="submit" [block]="true" [disabled]="categorySaving()">
+                        {{
+                          categorySaving()
+                            ? 'Salvando categoria...'
+                            : categoryEditingId()
+                              ? 'Atualizar categoria'
+                              : 'Salvar categoria'
+                        }}
+                      </app-button>
+
+                      @if (categoryEditingId()) {
+                        <app-button type="button" variant="secondary" [block]="true" (click)="cancelCategoryEdit()">
+                          Cancelar edição
+                        </app-button>
+                      }
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+
+            <div class="col-12 col-xl-7">
+              <section class="category-modal-panel">
+                <div class="summary-strip">
+                  <div>
+                    <strong>{{ categories().length }}</strong>
+                    <span>Categorias cadastradas</span>
+                  </div>
+                  <div>
+                    <strong>{{ activeCategoryCount() }}</strong>
+                    <span>Categorias ativas</span>
+                  </div>
+                </div>
+
+                @if (!categories().length) {
+                  <div class="empty-aside mt-3">
+                    <strong>Nenhuma categoria cadastrada.</strong>
+                    <p>Crie a primeira categoria para selecionar neste produto.</p>
+                  </div>
+                } @else {
+                  <div class="category-modal-list">
+                    @for (item of categories(); track item.id) {
+                      <article class="category-item-card">
+                        <div class="category-item-head">
+                          <div class="category-item-title">
+                            <strong>{{ item.nome }}</strong>
+                            <span>/{{ item.slug }}</span>
+                          </div>
+
+                          <div class="category-item-badges">
+                            <span class="category-pill" [class.is-active]="item.ativa" [class.is-inactive]="!item.ativa">
+                              {{ item.ativa ? 'Ativa' : 'Inativa' }}
+                            </span>
+                            <span class="category-pill is-count">{{ item.produtos_count }} produto(s)</span>
+                          </div>
+                        </div>
+
+                        <p>{{ item.descricao || 'Sem descrição cadastrada para esta categoria.' }}</p>
+
+                        <div class="category-item-meta">
+                          <span>Ordem {{ item.ordem }}</span>
+                          <span>{{ item.atualizado_em | date: 'dd/MM/yyyy HH:mm' }}</span>
+                        </div>
+
+                        <div class="gallery-modal-actions">
+                          <button type="button" class="gallery-action-button" (click)="editCategory(item)">Editar</button>
+                          <button
+                            type="button"
+                            class="gallery-action-button is-danger"
+                            [disabled]="isDeletingCategory(item.id)"
+                            (click)="deleteCategory(item)"
+                          >
+                            {{ isDeletingCategory(item.id) ? 'Excluindo...' : 'Excluir' }}
+                          </button>
+                        </div>
+                      </article>
+                    }
+                  </div>
+                }
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <div modal-footer>
+          <button type="button" class="sidebar-link-button" (click)="closeCategoryModal()">Concluir</button>
+        </div>
+      </app-modal>
+    }
+  }
+</section>

@@ -1,0 +1,1846 @@
+<section
+  class="page-shell container-fluid px-0"
+  [style.--store-accent]="form.controls.accent_color.value"
+  [style.--store-button]="form.controls.button_color.value"
+  [style.--store-button-text]="form.controls.button_text_color.value"
+  [style.--store-launch-badge]="form.controls.launch_badge_color.value"
+  [style.--store-featured-badge]="form.controls.featured_badge_color.value"
+  [style.--store-promotion-badge]="form.controls.promotion_badge_color.value"
+  [style.--store-discount]="form.controls.discount_color.value"
+  [attr.data-button-style]="form.controls.button_style.value"
+>
+  <app-page-header
+    eyebrow="Loja"
+    title="Layout e identidade"
+    description="Organize a loja em blocos reais da storefront: header, menu, banner, bloco customizado, vitrines, destaques institucionais e rodapé."
+  >
+    <a routerLink="/loja/produtos" class="header-link">Gerenciar produtos</a>
+  </app-page-header>
+
+  @if (loading()) {
+    <div class="state-card">
+      <span>Carregando configurações da loja...</span>
+    </div>
+  } @else {
+    <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="col-12 col-xl-8">
+        <div class="editor-navbar-shell">
+          <nav class="navbar navbar-expand-lg editor-navbar" aria-label="Seções da loja">
+            <div class="container-fluid px-0">
+              <button
+                class="navbar-toggler editor-navbar-toggler"
+                type="button"
+                [attr.aria-expanded]="editorNavOpen()"
+                aria-label="Alternar navegação"
+                (click)="toggleEditorNav()"
+              >
+                <span class="navbar-toggler-icon"></span>
+              </button>
+
+              <div class="collapse navbar-collapse" [class.show]="editorNavOpen()">
+                <div class="navbar-nav editor-navbar-nav" role="tablist">
+                  <button
+                    type="button"
+                    class="nav-link editor-nav-link"
+                    [class.active]="activeTab() === 'dados'"
+                    (click)="setActiveSection('dados')"
+                  >
+                    Dados Principais
+                  </button>
+
+                  <button
+                    type="button"
+                    class="nav-link editor-nav-link"
+                    [class.active]="activeTab() === 'cores'"
+                    (click)="setActiveSection('cores')"
+                  >
+                    Cores e Tema
+                  </button>
+
+                  <button
+                    type="button"
+                    class="nav-link editor-nav-link"
+                    [class.active]="activeTab() === 'layout'"
+                    (click)="setActiveSection('layout')"
+                  >
+                    Layout
+                  </button>
+
+                  <button
+                    type="button"
+                    class="nav-link editor-nav-link"
+                    [class.active]="activeTab() === 'menu'"
+                    (click)="setActiveSection('menu')"
+                  >
+                    Menu
+                  </button>
+
+                  <button
+                    type="button"
+                    class="nav-link editor-nav-link"
+                    [class.active]="activeTab() === 'banners'"
+                    (click)="setActiveSection('banners')"
+                  >
+                    Banner Principal
+                  </button>
+
+                  <div class="nav-item dropdown editor-nav-dropdown" [class.show]="editorContentDropdownOpen()">
+                    <button
+                      type="button"
+                      class="nav-link dropdown-toggle editor-nav-link"
+                      [class.active]="isContentGroupActive()"
+                      [attr.aria-expanded]="editorContentDropdownOpen()"
+                      (click)="toggleEditorContentDropdown()"
+                    >
+                      Conteúdo
+                    </button>
+
+                    <div class="dropdown-menu editor-dropdown-menu" [class.show]="editorContentDropdownOpen()">
+                      <button
+                        type="button"
+                        class="dropdown-item editor-dropdown-item"
+                        [class.active]="activeTab() === 'bloco'"
+                        (click)="setActiveSection('bloco')"
+                      >
+                        Bloco Customizado
+                      </button>
+
+                      <button
+                        type="button"
+                        class="dropdown-item editor-dropdown-item"
+                        [class.active]="activeTab() === 'destaques'"
+                        (click)="setActiveSection('destaques')"
+                      >
+                        Destaques Padronizados
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="nav-link editor-nav-link"
+                    [class.active]="activeTab() === 'produtos'"
+                    (click)="setActiveSection('produtos')"
+                  >
+                    Produtos
+                  </button>
+
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+
+        @if (activeTab() === 'dados') {
+          <div class="row g-4">
+            <div class="col-12">
+              <section class="content-card">
+                <div class="section-heading">
+                  <span class="section-eyebrow">Dados Principais</span>
+                  <h2>Identidade da loja</h2>
+                  <p>Preencha aqui o nome público da loja, os textos principais da vitrine e a mensagem institucional que o cliente verá primeiro.</p>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-lg-8">
+                    <app-form-input
+                      label="Nome da loja"
+                      [required]="true"
+                      [control]="form.controls.store_name"
+                      [invalid]="hasFieldError('store_name')"
+                      [errorText]="getFieldError('store_name')"
+                      placeholder="Ex.: Aura Editora"
+                    />
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <app-form-input
+                      label="Subtítulo"
+                      [control]="form.controls.store_subtitle"
+                      placeholder="Ex.: Loja oficial"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Tags"
+                      [control]="form.controls.store_tags"
+                      placeholder="Ex.: fantasia, romance, editora independente"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <label class="banner-toggle">
+                      <input type="checkbox" [formControl]="form.controls.store_in_maintenance" />
+                      <span>Loja em construção / manutenção</span>
+                    </label>
+                  </div>
+
+                  @if (form.controls.store_in_maintenance.value) {
+                    <div class="col-12 col-lg-6">
+                      <app-form-input
+                        label="Título da manutenção"
+                        [control]="form.controls.maintenance_title"
+                        placeholder="Ex.: Estamos em manutenção"
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                      <app-form-textarea
+                        label="Mensagem da manutenção"
+                        [control]="form.controls.maintenance_message"
+                        [rows]="3"
+                        placeholder="Ex.: Nossa loja está temporariamente indisponível. Em breve retornaremos."
+                      />
+                    </div>
+                  }
+
+                  <div class="col-12">
+                    <app-form-textarea
+                      label="Descrição institucional"
+                      [control]="form.controls.store_description"
+                      [rows]="5"
+                      placeholder="Conte em poucas linhas o posicionamento editorial e o tipo de catálogo da loja."
+                    />
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <app-form-input
+                      label="Título principal"
+                      [control]="form.controls.hero_title"
+                      placeholder="Ex.: Livros que merecem ocupar a vitrine"
+                    />
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <app-form-textarea
+                      label="Subtítulo do hero"
+                      [control]="form.controls.hero_subtitle"
+                      [rows]="3"
+                      placeholder="Descreva a proposta da vitrine em um texto curto."
+                    />
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="col-12">
+              <section class="content-card">
+                <div class="section-heading">
+                  <span class="section-eyebrow">Marca</span>
+                  <h2>Logo e favicon</h2>
+                  <p>Envie aqui os arquivos visuais da marca. A logo aparece na loja e o favicon aparece na aba do navegador.</p>
+                </div>
+
+                <div class="row g-4">
+                  <div class="col-12 col-md-6">
+                    <app-image-upload
+                      label="Logo da loja"
+                      [previewUrl]="logoPreview()"
+                      placeholderTitle="Logo não enviada"
+                      placeholderSubtitle="Clique para enviar a logo"
+                      [fullWidth]="true"
+                      (fileSelected)="handleLogoSelected($event)"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-image-upload
+                      label="Favicon"
+                      [previewUrl]="faviconPreview()"
+                      placeholderTitle="Favicon não enviado"
+                      placeholderSubtitle="Clique para enviar o favicon"
+                      (fileSelected)="handleFaviconSelected($event)"
+                    />
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        }
+
+        @if (activeTab() === 'cores') {
+          <section class="content-card">
+            <div class="section-heading">
+              <span class="section-eyebrow">Tema Visual</span>
+              <h2>Cores e aparência</h2>
+              <p>Preencha esta aba na ordem: estrutura, identidade, fundos, textos, status e botões. Use a prévia para validar contraste e leitura.</p>
+            </div>
+
+            <div class="theme-intro-grid">
+              <div class="theme-intro-card">
+                <strong>Comece pela base</strong>
+                <p>Defina primeiro arredondamento, largura e identidade visual. Depois ajuste os detalhes de texto, status e botões.</p>
+              </div>
+
+              <div class="theme-intro-card">
+                <strong>Escolha o estilo do CTA</strong>
+                <p>Use <strong>degradê</strong> se quiser mais impacto visual. Use <strong>sólido</strong> se quiser um botão mais limpo e direto.</p>
+              </div>
+
+              <div class="theme-intro-card">
+                <strong>Separe os selos</strong>
+                <p>Defina uma cor exclusiva para <strong>Lançamento</strong>, <strong>Destaque</strong>, <strong>Promoção</strong> e <strong>% OFF</strong> para evitar confusão visual.</p>
+              </div>
+            </div>
+
+            <div class="row g-4">
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Cabeçalho</span>
+                    <h3>Marca e leitura do topo</h3>
+                    <p>Ajuste aqui como a marca aparece no topo. As cores do cabeçalho e do texto já ficam nos blocos de superfícies e texto desta mesma aba.</p>
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-lg-6">
+                      <app-form-select
+                        label="Exibição da marca"
+                        [control]="form.controls.brand_display_mode"
+                        [options]="brandDisplayOptions"
+                        helperText="Escolha se o topo mostra apenas a logo ou a logo com o nome da loja."
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                      <app-form-select
+                        label="Tamanho da logo"
+                        [control]="form.controls.brand_logo_size"
+                        [options]="brandLogoSizeOptions"
+                        helperText="Pequeno mantém a marca mais discreta. Médio e grande dão mais destaque no topo."
+                      />
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Estrutura</span>
+                    <h3>Formato geral da vitrine</h3>
+                    <p>Defina estas opções antes das cores. Elas montam a base visual da loja e influenciam a leitura da vitrine.</p>
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-lg-4">
+                      <app-form-select
+                        label="Arredondamento dos itens"
+                        [control]="form.controls.corner_style"
+                        [options]="cornerStyleOptions"
+                        helperText="Escolha o nível de arredondamento que melhor combina com a identidade da loja."
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                      <app-form-select
+                        label="Largura do conteúdo"
+                        [control]="form.controls.content_width_mode"
+                        [options]="contentWidthOptions"
+                        helperText="Use centralizado para deixar margens laterais. Use largura total para ocupar mais a tela."
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                      <app-form-select
+                        label="Estilo do botão principal"
+                        [control]="form.controls.button_style"
+                        [options]="buttonStyleOptions"
+                        helperText="Escolha `Degradê` para um botão mais chamativo ou `Sólido` para um visual mais limpo."
+                      />
+                    </div>
+
+                    <div class="col-12">
+                      <div class="font-library-card">
+                        <div class="font-library-head">
+                          <div>
+                            <span class="section-eyebrow">Tipografia</span>
+                            <h3>Fontes instaladas na loja</h3>
+                            <p>Adicione aqui as fontes que a loja pode usar. Depois escolha cada uma nos campos de Site, Menu, Botões e Destaques.</p>
+                          </div>
+
+                          <div class="font-library-actions">
+                            <button type="button" class="section-action" (click)="openInstallFontModal()">Instalar fonte</button>
+                            @if (installedFontSets().length) {
+                              <button type="button" class="section-action is-secondary" (click)="openManageFontsModal()">
+                                Ver fontes
+                              </button>
+                            }
+                          </div>
+                        </div>
+
+                        <div class="empty-state-card">
+                          <strong>
+                            {{ installedFontSets().length ? installedFontSets().length + ' fonte(s) adicionada(s).' : 'Nenhuma fonte adicionada.' }}
+                          </strong>
+                          <p>
+                            @if (installedFontSets().length) {
+                              Abra `Ver fontes` para revisar ou excluir as fontes instaladas.
+                            } @else {
+                              Clique em `Instalar fonte`, cole a URL CSS do Google Fonts e a loja adiciona as famílias automaticamente.
+                            }
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Marca</span>
+                    <h3>Cores-base da identidade</h3>
+                    <p>Preencha primeiro as cores da identidade. Elas servem de referência para o restante da paleta.</p>
+                  </div>
+
+                  <div class="palette-stack">
+                    <app-store-color-field
+                      label="Cor principal"
+                      description="Escolha a cor mais forte da identidade da loja."
+                      usage="Use a cor da marca ou a cor que deve funcionar como referência visual principal."
+                      [control]="form.controls.primary_color"
+                      [invalid]="hasFieldError('primary_color')"
+                      [errorText]="getFieldError('primary_color')"
+                      [required]="true"
+                      placeholder="#7C3AED"
+                      previewLabel="Marca"
+                    />
+
+                    <app-store-color-field
+                      label="Cor secundária"
+                      description="Escolha a segunda cor da identidade para complementar a principal."
+                      usage="Use uma tonalidade que combine com a cor principal sem disputar atenção com ela."
+                      [control]="form.controls.secondary_color"
+                      [invalid]="hasFieldError('secondary_color')"
+                      [errorText]="getFieldError('secondary_color')"
+                      [required]="true"
+                      placeholder="#A78BFA"
+                      previewLabel="Secundária"
+                    />
+
+                    <app-store-color-field
+                      label="Cor de apoio"
+                      description="Escolha uma cor complementar para detalhes e variações visuais."
+                      usage="Use uma cor de apoio para aliviar o excesso da cor principal e enriquecer a composição."
+                      [control]="form.controls.accent_color"
+                      [invalid]="hasFieldError('accent_color')"
+                      [errorText]="getFieldError('accent_color')"
+                      [required]="true"
+                      placeholder="#22C55E"
+                      previewLabel="Apoio"
+                    />
+
+                    <app-store-color-field
+                      label="Cor de destaque geral"
+                      description="Escolha a cor usada para pequenos destaques editoriais da interface."
+                      usage="Use uma cor visível, mas diferente das cores reservadas para `Lançamento`, `Destaque`, `Promoção` e `% OFF`."
+                      [control]="form.controls.highlight_color"
+                      [invalid]="hasFieldError('highlight_color')"
+                      [errorText]="getFieldError('highlight_color')"
+                      [required]="true"
+                      placeholder="#F59E0B"
+                      previewLabel="Destaque geral"
+                      previewMode="badge"
+                    />
+                  </div>
+                </section>
+              </div>
+
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Superfícies</span>
+                    <h3>Fundos e áreas estruturais</h3>
+                    <p>Defina os fundos principais da loja. Priorize contraste suficiente para textos, botões e selos.</p>
+                  </div>
+
+                  <div class="palette-stack">
+                    <app-store-color-field
+                      label="Cor de fundo"
+                      description="Escolha a cor do pano de fundo principal da loja."
+                      usage="Use um tom base que permita boa leitura na página inteira."
+                      [control]="form.controls.background_color"
+                      [invalid]="hasFieldError('background_color')"
+                      [errorText]="getFieldError('background_color')"
+                      [required]="true"
+                      placeholder="#020617"
+                      previewLabel="Fundo da loja"
+                    />
+
+                    <app-store-color-field
+                      label="Fundo do cabeçalho"
+                      description="Escolha a cor da faixa superior da loja."
+                      usage="Use uma cor que destaque marca, busca e ícones sem perder contraste."
+                      [control]="form.controls.header_color"
+                      [invalid]="hasFieldError('header_color')"
+                      [errorText]="getFieldError('header_color')"
+                      [required]="true"
+                      placeholder="#020617"
+                      previewLabel="Cabeçalho"
+                    />
+
+                    <app-store-color-field
+                      label="Fundo do menu"
+                      description="Escolha a cor da faixa de navegação principal."
+                      usage="Use um tom que diferencie o menu do restante da página."
+                      [control]="form.controls.menu_color"
+                      [invalid]="hasFieldError('menu_color')"
+                      [errorText]="getFieldError('menu_color')"
+                      [required]="true"
+                      placeholder="#0F172A"
+                      previewLabel="Menu"
+                    />
+
+                    <app-store-color-field
+                      label="Cor do rodapé"
+                      description="Escolha a cor da área final da loja."
+                      usage="Use um tom que feche a página com contraste e combine com a identidade."
+                      [control]="form.controls.footer_color"
+                      [invalid]="hasFieldError('footer_color')"
+                      [errorText]="getFieldError('footer_color')"
+                      [required]="true"
+                      placeholder="#111827"
+                      previewLabel="Rodapé"
+                    />
+                  </div>
+                </section>
+              </div>
+
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Texto</span>
+                    <h3>Cores de leitura</h3>
+                    <p>Preencha as cores de texto depois dos fundos para validar contraste e legibilidade em cada área.</p>
+                  </div>
+
+                  <div class="palette-stack">
+                    <app-form-select
+                      label="Fonte do site"
+                      [control]="form.controls.font_family"
+                      [options]="detectedFontOptions()"
+                      [required]="true"
+                      [showPlaceholderOption]="false"
+                      helperText="Escolha aqui a fonte do conteúdo principal da loja."
+                    />
+
+                    <app-store-color-field
+                      label="Texto principal"
+                      description="Escolha a cor padrão de títulos, descrições e preços."
+                      usage="Use uma cor com contraste forte sobre o fundo principal."
+                      [control]="form.controls.primary_text_color"
+                      [invalid]="hasFieldError('primary_text_color')"
+                      [errorText]="getFieldError('primary_text_color')"
+                      [required]="true"
+                      placeholder="#F8FAFC"
+                      previewLabel="Título e descrição"
+                      previewMode="text"
+                    />
+
+                    <app-store-color-field
+                      label="Texto do cabeçalho"
+                      description="Escolha a cor dos textos e ícones do topo."
+                      usage="Use uma cor legível sobre o fundo do cabeçalho."
+                      [control]="form.controls.header_text_color"
+                      [invalid]="hasFieldError('header_text_color')"
+                      [errorText]="getFieldError('header_text_color')"
+                      [required]="true"
+                      placeholder="#F8FAFC"
+                      previewLabel="Busca e marca"
+                      previewMode="text"
+                      [previewBackground]="form.controls.header_color.value"
+                    />
+
+                    <app-store-color-field
+                      label="Texto do menu"
+                      description="Escolha a cor dos links de navegação."
+                      usage="Use uma cor clara e fácil de ler sobre o fundo do menu."
+                      [control]="form.controls.menu_text_color"
+                      [invalid]="hasFieldError('menu_text_color')"
+                      [errorText]="getFieldError('menu_text_color')"
+                      [required]="true"
+                      placeholder="#E2E8F0"
+                      previewLabel="Produtos"
+                      previewMode="text"
+                      [previewBackground]="form.controls.menu_color.value"
+                    />
+
+                    <app-store-color-field
+                      label="Texto do rodapé"
+                      description="Escolha a cor dos textos auxiliares do rodapé."
+                      usage="Use uma cor legível sobre o fundo do rodapé, sem competir com o conteúdo principal."
+                      [control]="form.controls.footer_text_color"
+                      [invalid]="hasFieldError('footer_text_color')"
+                      [errorText]="getFieldError('footer_text_color')"
+                      [required]="true"
+                      placeholder="#CBD5E1"
+                      previewLabel="Contato e links"
+                      previewMode="text"
+                      [previewBackground]="form.controls.footer_color.value"
+                    />
+                  </div>
+                </section>
+              </div>
+
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Status</span>
+                    <h3>Destaques exclusivos por tipo</h3>
+                    <p>Defina uma cor exclusiva para cada selo de produto. Evite repetir a mesma cor em funções diferentes.</p>
+                  </div>
+
+                  <div class="palette-stack">
+                    <app-form-select
+                      label="Fonte dos destaques"
+                      [control]="form.controls.font_highlight_family"
+                      [options]="detectedFontOptions()"
+                      [required]="true"
+                      [showPlaceholderOption]="false"
+                      helperText="Escolha aqui a fonte usada em selos, chamadas curtas e destaques visuais."
+                    />
+
+                    <app-store-color-field
+                      label="Selo de lançamento"
+                      description="Escolha a cor reservada para novidades."
+                      usage="Use uma cor que transmita entrada recente e não se confunda com promoção."
+                      [control]="form.controls.launch_badge_color"
+                      [invalid]="hasFieldError('launch_badge_color')"
+                      [errorText]="getFieldError('launch_badge_color')"
+                      [required]="true"
+                      placeholder="#1D4ED8"
+                      previewLabel="Lançamento"
+                      previewMode="badge"
+                    />
+
+                    <app-store-color-field
+                      label="Selo de destaque"
+                      description="Escolha a cor reservada para produtos em evidência."
+                      usage="Use uma cor forte para curadoria, diferente de lançamento e promoção."
+                      [control]="form.controls.featured_badge_color"
+                      [invalid]="hasFieldError('featured_badge_color')"
+                      [errorText]="getFieldError('featured_badge_color')"
+                      [required]="true"
+                      placeholder="#166534"
+                      previewLabel="Destaque"
+                      previewMode="badge"
+                    />
+
+                    <app-store-color-field
+                      label="Selo de promoção"
+                      description="Escolha a cor reservada para produtos promocionais."
+                      usage="Use uma cor que deixe claro que o item está em oferta, sem repetir a cor do desconto percentual."
+                      [control]="form.controls.promotion_badge_color"
+                      [invalid]="hasFieldError('promotion_badge_color')"
+                      [errorText]="getFieldError('promotion_badge_color')"
+                      [required]="true"
+                      placeholder="#C2410C"
+                      previewLabel="Promoção"
+                      previewMode="badge"
+                    />
+
+                    <app-store-color-field
+                      label="Cor de desconto"
+                      description="Escolha a cor do preço riscado e do `% OFF`."
+                      usage="Use uma cor de urgência que destaque economia imediatamente."
+                      [control]="form.controls.discount_color"
+                      [invalid]="hasFieldError('discount_color')"
+                      [errorText]="getFieldError('discount_color')"
+                      [required]="true"
+                      placeholder="#EF4444"
+                      previewLabel="% OFF"
+                      previewMode="badge"
+                    />
+                  </div>
+                </section>
+              </div>
+
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Botões</span>
+                    <h3>Cor e leitura dos CTAs</h3>
+                    <p>Defina separadamente a cor do botão e a cor do texto para garantir leitura clara no CTA.</p>
+                  </div>
+
+                  <div class="palette-stack">
+                    <app-form-select
+                      label="Fonte dos botões"
+                      [control]="form.controls.font_button_family"
+                      [options]="detectedFontOptions()"
+                      [required]="true"
+                      [showPlaceholderOption]="false"
+                      helperText="Escolha aqui a fonte dos botões principais da loja."
+                    />
+
+                    <app-store-color-field
+                      label="Cor do botão principal"
+                      description="Escolha a cor base do principal botão de ação da loja."
+                      usage="Use uma cor chamativa para `Comprar`, `Abrir preview` e outras ações principais."
+                      [control]="form.controls.button_color"
+                      [invalid]="hasFieldError('button_color')"
+                      [errorText]="getFieldError('button_color')"
+                      [required]="true"
+                      placeholder="#7C3AED"
+                      previewLabel="Comprar agora"
+                      previewMode="button"
+                      [previewTextColor]="form.controls.button_text_color.value"
+                    />
+
+                    <app-store-color-field
+                      label="Cor do texto do botão"
+                      description="Escolha a cor do texto que ficará sobre o botão principal."
+                      usage="Use uma cor com contraste forte sobre a cor do botão para leitura imediata."
+                      [control]="form.controls.button_text_color"
+                      [invalid]="hasFieldError('button_text_color')"
+                      [errorText]="getFieldError('button_text_color')"
+                      [required]="true"
+                      placeholder="#F8FAFC"
+                      previewLabel="Comprar agora"
+                      previewMode="text"
+                      [previewBackground]="form.controls.button_color.value"
+                    />
+                  </div>
+                </section>
+              </div>
+
+              <div class="col-12">
+                <section class="theme-group-card">
+                  <div class="section-heading compact">
+                    <span class="section-eyebrow">Rodapé</span>
+                    <h3>Contato e links úteis</h3>
+                    <p>Preencha a faixa final da loja com o texto de contato e os links que devem aparecer no encerramento da página.</p>
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-lg-4">
+                      <app-form-input
+                        label="Título do contato"
+                        [control]="form.controls.footer_contact_title"
+                        placeholder="Ex.: Fale com a loja"
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-8">
+                      <app-form-textarea
+                        label="Texto de contato"
+                        [control]="form.controls.footer_contact_text"
+                        [rows]="3"
+                        placeholder="WhatsApp, e-mail, telefone, horário e informações úteis."
+                      />
+                    </div>
+                  </div>
+
+                  <div class="banner-toolbar mt-4">
+                    <div class="banner-toolbar-copy">
+                      <strong>{{ footerLinks().length }} link(s) no rodapé</strong>
+                      <span>Links úteis como contato, políticas, categorias e páginas institucionais.</span>
+                    </div>
+
+                    <button type="button" class="section-action" (click)="addFooterLink()">Adicionar link</button>
+                  </div>
+
+                  <div class="link-stack">
+                    @for (item of footerLinks(); track $index) {
+                      <article class="link-card">
+                        <div class="row g-3">
+                          <div class="col-12 col-lg-5">
+                            <label class="native-field-label">Rótulo</label>
+                            <input
+                              class="form-control manual-input"
+                              type="text"
+                              [value]="item.label"
+                              placeholder="Ex.: Contato"
+                              (input)="updateFooterLinkField($index, 'label', $event)"
+                            />
+                          </div>
+
+                          <div class="col-12 col-lg-5">
+                            <label class="native-field-label">URL ou âncora</label>
+                            <input
+                              class="form-control manual-input"
+                              type="text"
+                              [value]="item.url"
+                              placeholder="#rodape ou /politica-de-privacidade"
+                              (input)="updateFooterLinkField($index, 'url', $event)"
+                            />
+                          </div>
+
+                          <div class="col-12 col-lg-2 d-flex align-items-end">
+                            <button type="button" class="banner-control is-danger w-100" (click)="removeFooterLink($index)">
+                              Remover
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    }
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+        }
+
+        @if (activeTab() === 'layout') {
+          <section class="content-card">
+            <div class="section-heading">
+              <span class="section-eyebrow">Layout</span>
+              <h2>Blocos da home</h2>
+              <p>Aqui você controla quais blocos aparecem na home e em que ordem eles entram. Somente `header` e `rodapé` são fixos.</p>
+            </div>
+
+            <div class="row g-3 layout-settings-grid">
+              <div class="col-12">
+                <div class="section-heading compact">
+                  <span class="section-eyebrow">Grade de produtos</span>
+                  <h3>Produtos por linha</h3>
+                  <p>Defina separadamente quantos cards aparecem no desktop e no mobile.</p>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-6">
+                <app-form-select
+                  label="Desktop"
+                  [control]="form.controls.products_per_row_desktop"
+                  [options]="productsPerRowDesktopOptions()"
+                  [helperText]="productsPerRowDesktopHelperText()"
+                />
+              </div>
+
+              <div class="col-12 col-lg-6">
+                <app-form-select
+                  label="Mobile"
+                  [control]="form.controls.products_per_row_mobile"
+                  [options]="productsPerRowMobileOptions"
+                  helperText="No mobile a vitrine pode mostrar de 1 a 2 produtos por linha."
+                />
+              </div>
+            </div>
+
+            <div class="section-order-stack" cdkDropList cdkDropListOrientation="vertical" (cdkDropListDropped)="dropSection($event)">
+              @for (item of sectionOrder(); track item.key) {
+                <article class="section-order-card" cdkDrag>
+                  <div class="section-drag-handle" cdkDragHandle aria-label="Arrastar bloco" title="Arrastar bloco">
+                    <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
+                  </div>
+
+                  <div class="section-order-copy">
+                    <strong>{{ $index + 1 }}. {{ sectionCardTitle(item) }}</strong>
+                    <span>{{ sectionCardDescription(item) }}</span>
+                  </div>
+
+                  <div class="section-order-visibility">
+                    <button
+                      type="button"
+                      class="section-icon-button visibility-button"
+                      [class.is-hidden]="!item.visible"
+                      (click)="updateSectionVisibility($index, !item.visible)"
+                      [attr.aria-label]="item.visible ? 'Ocultar bloco' : 'Exibir bloco'"
+                      [title]="item.visible ? 'Ocultar bloco' : 'Exibir bloco'"
+                    >
+                      <i class="fa-solid" [class.fa-eye]="item.visible" [class.fa-eye-slash]="!item.visible" aria-hidden="true"></i>
+                    </button>
+                  </div>
+
+                  <div class="section-order-actions">
+                    @if (isConfigurableProductSection(item.key)) {
+                      <button
+                        type="button"
+                        class="section-icon-button"
+                        [class.is-active]="isSectionEditorOpen(item.key)"
+                        (click)="toggleSectionEditor(item.key)"
+                        aria-label="Editar configurações da vitrine"
+                        title="Editar configurações da vitrine"
+                      >
+                        <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                      </button>
+                    }
+                    <button
+                      type="button"
+                      class="section-icon-button"
+                      [disabled]="$first"
+                      [class.is-disabled]="$first"
+                      (click)="moveSection($index, -1)"
+                      aria-label="Mover bloco para cima"
+                      title="Mover bloco para cima"
+                    >
+                      <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="section-icon-button"
+                      [disabled]="$last"
+                      [class.is-disabled]="$last"
+                      (click)="moveSection($index, 1)"
+                      aria-label="Mover bloco para baixo"
+                      title="Mover bloco para baixo"
+                    >
+                      <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                    </button>
+                  </div>
+
+                  @if (isConfigurableProductSection(item.key) && isSectionEditorOpen(item.key)) {
+                    <div class="section-editor-panel">
+                      <div class="row g-3">
+                        <div class="col-12 col-lg-4">
+                          <label class="native-field-label">Rótulo superior <span class="field-optional">(opcional)</span></label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="editableSectionConfig(item.key).eyebrow"
+                            placeholder="Ex.: Produtos Destaque"
+                            (input)="updateProductSectionField(item.key, 'eyebrow', $event)"
+                          />
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                          <label class="native-field-label">Título *</label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="editableSectionConfig(item.key).title"
+                            placeholder="Ex.: Títulos em evidência"
+                            (input)="updateProductSectionField(item.key, 'title', $event)"
+                          />
+                        </div>
+
+                        <div class="col-12">
+                          <label class="native-field-label">Descrição <span class="field-optional">(opcional)</span></label>
+                          <textarea
+                            class="form-control manual-textarea"
+                            rows="3"
+                            [value]="editableSectionConfig(item.key).description"
+                            placeholder="Explique rapidamente o objetivo desta vitrine."
+                            (input)="updateProductSectionField(item.key, 'description', $event)"
+                          ></textarea>
+                        </div>
+
+                        <div class="col-12">
+                          <label class="native-field-label">Comportamento quando exceder o limite por linha</label>
+                          <select
+                            class="form-select manual-input"
+                            [value]="editableSectionConfig(item.key).display_mode"
+                            (change)="updateProductSectionField(item.key, 'display_mode', $event)"
+                          >
+                            @for (option of productSectionDisplayModeOptions; track option.value) {
+                              <option [value]="option.value">{{ option.label }}</option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+
+            <div class="section-layout-summary">
+              <strong>{{ visibleSectionCount() }} bloco(s) visível(is)</strong>
+              <span>Blocos ocultos não aparecem na loja pública nem no preview do rascunho.</span>
+            </div>
+          </section>
+        }
+
+        @if (activeTab() === 'menu') {
+          <section class="content-card">
+            <div class="section-heading">
+              <span class="section-eyebrow">Menu</span>
+              <h2>Links fixos da navegação</h2>
+              <p>Esses links aparecem na faixa de menu logo abaixo do header da loja.</p>
+            </div>
+
+            <div class="row g-3 layout-settings-grid">
+              <div class="col-12 col-lg-4">
+                <app-form-select
+                  label="Fundo do menu"
+                  [control]="form.controls.menu_background_mode"
+                  [options]="menuBackgroundOptions"
+                />
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <app-form-select
+                  label="Fonte do menu"
+                  [control]="form.controls.font_menu_family"
+                  [options]="detectedFontOptions()"
+                  [required]="true"
+                  [showPlaceholderOption]="false"
+                  helperText="Escolha aqui a fonte dos links da navegação principal e do menu mobile."
+                />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <div class="color-field">
+                  <div class="color-field-top">
+                    <label class="color-label" [class.is-invalid]="hasFieldError('menu_color')">
+                      Cor do menu *
+                    </label>
+                  </div>
+                  <div class="color-field-row">
+                    <input
+                      class="color-picker"
+                      type="color"
+                      [value]="form.controls.menu_color.value"
+                      (input)="updateColor('menu_color', $event)"
+                    />
+                    <input
+                      class="form-control manual-input"
+                      type="text"
+                      [formControl]="form.controls.menu_color"
+                      [class.is-invalid]="hasFieldError('menu_color')"
+                      placeholder="#0F172A"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <div class="color-field">
+                  <div class="color-field-top">
+                    <label class="color-label" [class.is-invalid]="hasFieldError('menu_text_color')">
+                      Texto do menu *
+                    </label>
+                  </div>
+                  <div class="color-field-row">
+                    <input
+                      class="color-picker"
+                      type="color"
+                      [value]="form.controls.menu_text_color.value"
+                      (input)="updateColor('menu_text_color', $event)"
+                    />
+                    <input
+                      class="form-control manual-input"
+                      type="text"
+                      [formControl]="form.controls.menu_text_color"
+                      [class.is-invalid]="hasFieldError('menu_text_color')"
+                      placeholder="#E2E8F0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="banner-toolbar">
+              <div class="banner-toolbar-copy">
+                <strong>{{ menuLinks().length }} link(s) no menu</strong>
+                <span>Itens fixos da loja e links extras, todos com controle de ordem e exibicao.</span>
+              </div>
+
+              <button type="button" class="section-action" (click)="addMenuLink()">Adicionar link</button>
+            </div>
+
+            <div class="link-stack">
+              @for (item of menuLinks(); track $index) {
+                <article class="section-order-card">
+                  <div class="section-order-copy">
+                    <strong>{{ $index + 1 }}. {{ item.label }}</strong>
+                    <span>{{ menuLinkDescription(item) }}</span>
+                  </div>
+
+                  <div class="section-order-visibility">
+                    <button
+                      type="button"
+                      class="section-icon-button visibility-button"
+                      [class.is-active]="item.visible"
+                      [class.is-hidden]="!item.visible"
+                      [attr.aria-label]="item.visible ? 'Ocultar link' : 'Mostrar link'"
+                      [title]="item.visible ? 'Ocultar link' : 'Mostrar link'"
+                      (click)="updateMenuLinkVisibility($index, !item.visible)"
+                    >
+                      <i class="fa-solid" [class.fa-eye]="item.visible" [class.fa-eye-slash]="!item.visible" aria-hidden="true"></i>
+                    </button>
+                  </div>
+
+                  <div class="section-order-actions">
+                    <button
+                      type="button"
+                      class="section-icon-button"
+                      [disabled]="$index === 0"
+                      aria-label="Subir link"
+                      title="Subir link"
+                      (click)="moveMenuLink($index, -1)"
+                    >
+                      <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="section-icon-button"
+                      [disabled]="$index === menuLinks().length - 1"
+                      aria-label="Descer link"
+                      title="Descer link"
+                      (click)="moveMenuLink($index, 1)"
+                    >
+                      <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                    </button>
+
+                    @if (isFixedMenuLink(item)) {
+                      <span class="banner-control">Fixo</span>
+                    } @else {
+                      <button
+                        type="button"
+                        class="banner-control is-danger"
+                        (click)="removeMenuLink($index)"
+                      >
+                        Remover
+                      </button>
+                    }
+                  </div>
+
+                  @if (!isFixedMenuLink(item)) {
+                    <div class="section-editor-panel">
+                      <div class="row g-3">
+                        <div class="col-12 col-lg-5">
+                          <label class="native-field-label">Rótulo</label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="item.label"
+                            placeholder="Ex.: Blog"
+                            (input)="updateMenuLinkField($index, 'label', $event)"
+                          />
+                        </div>
+
+                        <div class="col-12 col-lg-7">
+                          <label class="native-field-label">URL ou âncora</label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="item.url"
+                            placeholder="#lancamentos ou /pagina/blog"
+                            (input)="updateMenuLinkField($index, 'url', $event)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          </section>
+        }
+
+        @if (activeTab() === 'banners') {
+          <section class="content-card">
+            <div class="section-heading">
+              <span class="section-eyebrow">Banner Principal</span>
+              <h2>Sequência do carrossel</h2>
+              <p>Monte vários banners para desktop e mobile com o conteúdo sobreposto à imagem e controle total da posição do bloco.</p>
+            </div>
+
+            <div class="banner-toolbar">
+              <div class="banner-toolbar-copy">
+                <strong>{{ banners().length }} banner(s) configurado(s)</strong>
+                <span>{{ activeBannerCount() }} ativo(s) no carrossel</span>
+              </div>
+
+              <button type="button" class="section-action" (click)="addBanner()">Adicionar banner</button>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12 col-lg-4">
+                <label class="native-field-label">Largura do banner principal</label>
+                <select
+                  class="form-select manual-input"
+                  [formControl]="form.controls.banner_width_mode"
+                  [disabled]="isBannerWidthLockedToLayout()"
+                >
+                  @for (option of bannerWidthOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <label class="native-field-label">Efeito de transição</label>
+                <select class="form-select manual-input" [formControl]="form.controls.banner_effect_mode">
+                  @for (option of bannerEffectOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <app-form-input
+                  label="Tempo por banner (segundos)"
+                  type="number"
+                  [required]="true"
+                  [control]="form.controls.banner_rotation_seconds"
+                  [invalid]="hasFieldError('banner_rotation_seconds')"
+                  [errorText]="getFieldError('banner_rotation_seconds')"
+                  [helperText]="bannerRotationHelperText"
+                  [min]="2"
+                  [max]="15"
+                  [step]="1"
+                  inputmode="numeric"
+                  placeholder="Ex.: 5"
+                />
+              </div>
+
+            </div>
+
+            @if (!banners().length) {
+              <div class="empty-state-card">
+                <strong>Nenhum banner configurado.</strong>
+                <p>Adicione o primeiro item do carrossel para começar a vitrine principal.</p>
+              </div>
+            } @else {
+              <div class="banner-stack">
+                @for (banner of banners(); track banner.id || $index) {
+                  <article class="banner-card">
+                    <div class="banner-card-head">
+                      <div class="banner-card-copy">
+                        <strong>Banner {{ $index + 1 }}</strong>
+                        <span>{{ banner.active ? 'Ativo no carrossel' : 'Pausado' }}</span>
+                      </div>
+
+                      <div class="banner-card-actions">
+                        <button type="button" class="banner-control" (click)="moveBanner($index, -1)">Subir</button>
+                        <button type="button" class="banner-control" (click)="moveBanner($index, 1)">Descer</button>
+                        <button type="button" class="banner-control is-danger" (click)="removeBanner($index)">
+                          Remover
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="row g-3">
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Título do banner</label>
+                        <input
+                          class="form-control manual-input"
+                          type="text"
+                          [value]="banner.title"
+                          placeholder="Ex.: Lançamentos da temporada"
+                          (input)="updateBannerField($index, 'title', $event)"
+                        />
+                      </div>
+
+                      <div class="col-12 col-lg-9">
+                        <label class="native-field-label">Link do banner</label>
+                        <input
+                          class="form-control manual-input"
+                          type="text"
+                          [value]="banner.link"
+                          placeholder="/produto/colecao-especial ou URL externa"
+                          (input)="updateBannerField($index, 'link', $event)"
+                        />
+                      </div>
+
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Eixo horizontal</label>
+                        <select
+                          class="form-select manual-input"
+                          [value]="banner.content_position_x"
+                          (change)="updateBannerField($index, 'content_position_x', $event)"
+                        >
+                          @for (option of bannerContentHorizontalOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Eixo vertical</label>
+                        <select
+                          class="form-select manual-input"
+                          [value]="banner.content_position_y"
+                          (change)="updateBannerField($index, 'content_position_y', $event)"
+                        >
+                          @for (option of bannerContentVerticalOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Ação do link</label>
+                        <select
+                          class="form-select manual-input"
+                          [value]="banner.link_mode"
+                          (change)="updateBannerField($index, 'link_mode', $event)"
+                        >
+                          @for (option of bannerLinkModeOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      @if (banner.link_mode === 'button') {
+                        <div class="col-12 col-lg-3">
+                          <label class="native-field-label">Rótulo do botão</label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="banner.button_label"
+                            placeholder="Ex.: Quero conhecer"
+                            (input)="updateBannerField($index, 'button_label', $event)"
+                          />
+                        </div>
+                      }
+                      @else {
+                        <div class="col-12 col-lg-3"></div>
+                      }
+
+                      <div class="col-12">
+                        <label class="native-field-label">Subtítulo do banner</label>
+                        <textarea
+                          class="form-control manual-textarea"
+                          rows="3"
+                          [value]="banner.subtitle"
+                          placeholder="Texto complementar do slide."
+                          (input)="updateBannerField($index, 'subtitle', $event)"
+                        ></textarea>
+                      </div>
+
+                      <div class="col-12">
+                        <label class="banner-toggle">
+                          <input
+                            type="checkbox"
+                            [checked]="banner.show_content"
+                            (change)="updateBannerShowContent($index, $event)"
+                          />
+                          <span>Exibir conteúdo sobreposto</span>
+                        </label>
+                      </div>
+
+                      <div class="col-12">
+                        <label class="banner-toggle">
+                          <input
+                            type="checkbox"
+                            [checked]="banner.active"
+                            (change)="updateBannerActive($index, $event)"
+                          />
+                          <span>Banner ativo no carrossel</span>
+                        </label>
+                      </div>
+
+                      <div class="col-12 col-xl-6">
+                        <label class="native-field-label">Imagem desktop</label>
+                        <input
+                          #desktopBannerInput
+                          class="visually-hidden"
+                          type="file"
+                          accept="image/*"
+                          (change)="handleBannerDesktopSelected($index, $event)"
+                        />
+                        <button
+                          type="button"
+                          class="banner-upload-button"
+                          (click)="desktopBannerInput.value = ''; desktopBannerInput.click()"
+                        >
+                          {{ banner.desktopPreview ? 'Trocar imagem desktop' : 'Enviar imagem desktop' }}
+                        </button>
+                        <span class="banner-upload-meta">
+                          @if (banner.desktop) {
+                            Arquivo pronto: {{ banner.desktop.largura }} x {{ banner.desktop.altura }} px
+                          } @else {
+                            Nenhuma imagem desktop enviada ainda.
+                          }
+                        </span>
+                        <small class="banner-upload-hint">
+                          Sugestão: largura entre 1400 e 1920 px, altura entre 500 e 620 px.
+                        </small>
+                      </div>
+
+                      <div class="col-12 col-xl-6">
+                        <label class="native-field-label">Imagem mobile</label>
+                        <input
+                          #mobileBannerInput
+                          class="visually-hidden"
+                          type="file"
+                          accept="image/*"
+                          (change)="handleBannerMobileSelected($index, $event)"
+                        />
+                        <button
+                          type="button"
+                          class="banner-upload-button"
+                          (click)="mobileBannerInput.value = ''; mobileBannerInput.click()"
+                        >
+                          {{ banner.mobilePreview ? 'Trocar imagem mobile' : 'Enviar imagem mobile' }}
+                        </button>
+                        <span class="banner-upload-meta">
+                          @if (banner.mobile) {
+                            Arquivo pronto: {{ banner.mobile.largura }} x {{ banner.mobile.altura }} px
+                          } @else {
+                            Nenhuma imagem mobile enviada ainda.
+                          }
+                        </span>
+                        <small class="banner-upload-hint">
+                          Sugestão: 1080 x 1440 px para manter a arte bem distribuída no mobile.
+                        </small>
+                      </div>
+
+                      <div class="col-12">
+                        <div class="banner-preview-grid">
+                          <div class="banner-preview-panel is-desktop">
+                            <span class="banner-preview-label">Prévia desktop</span>
+                            <div class="banner-editor-preview is-desktop" [attr.data-pos-x]="banner.content_position_x" [attr.data-pos-y]="banner.content_position_y">
+                              @if (banner.desktopPreview || banner.mobilePreview; as bannerUrl) {
+                                <img [src]="banner.desktopPreview || banner.mobilePreview" alt="Prévia desktop do banner" />
+                              } @else {
+                                <div class="banner-editor-preview-placeholder"></div>
+                              }
+
+                              @if (banner.show_content) {
+                                <div class="banner-editor-preview-copy">
+                                  <strong>{{ banner.title || form.controls.hero_title.value || 'Título do banner' }}</strong>
+                                  <p>{{ banner.subtitle || form.controls.hero_subtitle.value || 'Texto sobreposto à imagem.' }}</p>
+                                  @if (banner.link_mode === 'button' && banner.button_label.trim()) {
+                                    <button type="button" class="banner-editor-preview-button">{{ banner.button_label }}</button>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          </div>
+
+                          <div class="banner-preview-panel is-mobile">
+                            <span class="banner-preview-label">Prévia mobile</span>
+                            <div class="banner-editor-preview is-mobile" [attr.data-pos-x]="banner.content_position_x" [attr.data-pos-y]="banner.content_position_y">
+                              @if (banner.mobilePreview || banner.desktopPreview; as bannerUrl) {
+                                <img [src]="banner.mobilePreview || banner.desktopPreview" alt="Prévia mobile do banner" />
+                              } @else {
+                                <div class="banner-editor-preview-placeholder"></div>
+                              }
+
+                              @if (banner.show_content) {
+                                <div class="banner-editor-preview-copy">
+                                  <strong>{{ banner.title || form.controls.hero_title.value || 'Título do banner' }}</strong>
+                                  <p>{{ banner.subtitle || form.controls.hero_subtitle.value || 'Texto sobreposto à imagem.' }}</p>
+                                  @if (banner.link_mode === 'button' && banner.button_label.trim()) {
+                                    <button type="button" class="banner-editor-preview-button">{{ banner.button_label }}</button>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+          </section>
+        }
+
+        @if (activeTab() === 'bloco') {
+          <section class="content-card">
+            <div class="section-heading">
+              <span class="section-eyebrow">Bloco Customizado</span>
+              <h2>HTML, CSS e JavaScript do cliente</h2>
+              <p>O conteúdo customizado será renderizado isolado na home, executando o JavaScript apenas dentro do bloco.</p>
+            </div>
+
+
+
+            <div class="mb-4">
+              <div class="font-guide-card">
+                <span class="section-eyebrow">Prévia</span>
+                <strong>{{ customBlockEnabled() ? 'Bloco pronto para a home' : 'Prévia vazia' }}</strong>
+                <p>
+                  {{ customBlockEnabled() ? 'A renderização final vai respeitar o HTML, o CSS e o JavaScript informados aqui.' : 'Quando você preencher o conteúdo, esta área vai mostrar a leitura visual do bloco.' }}
+                </p>
+
+                @if (customBlockHeaderEnabled()) {
+                  <div style="display:grid;gap:.45rem;">
+                    @if (form.controls.custom_block_eyebrow.value.trim()) {
+                      <span class="section-eyebrow">{{ form.controls.custom_block_eyebrow.value.trim() }}</span>
+                    }
+                    @if (form.controls.custom_block_title.value.trim()) {
+                      <h3>{{ form.controls.custom_block_title.value.trim() }}</h3>
+                    }
+                    @if (form.controls.custom_block_description.value.trim()) {
+                      <p>{{ form.controls.custom_block_description.value.trim() }}</p>
+                    }
+                  </div>
+                }
+
+                @if (customBlockEnabled()) {
+                  <iframe
+                    #customBlockFrame
+                    style="display:block;width:100%;min-height:0;border:0;background:transparent;box-shadow:none;"
+                    [style.height.px]="customBlockPreviewHeight()"
+                    sandbox="allow-scripts"
+                    title="Prévia do bloco customizado"
+                  ></iframe>
+                } @else {
+                  <div class="empty-state-card is-empty">
+                    <strong>Minha campanha</strong>
+                    <p>Conteúdo customizado com destaque visual, pensado para a home da loja.</p>
+                    <button type="button" class="section-action">Ver chamada</button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="d-grid gap-3">
+              <app-form-input
+                label="Rotulo superior"
+                [control]="form.controls.custom_block_eyebrow"
+                placeholder="Ex.: Campanha especial"
+              />
+
+              <app-form-input
+                label="Titulo"
+                [control]="form.controls.custom_block_title"
+                placeholder="Ex.: Monte um bloco livre para a sua home"
+              />
+
+              <app-form-textarea
+                label="Descricao"
+                [control]="form.controls.custom_block_description"
+                [rows]="3"
+                placeholder="Texto opcional para contextualizar o bloco antes do HTML customizado."
+              />
+
+              <app-form-textarea
+                label="HTML do bloco"
+                [control]="form.controls.custom_block_html"
+                [rows]="8"
+                placeholder="<section><h2>Minha campanha</h2><p>Conteúdo customizado.</p></section>"
+              />
+
+              <app-form-textarea
+                label="CSS do bloco"
+                [control]="form.controls.custom_block_css"
+                [rows]="8"
+                placeholder=".promo { padding: 2rem; border-radius: 1rem; }"
+              />
+
+              <app-form-textarea
+                label="JavaScript do bloco"
+                [control]="form.controls.custom_block_js"
+                [rows]="8"
+                placeholder="document.querySelectorAll('.promo button').forEach(...);"
+              />
+            </div>
+          </section>
+        }
+
+        @if (activeTab() === 'destaques') {
+          <section class="content-card">
+            <div class="section-heading">
+              <span class="section-eyebrow">Destaques Padronizados</span>
+              <h2>Cards institucionais</h2>
+              <p>Esses cards ficam entre os produtos destaque e os produtos em promoção.</p>
+            </div>
+
+            <div class="banner-toolbar">
+              <div class="banner-toolbar-copy">
+                <strong>{{ featureHighlights().length }} card(s) institucionais</strong>
+                <span>Use ícones simples como `shield`, `truck`, `headset`, `credit-card` ou texto livre.</span>
+              </div>
+
+              <button type="button" class="section-action" (click)="addFeatureHighlight()">Adicionar card</button>
+            </div>
+
+            <div class="highlight-stack">
+              @for (item of featureHighlights(); track $index) {
+                <article class="banner-card">
+                  <div class="row g-3">
+                    <div class="col-12 col-lg-4">
+                      <label class="native-field-label">Título</label>
+                      <input
+                        class="form-control manual-input"
+                        type="text"
+                        [value]="item.title"
+                        placeholder="Ex.: Compra segura"
+                        (input)="updateFeatureHighlightField($index, 'title', $event)"
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-3">
+                      <label class="native-field-label">Ícone</label>
+                      <input
+                        class="form-control manual-input"
+                        type="text"
+                        [value]="item.icon"
+                        placeholder="shield"
+                        (input)="updateFeatureHighlightField($index, 'icon', $event)"
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-5">
+                      <label class="native-field-label">Texto</label>
+                      <textarea
+                        class="form-control manual-textarea"
+                        rows="3"
+                        [value]="item.text"
+                        placeholder="Explique o benefício institucional."
+                        (input)="updateFeatureHighlightField($index, 'text', $event)"
+                      ></textarea>
+                    </div>
+
+                    <div class="col-12">
+                      <button type="button" class="banner-control is-danger" (click)="removeFeatureHighlight($index)">
+                        Remover card
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+
+        @if (activeTab() === 'produtos') {
+          <section class="content-card">
+            <div class="section-heading">
+              <span class="section-eyebrow">Produtos</span>
+              <h2>Curadoria da vitrine</h2>
+              <p>Separei os produtos nas visões que você pediu: categorias, destaques, promoções e lançamentos.</p>
+            </div>
+
+            <div class="products-toolbar">
+              <div class="tabs-grid compact">
+                @for (tab of productTabs; track tab.id) {
+                  <button
+                    type="button"
+                    class="tab-button compact"
+                    [class.is-active]="activeProductTab() === tab.id"
+                    (click)="setActiveProductSection(tab.id)"
+                  >
+                    <strong>{{ tab.label }}</strong>
+                  </button>
+                }
+              </div>
+
+              <a routerLink="/loja/produtos" class="section-link">Abrir gestão completa de produtos</a>
+            </div>
+
+            @if (productsLoadError()) {
+              <div class="alert alert-danger py-2 mb-0">{{ productsLoadError() }}</div>
+            } @else if (!products().length) {
+              <div class="empty-state-card">
+                <strong>Nenhum produto configurado.</strong>
+                <p>Cadastre itens da loja para montar as seções da vitrine pública.</p>
+              </div>
+            } @else {
+              @if (activeProductTab() === 'categorias') {
+                <div class="product-group-stack">
+                  @for (group of categoryGroups(); track group.name) {
+                    <section class="product-group-card">
+                      <div class="product-group-head">
+                        <strong>{{ group.name }}</strong>
+                        <span>{{ group.items.length }} item(ns)</span>
+                      </div>
+
+                      <div class="product-mini-grid">
+                        @for (item of group.items; track item.id) {
+                          <article class="product-mini-card">
+                            <div class="product-mini-top">
+                              <strong>{{ item.nome_exibicao }}</strong>
+                              <span>Ordem {{ item.ordem }}</span>
+                            </div>
+                            <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
+                            <div class="product-mini-bottom">
+                              <span>{{ item.ativo ? 'Ativo' : 'Inativo' }}</span>
+                              <strong>{{ formatPrice(item.em_promocao ? item.preco_promocional : item.preco_venda) }}</strong>
+                            </div>
+                          </article>
+                        }
+                      </div>
+                    </section>
+                  }
+                </div>
+              }
+
+              @if (activeProductTab() === 'destaques') {
+                <div class="product-mini-grid">
+                  @for (item of featuredProducts(); track item.id) {
+                    <article class="product-mini-card">
+                      <div class="product-mini-top">
+                        <strong>{{ item.nome_exibicao }}</strong>
+                        <span>{{ item.categoria || 'Sem categoria' }}</span>
+                      </div>
+                      <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
+                      <div class="product-mini-bottom">
+                        <span>Destaque</span>
+                        <strong>{{ formatPrice(item.preco_venda) }}</strong>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+
+              @if (activeProductTab() === 'promocoes') {
+                <div class="product-mini-grid">
+                  @for (item of promotionProducts(); track item.id) {
+                    <article class="product-mini-card is-promotion">
+                      <div class="product-mini-top">
+                        <strong>{{ item.nome_exibicao }}</strong>
+                        <span>{{ item.categoria || 'Sem categoria' }}</span>
+                      </div>
+                      <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
+                      <div class="product-mini-bottom promo-prices">
+                        <span>{{ formatPrice(item.preco_venda) }}</span>
+                        <strong>{{ formatPrice(item.preco_promocional) }}</strong>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+
+              @if (activeProductTab() === 'lancamentos') {
+                <div class="product-mini-grid">
+                  @for (item of launchProducts(); track item.id) {
+                    <article class="product-mini-card">
+                      <div class="product-mini-top">
+                        <strong>{{ item.nome_exibicao }}</strong>
+                        <span>{{ item.categoria || 'Sem categoria' }}</span>
+                      </div>
+                      <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
+                      <div class="product-mini-bottom">
+                        <span>Lançamento</span>
+                        <strong>{{ formatPrice(item.em_promocao ? item.preco_promocional : item.preco_venda) }}</strong>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            }
+          </section>
+        }
+      </div>
+
+      <div class="col-12 col-xl-4 sidebar-column">
+        <div class="sidebar-stack">
+          <aside class="content-card sticky-actions">
+            <div class="section-heading compact">
+              <span class="section-eyebrow">Ações</span>
+              <h2>Rascunho e publicação</h2>
+              <p>Salve primeiro no rascunho, confira no preview e só depois publique para a loja oficial.</p>
+            </div>
+
+            <div class="action-stack">
+              <app-button type="submit" [block]="true" [disabled]="saving()">
+                @if (saving()) {
+                  Salvando rascunho...
+                } @else {
+                  Salvar rascunho
+                }
+              </app-button>
+
+              <a [href]="previewUrl()" target="_blank" rel="noreferrer" class="sidebar-link-button">
+                Abrir preview do rascunho
+              </a>
+
+              <button
+                type="button"
+                class="sidebar-link-button action-button"
+                [disabled]="publishing() || !hasUnpublishedChanges()"
+                (click)="publishDraft()"
+              >
+                @if (publishing()) {
+                  Publicando loja...
+                } @else {
+                  Publicar loja
+                }
+              </button>
+
+              <a routerLink="/loja/produtos" class="sidebar-link-button">Ir para produtos</a>
+            </div>
+
+            @if (successMessage()) {
+              <div class="alert alert-success py-2 mb-0 mt-3">{{ successMessage() }}</div>
+            }
+
+            @if (errorMessage()) {
+              <div class="alert alert-danger py-2 mb-0 mt-3">{{ errorMessage() }}</div>
+            }
+          </aside>
+        </div>
+      </div>
+    </form>
+  }
+</section>
+
+@if (installFontModalOpen()) {
+  <app-modal
+    title="Instalar fonte"
+    subtitle="Cole a URL CSS do Google Fonts. A loja identifica as familias e salva tudo automaticamente."
+    maxWidth="48rem"
+    (close)="closeInstallFontModal()"
+  >
+    <div modal-body>
+      <div class="section-heading compact">
+        <span class="section-eyebrow">Tipografia</span>
+        <h2>Adicionar nova fonte</h2>
+        <p>Cole a URL CSS. Se a URL tiver mais de uma familia, todas entram na lista da loja automaticamente.</p>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="native-field-label" for="install-font-url">URL CSS do Google Fonts</label>
+          <input
+            id="install-font-url"
+            class="form-control manual-input"
+            type="text"
+            [value]="installFontUrl()"
+            placeholder="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap"
+            (input)="updateInstallFontUrl($event)"
+          />
+        </div>
+      </div>
+
+      @if (installFontErrorMessage()) {
+        <div class="alert alert-danger py-2 mb-0 mt-3">{{ installFontErrorMessage() }}</div>
+      }
+    </div>
+
+    <div modal-footer>
+      <div class="modal-actions">
+        <app-button type="button" variant="secondary" (click)="closeInstallFontModal()">Cancelar</app-button>
+        <app-button type="button" (click)="addInstalledFonts()">Adicionar fonte</app-button>
+      </div>
+    </div>
+  </app-modal>
+}
+
+@if (manageFontsModalOpen()) {
+  <app-modal
+    title="Fontes instaladas"
+    subtitle="Revise as fontes que a loja pode usar e exclua o que nao for mais necessario."
+    maxWidth="56rem"
+    (close)="closeManageFontsModal()"
+  >
+    <div modal-body>
+      <div class="section-heading compact">
+        <span class="section-eyebrow">Tipografia</span>
+        <h2>Gerenciar fontes</h2>
+        <p>Use esta lista para conferir as fontes instaladas e remover o que nao deve mais aparecer nos seletores.</p>
+      </div>
+
+      @if (installedFontSets().length) {
+        <div class="font-install-list">
+          @for (fontSet of installedFontSets(); track fontSet.id) {
+            <article class="font-install-item">
+              <div class="font-install-copy">
+                <strong>{{ fontSet.family }}</strong>
+                <span>{{ fontSet.importUrl }}</span>
+              </div>
+
+              <button type="button" class="banner-control is-danger" (click)="removeInstalledFont(fontSet.id)">
+                Excluir
+              </button>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="empty-state-card">
+          <strong>Nenhuma fonte adicionada.</strong>
+          <p>Feche este modal e use `Instalar fonte` para adicionar uma nova URL CSS.</p>
+        </div>
+      }
+    </div>
+
+    <div modal-footer>
+      <div class="modal-actions">
+        <app-button type="button" variant="secondary" (click)="closeManageFontsModal()">Fechar</app-button>
+      </div>
+    </div>
+  </app-modal>
+}

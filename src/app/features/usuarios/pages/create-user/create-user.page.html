@@ -1,0 +1,315 @@
+    <section class="page-shell container-fluid px-0">
+      <app-page-header eyebrow="Usuários" [title]="isEditMode() ? 'Editar usuário' : 'Cadastrar novo usuário'">
+        <a class="btn btn-outline-secondary" [routerLink]="backRoute()">{{ backLabel() }}</a>
+      </app-page-header>
+
+      <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="col-12 col-xl-8 order-2 order-xl-1">
+          <div class="content-stack">
+            <div class="card border-0 rounded-4">
+              <div class="card-body p-4 p-lg-4">
+                <h2 class="h5 mb-3">Dados principais</h2>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <app-form-input
+                      label="CPF"
+                      [control]="form.controls.cpf"
+                      [required]="true"
+                      [invalid]="hasFieldError('cpf')"
+                      [errorText]="getFieldError('cpf')"
+                      [readonly]="isEditMode()"
+                      inputmode="numeric"
+                      [maxlength]="14"
+                      (inputEvent)="formatCpfInput($event)"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-form-input
+                      label="Email"
+                      [control]="form.controls.email"
+                      [required]="true"
+                      [invalid]="hasFieldError('email')"
+                      [errorText]="getFieldError('email')"
+                      autocomplete="email"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Nome completo"
+                      [control]="form.controls.nome_completo"
+                      [required]="true"
+                      [invalid]="hasFieldError('nome_completo')"
+                      [errorText]="getFieldError('nome_completo')"
+                      autocomplete="name"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-form-input
+                      label="Pseudônimo"
+                      [control]="form.controls.pseudonimo"
+                      [invalid]="hasFieldError('pseudonimo')"
+                      [errorText]="getFieldError('pseudonimo')"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-form-input
+                      label="WhatsApp"
+                      [control]="form.controls.whatsapp"
+                      [required]="true"
+                      [invalid]="hasFieldError('whatsapp')"
+                      [errorText]="getFieldError('whatsapp')"
+                      inputmode="numeric"
+                      [maxlength]="15"
+                      (inputEvent)="formatWhatsappInput($event)"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-form-input
+                      label="Data de nascimento"
+                      type="date"
+                      [control]="form.controls.data_nascimento"
+                      [required]="true"
+                      [invalid]="hasFieldError('data_nascimento')"
+                      [errorText]="getFieldError('data_nascimento')"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-form-input
+                      label="Nacionalidade"
+                      [control]="form.controls.nacionalidade"
+                      [invalid]="hasFieldError('nacionalidade')"
+                      [errorText]="getFieldError('nacionalidade')"
+                    />
+                  </div>
+
+                  @if (!isEditMode()) {
+                    <div class="col-md-6">
+                      <app-form-input
+                        label="Senha inicial"
+                        type="password"
+                        [control]="form.controls.senha"
+                        [required]="true"
+                        [invalid]="hasFieldError('senha')"
+                        [errorText]="getFieldError('senha')"
+                      />
+                    </div>
+                  }
+
+                  <div class="col-12">
+                    <app-form-textarea
+                      label="Descrição"
+                      [control]="form.controls.descricao"
+                      [invalid]="hasFieldError('descricao')"
+                      [errorText]="getFieldError('descricao')"
+                      [rows]="4"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card border-0 rounded-4">
+              <div class="card-body p-4 p-lg-4">
+                <div class="mb-3">
+                  <h2 class="h5 mb-0">Endereço principal</h2>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <app-form-input
+                      label="CEP"
+                      [control]="form.controls.cep"
+                      [invalid]="hasFieldError('cep')"
+                      [errorText]="getFieldError('cep')"
+                      [helperText]="!hasFieldError('cep') ? cepLookupMessage() : ''"
+                      inputmode="numeric"
+                      [maxlength]="9"
+                      placeholder="00000-000"
+                      (inputEvent)="formatCepInput($event)"
+                    />
+                  </div>
+
+                  <div class="col-md-8">
+                    <app-form-input
+                      label="Logradouro"
+                      [control]="form.controls.logradouro"
+                      [invalid]="hasFieldError('logradouro')"
+                      [errorText]="getFieldError('logradouro')"
+                    />
+                  </div>
+
+                  <div class="col-md-4">
+                    <app-form-input
+                      label="Número"
+                      [control]="form.controls.numero"
+                      [invalid]="hasFieldError('numero')"
+                      [errorText]="getFieldError('numero')"
+                    />
+                  </div>
+
+                  <div class="col-md-8">
+                    <app-form-input
+                      label="Complemento"
+                      [control]="form.controls.complemento"
+                      [invalid]="hasFieldError('complemento')"
+                      [errorText]="getFieldError('complemento')"
+                    />
+                  </div>
+
+                  <div class="col-md-4">
+                    <app-form-input
+                      label="Bairro"
+                      [control]="form.controls.bairro"
+                      [invalid]="hasFieldError('bairro')"
+                      [errorText]="getFieldError('bairro')"
+                    />
+                  </div>
+
+                  <div class="col-md-6">
+                    <app-form-input
+                      label="Cidade"
+                      [control]="form.controls.cidade"
+                      [invalid]="hasFieldError('cidade')"
+                      [errorText]="getFieldError('cidade')"
+                    />
+                  </div>
+
+                  <div class="col-md-2">
+                    <app-form-input
+                      label="UF"
+                      [control]="form.controls.uf"
+                      [invalid]="hasFieldError('uf')"
+                      [errorText]="getFieldError('uf')"
+                      [maxlength]="2"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4 order-1 order-xl-2">
+          <div class="aside-stack">
+            <div class="card border-0 rounded-4 photo-card">
+              <div class="card-body p-4 p-lg-4">
+                <app-image-upload
+                  label="Foto do usuário"
+                  [required]="true"
+                  [invalid]="hasPhotoError()"
+                  [errorText]="getPhotoError()"
+                  [previewUrl]="shouldShowPhotoPreview() ? photoPreview() : null"
+                  placeholderTitle="Perfil sem foto"
+                  placeholderSubtitle="Clique para enviar"
+                  ariaLabel="Selecionar foto do usuário"
+                  [fullWidth]="true"
+                  (fileSelected)="onPhotoSelected($event)"
+                  (previewLoad)="handlePhotoPreviewLoad()"
+                  (previewError)="handlePhotoPreviewError($event)"
+                />
+              </div>
+            </div>
+
+            @if (canShowAdminActions()) {
+              <div class="card border-0 rounded-4">
+                <div class="card-body p-4 p-lg-4">
+                  <div class="admin-actions-head">
+                    <div>
+                      <h2 class="h5 mb-1">Ações administrativas</h2>
+                      <p class="admin-actions-copy">Controle de acesso e senha deste usuário.</p>
+                    </div>
+
+                    <span class="status-chip" [ngClass]="getCurrentStatusClass()">
+                      {{ getCurrentStatusLabel() }}
+                    </span>
+                  </div>
+
+                  <div class="admin-actions-grid">
+                    <app-button
+                      type="button"
+                      variant="secondary"
+                      [disabled]="adminActionLoading() || !canActivateUser()"
+                      (click)="activateUser()"
+                    >
+                      Ativar
+                    </app-button>
+
+                    <app-button
+                      type="button"
+                      variant="danger"
+                      [outline]="true"
+                      [disabled]="adminActionLoading() || !canBlockUser()"
+                      (click)="blockUser()"
+                    >
+                      Bloquear
+                    </app-button>
+
+                    <app-button
+                      type="button"
+                      variant="primary"
+                      [outline]="true"
+                      [disabled]="adminActionLoading()"
+                      (click)="resetUserPassword()"
+                    >
+                      Resetar senha
+                    </app-button>
+                  </div>
+
+                  @if (adminActionMessage()) {
+                    <div class="alert alert-success mb-0 mt-3">{{ adminActionMessage() }}</div>
+                  }
+
+                  @if (temporaryPassword()) {
+                    <div class="temporary-password-card">
+                      <span>Senha temporária</span>
+                      <strong>{{ temporaryPassword() }}</strong>
+                    </div>
+                  }
+
+                  @if (adminActionError()) {
+                    <div class="alert alert-danger mb-0 mt-3">{{ adminActionError() }}</div>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (canManageUsers()) {
+              <div class="card border-0 rounded-4">
+                <div class="card-body p-4 p-lg-4">
+                  <h2 class="h5 mb-3">Perfis</h2>
+                  <div class="role-checklist">
+                    <app-form-checkbox label="CLIENTE" [checked]="true" [disabled]="true" />
+                    <app-form-checkbox label="ADMIN" [control]="form.controls.role_admin" />
+                    <app-form-checkbox label="EDITOR" [control]="form.controls.role_editor" />
+                    <app-form-checkbox label="FUNC" [control]="form.controls.role_func" />
+                    <app-form-checkbox label="ESCRITOR" [control]="form.controls.role_escritor" />
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (successMessage()) {
+              <div class="alert alert-success">{{ successMessage() }}</div>
+            }
+
+            <app-button class="w-100 sticky-submit" type="submit" [block]="true" [disabled]="loading() || processingPhoto()">
+              @if (processingPhoto()) {
+                Processando foto...
+              } @else if (loading()) {
+                {{ isEditMode() ? 'Salvando alterações...' : 'Salvando usuário...' }}
+              } @else {
+                {{ isEditMode() ? 'Salvar alterações' : 'Criar usuário' }}
+              }
+            </app-button>
+          </div>
+        </div>
+      </form>
+    </section>
+  

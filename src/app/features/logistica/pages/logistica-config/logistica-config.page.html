@@ -1,0 +1,606 @@
+<app-page-header
+  eyebrow="Logística"
+  title="Configuração de logística"
+  description="Gerencie a origem operacional e os providers de frete usados pela editora."
+/>
+
+<div class="container pb-4">
+  <div class="row g-4">
+    <div class="col-12 col-xl-8">
+      @if (errorMessage()) {
+        <div class="alert alert-danger mb-3">{{ errorMessage() }}</div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success mb-3">{{ successMessage() }}</div>
+      }
+
+      <form class="row g-4" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="col-12">
+          <section class="config-card">
+            <h2>Operação logística</h2>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <app-form-select
+                  label="Provider padrão"
+                  [control]="form.controls.default_provider"
+                  [options]="providerOptions"
+                  [invalid]="hasFieldError('default_provider')"
+                  [errorText]="getFieldError('default_provider')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-6">
+                <app-form-input
+                  label="Timeout (segundos)"
+                  [control]="form.controls.timeout_seconds"
+                  type="number"
+                  [min]="5"
+                  [max]="120"
+                  [invalid]="hasFieldError('timeout_seconds')"
+                  [errorText]="getFieldError('timeout_seconds')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12">
+                <app-form-input
+                  label="Email de contato"
+                  [control]="form.controls.contact_email"
+                  type="email"
+                  autocomplete="email"
+                  [invalid]="hasFieldError('contact_email')"
+                  [errorText]="getFieldError('contact_email')"
+                  [required]="true"
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="config-card">
+            <h2>Origem da expedição</h2>
+            <div class="row g-3">
+              <div class="col-12">
+                <app-form-input
+                  label="Nome da origem"
+                  [control]="form.controls.origin_name"
+                  [invalid]="hasFieldError('origin_name')"
+                  [errorText]="getFieldError('origin_name')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <app-form-input
+                  label="CEP"
+                  [control]="form.controls.origin_cep"
+                  inputmode="numeric"
+                  [maxlength]="9"
+                  [invalid]="hasFieldError('origin_cep')"
+                  [errorText]="getFieldError('origin_cep')"
+                  [required]="true"
+                  (inputEvent)="formatCepInput($event)"
+                />
+              </div>
+
+              <div class="col-12 col-md-8">
+                <app-form-input
+                  label="Endereço"
+                  [control]="form.controls.origin_address"
+                  [invalid]="hasFieldError('origin_address')"
+                  [errorText]="getFieldError('origin_address')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-3">
+                <app-form-input
+                  label="Número"
+                  [control]="form.controls.origin_number"
+                  [invalid]="hasFieldError('origin_number')"
+                  [errorText]="getFieldError('origin_number')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-5">
+                <app-form-input
+                  label="Bairro"
+                  [control]="form.controls.origin_district"
+                  [invalid]="hasFieldError('origin_district')"
+                  [errorText]="getFieldError('origin_district')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-3">
+                <app-form-input
+                  label="Cidade"
+                  [control]="form.controls.origin_city"
+                  [invalid]="hasFieldError('origin_city')"
+                  [errorText]="getFieldError('origin_city')"
+                  [required]="true"
+                />
+              </div>
+
+              <div class="col-12 col-md-1">
+                <app-form-input
+                  label="UF"
+                  [control]="form.controls.origin_state"
+                  [maxlength]="2"
+                  [invalid]="hasFieldError('origin_state')"
+                  [errorText]="getFieldError('origin_state')"
+                  [required]="true"
+                  (inputEvent)="formatStateInput($event)"
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="config-card">
+            <div class="provider-panel" [class.is-expanded]="isProviderExpanded('SUPERFRETE')">
+              <div class="provider-panel-header">
+                <button
+                  type="button"
+                  class="provider-toggle"
+                  (click)="toggleProviderPanel('SUPERFRETE')"
+                >
+                  <div>
+                    <h2>SuperFrete</h2>
+                    <p>Gateway com cálculo de frete por token Bearer e serviços configuráveis.</p>
+                  </div>
+                </button>
+
+                <div class="provider-summary">
+                  <span class="status-chip" [class.is-active]="isProviderEnabled('SUPERFRETE')">
+                    {{ isProviderEnabled('SUPERFRETE') ? 'Habilitado' : 'Desabilitado' }}
+                  </span>
+                  @if (isDefaultProvider('SUPERFRETE')) {
+                    <span class="status-chip is-default">Padrão</span>
+                  }
+                  <button
+                    type="button"
+                    class="collapse-trigger"
+                    (click)="toggleProviderPanel('SUPERFRETE')"
+                  >
+                    {{ isProviderExpanded('SUPERFRETE') ? 'Ocultar' : 'Expandir' }}
+                  </button>
+                </div>
+              </div>
+
+              @if (isProviderExpanded('SUPERFRETE')) {
+                <div class="provider-panel-body row g-3">
+                  <div class="col-12">
+                    <app-form-checkbox
+                      label="Habilitar provider"
+                      [control]="form.controls.superfrete_enabled"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-checkbox
+                      label="Usar sandbox"
+                      [control]="form.controls.superfrete_sandbox"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-8">
+                    <app-form-input
+                      label="Base URL"
+                      [control]="form.controls.superfrete_base_url"
+                      [invalid]="hasFieldError('superfrete_base_url')"
+                      [errorText]="getFieldError('superfrete_base_url')"
+                      [required]="superFreteEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Token"
+                      [control]="form.controls.superfrete_token"
+                      [invalid]="hasFieldError('superfrete_token')"
+                      [errorText]="getFieldError('superfrete_token')"
+                      [required]="superFreteEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-8">
+                    <app-form-input
+                      label="User agent"
+                      [control]="form.controls.superfrete_user_agent"
+                      [invalid]="hasFieldError('superfrete_user_agent')"
+                      [errorText]="getFieldError('superfrete_user_agent')"
+                      [required]="superFreteEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-input
+                      label="Serviços"
+                      [control]="form.controls.superfrete_services"
+                      [invalid]="hasFieldError('superfrete_services')"
+                      [errorText]="getFieldError('superfrete_services')"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="config-card">
+            <div class="provider-panel" [class.is-expanded]="isProviderExpanded('MELHOR_ENVIO')">
+              <div class="provider-panel-header">
+                <button
+                  type="button"
+                  class="provider-toggle"
+                  (click)="toggleProviderPanel('MELHOR_ENVIO')"
+                >
+                  <div>
+                    <h2>Melhor Envio</h2>
+                    <p>Provider inicial de frete integrado ao painel administrativo.</p>
+                  </div>
+                </button>
+
+                <div class="provider-summary">
+                  <span class="status-chip" [class.is-active]="isProviderEnabled('MELHOR_ENVIO')">
+                    {{ isProviderEnabled('MELHOR_ENVIO') ? 'Habilitado' : 'Desabilitado' }}
+                  </span>
+                  @if (isDefaultProvider('MELHOR_ENVIO')) {
+                    <span class="status-chip is-default">Padrão</span>
+                  }
+                  <button
+                    type="button"
+                    class="collapse-trigger"
+                    (click)="toggleProviderPanel('MELHOR_ENVIO')"
+                  >
+                    {{ isProviderExpanded('MELHOR_ENVIO') ? 'Ocultar' : 'Expandir' }}
+                  </button>
+                </div>
+              </div>
+
+              @if (isProviderExpanded('MELHOR_ENVIO')) {
+                <div class="provider-panel-body row g-3">
+                  <div class="col-12">
+                    <app-form-checkbox
+                      label="Habilitar provider"
+                      [control]="form.controls.melhor_envio_enabled"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-checkbox
+                      label="Usar sandbox"
+                      [control]="form.controls.melhor_envio_sandbox"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-8">
+                    <app-form-input
+                      label="Base URL"
+                      [control]="form.controls.melhor_envio_base_url"
+                      [invalid]="hasFieldError('melhor_envio_base_url')"
+                      [errorText]="getFieldError('melhor_envio_base_url')"
+                      [required]="melhorEnvioEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Access token"
+                      [control]="form.controls.melhor_envio_access_token"
+                      [invalid]="hasFieldError('melhor_envio_access_token')"
+                      [errorText]="getFieldError('melhor_envio_access_token')"
+                      [required]="melhorEnvioEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Refresh token"
+                      [control]="form.controls.melhor_envio_refresh_token"
+                      [invalid]="hasFieldError('melhor_envio_refresh_token')"
+                      [errorText]="getFieldError('melhor_envio_refresh_token')"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Client ID"
+                      [control]="form.controls.melhor_envio_client_id"
+                      [invalid]="hasFieldError('melhor_envio_client_id')"
+                      [errorText]="getFieldError('melhor_envio_client_id')"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Client secret"
+                      [control]="form.controls.melhor_envio_client_secret"
+                      [invalid]="hasFieldError('melhor_envio_client_secret')"
+                      [errorText]="getFieldError('melhor_envio_client_secret')"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Redirect URL"
+                      [control]="form.controls.melhor_envio_redirect_url"
+                      [invalid]="hasFieldError('melhor_envio_redirect_url')"
+                      [errorText]="getFieldError('melhor_envio_redirect_url')"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="User agent"
+                      [control]="form.controls.melhor_envio_user_agent"
+                      [invalid]="hasFieldError('melhor_envio_user_agent')"
+                      [errorText]="getFieldError('melhor_envio_user_agent')"
+                      [required]="melhorEnvioEnabled()"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="config-card">
+            <div class="provider-panel" [class.is-expanded]="isProviderExpanded('LOGGI')">
+              <div class="provider-panel-header">
+                <button
+                  type="button"
+                  class="provider-toggle"
+                  (click)="toggleProviderPanel('LOGGI')"
+                >
+                  <div>
+                    <h2>Loggi</h2>
+                    <p>Provider com autenticação OAuth2 e cotação pela API oficial da Loggi.</p>
+                  </div>
+                </button>
+
+                <div class="provider-summary">
+                  <span class="status-chip" [class.is-active]="isProviderEnabled('LOGGI')">
+                    {{ isProviderEnabled('LOGGI') ? 'Habilitado' : 'Desabilitado' }}
+                  </span>
+                  @if (isDefaultProvider('LOGGI')) {
+                    <span class="status-chip is-default">Padrão</span>
+                  }
+                  <button
+                    type="button"
+                    class="collapse-trigger"
+                    (click)="toggleProviderPanel('LOGGI')"
+                  >
+                    {{ isProviderExpanded('LOGGI') ? 'Ocultar' : 'Expandir' }}
+                  </button>
+                </div>
+              </div>
+
+              @if (isProviderExpanded('LOGGI')) {
+                <div class="provider-panel-body row g-3">
+                  <div class="col-12">
+                    <app-form-checkbox
+                      label="Habilitar provider"
+                      [control]="form.controls.loggi_enabled"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-checkbox
+                      label="Usar sandbox"
+                      [control]="form.controls.loggi_sandbox"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-8">
+                    <app-form-input
+                      label="Base URL"
+                      [control]="form.controls.loggi_base_url"
+                      [invalid]="hasFieldError('loggi_base_url')"
+                      [errorText]="getFieldError('loggi_base_url')"
+                      [required]="loggiEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-input
+                      label="Company ID"
+                      [control]="form.controls.loggi_company_id"
+                      [invalid]="hasFieldError('loggi_company_id')"
+                      [errorText]="getFieldError('loggi_company_id')"
+                      [required]="loggiEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-input
+                      label="Client ID"
+                      [control]="form.controls.loggi_client_id"
+                      [invalid]="hasFieldError('loggi_client_id')"
+                      [errorText]="getFieldError('loggi_client_id')"
+                      [required]="loggiEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-input
+                      label="Client secret"
+                      [control]="form.controls.loggi_client_secret"
+                      [invalid]="hasFieldError('loggi_client_secret')"
+                      [errorText]="getFieldError('loggi_client_secret')"
+                      [required]="loggiEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Pickup type"
+                      [control]="form.controls.loggi_pickup_type"
+                      [invalid]="hasFieldError('loggi_pickup_type')"
+                      [errorText]="getFieldError('loggi_pickup_type')"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="External service ID"
+                      [control]="form.controls.loggi_external_service_id"
+                      [invalid]="hasFieldError('loggi_external_service_id')"
+                      [errorText]="getFieldError('loggi_external_service_id')"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+
+        <div class="col-12">
+          <section class="config-card">
+            <div class="provider-panel" [class.is-expanded]="isProviderExpanded('FRENET')">
+              <div class="provider-panel-header">
+                <button
+                  type="button"
+                  class="provider-toggle"
+                  (click)="toggleProviderPanel('FRENET')"
+                >
+                  <div>
+                    <h2>Frenet</h2>
+                    <p>Gateway multi-transportadora com cotação via token administrativo da Frenet.</p>
+                  </div>
+                </button>
+
+                <div class="provider-summary">
+                  <span class="status-chip" [class.is-active]="isProviderEnabled('FRENET')">
+                    {{ isProviderEnabled('FRENET') ? 'Habilitado' : 'Desabilitado' }}
+                  </span>
+                  @if (isDefaultProvider('FRENET')) {
+                    <span class="status-chip is-default">Padrão</span>
+                  }
+                  <button
+                    type="button"
+                    class="collapse-trigger"
+                    (click)="toggleProviderPanel('FRENET')"
+                  >
+                    {{ isProviderExpanded('FRENET') ? 'Ocultar' : 'Expandir' }}
+                  </button>
+                </div>
+              </div>
+
+              @if (isProviderExpanded('FRENET')) {
+                <div class="provider-panel-body row g-3">
+                  <div class="col-12">
+                    <app-form-checkbox
+                      label="Habilitar provider"
+                      [control]="form.controls.frenet_enabled"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <app-form-checkbox
+                      label="Usar sandbox"
+                      [control]="form.controls.frenet_sandbox"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-8">
+                    <app-form-input
+                      label="Base URL"
+                      [control]="form.controls.frenet_base_url"
+                      [invalid]="hasFieldError('frenet_base_url')"
+                      [errorText]="getFieldError('frenet_base_url')"
+                      [required]="frenetEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <app-form-input
+                      label="Token"
+                      [control]="form.controls.frenet_token"
+                      [invalid]="hasFieldError('frenet_token')"
+                      [errorText]="getFieldError('frenet_token')"
+                      [required]="frenetEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Plataforma"
+                      [control]="form.controls.frenet_platform"
+                      [invalid]="hasFieldError('frenet_platform')"
+                      [errorText]="getFieldError('frenet_platform')"
+                      [required]="frenetEnabled()"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <app-form-input
+                      label="Versão da plataforma"
+                      [control]="form.controls.frenet_platform_ver"
+                      [invalid]="hasFieldError('frenet_platform_ver')"
+                      [errorText]="getFieldError('frenet_platform_ver')"
+                      [required]="frenetEnabled()"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="sticky-column">
+        <section class="config-card">
+          <h2>Status dos providers</h2>
+          <div class="provider-status-list">
+            @for (provider of providerStatuses(); track provider.code) {
+              <div class="provider-status-item">
+                <div>
+                  <strong>{{ provider.label }}</strong>
+                  <span>{{ provider.code }}</span>
+                </div>
+                <div class="status-chips">
+                  <span class="status-chip" [class.is-active]="provider.enabled">
+                    {{ provider.enabled ? 'Ativo' : 'Desativado' }}
+                  </span>
+                  <span class="status-chip" [class.is-ready]="provider.configured">
+                    {{ provider.configured ? 'Configurado' : 'Incompleto' }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="config-card">
+          <h2>Última atualização</h2>
+          <p class="meta-copy">{{ formatDateTime(updatedAt()) }}</p>
+          <div class="action-stack">
+            <app-button
+              type="button"
+              [disabled]="loading() || saving()"
+              [block]="true"
+              (click)="submit()"
+            >
+              {{ saving() ? 'Salvando...' : 'Salvar configuração' }}
+            </app-button>
+            <a class="btn btn-outline-light action-link" routerLink="/logistica/cotacao">
+              Consultar frete
+            </a>
+            <a class="btn btn-outline-light action-link" routerLink="/">Voltar ao painel</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
