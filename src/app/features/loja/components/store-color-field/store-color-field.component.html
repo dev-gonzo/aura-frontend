@@ -34,12 +34,20 @@
     />
   </div>
 
-  <div class="palette-preview">
-    <span class="palette-preview-label">Prévia</span>
-    <div class="palette-preview-shell">
-      <span class="palette-preview-chip" [class.is-text]="previewMode === 'text'" [class.is-button]="previewMode === 'button'" [class.is-badge]="previewMode === 'badge'" [ngStyle]="previewStyles">
-        {{ previewLabel }}
-      </span>
+  @if (showPreview) {
+    <div class="palette-preview">
+      <span class="palette-preview-label">Prévia</span>
+      <div class="palette-preview-shell">
+        <span
+          class="palette-preview-chip"
+          [class.is-text]="previewMode === 'text'"
+          [class.is-button]="previewMode === 'button'"
+          [class.is-badge]="previewMode === 'badge'"
+          [ngStyle]="previewStyles"
+        >
+          {{ previewLabel }}
+        </span>
+      </div>
     </div>
-  </div>
+  }
 </article>

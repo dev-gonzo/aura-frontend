@@ -28,6 +28,7 @@ export class StoreColorFieldComponent {
   @Input() previewBackground = '';
   @Input() previewTextColor = '#F8FAFC';
   @Input() previewOutline = '';
+  @Input() showPreview = true;
 
   protected get currentColor(): string {
     return this.control?.value || '#000000';

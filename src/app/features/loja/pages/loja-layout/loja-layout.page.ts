@@ -157,6 +157,32 @@ interface EditableInstitutionalSectionConfig {
   background_color: string;
 }
 
+interface EditableProductListingConfig {
+  show_buy_button: boolean;
+  buy_button_label: string;
+  buy_button_uppercase: boolean;
+  show_add_to_cart_button: boolean;
+  add_to_cart_button_label: string;
+  add_to_cart_button_uppercase: boolean;
+  show_price: boolean;
+  show_compare_price: boolean;
+  show_tags: boolean;
+  card_background_color: string;
+  show_border: boolean;
+  border_color: string;
+  border_width: number;
+  show_shadow: boolean;
+  shadow_direction: 'top' | 'bottom' | 'left' | 'right' | 'bottom-left' | 'bottom-right';
+  shadow_intensity: 'soft' | 'medium' | 'strong';
+  use_default_title_color: boolean;
+  title_text_color: string;
+  use_default_body_color: boolean;
+  body_text_color: string;
+  secondary_button_color: string;
+  secondary_button_text_color: string;
+  button_shape: 'sharp' | 'soft' | 'rounded' | 'pill';
+}
+
 interface EditableSectionOrderItem {
   key: StorefrontSectionKey;
   label: string;
@@ -256,6 +282,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly manageFontsModalOpen = signal(false);
   protected readonly installFontUrl = signal('');
   protected readonly installFontErrorMessage = signal('');
+  protected readonly productListingConfig = signal<EditableProductListingConfig>(this.createDefaultProductListingConfig());
   protected readonly productSectionConfigs = signal<Record<ConfigurableProductSectionKey, EditableProductSectionConfig>>({
     launches: this.createDefaultProductSectionConfig('launches'),
     featured: this.createDefaultProductSectionConfig('featured'),
@@ -287,6 +314,11 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
 
   private readonly logoAsset = signal<StoreImagePayload | null>(null);
   private readonly faviconAsset = signal<StoreImagePayload | null>(null);
+  protected readonly secondaryButtonColorControl = this.formBuilder.nonNullable.control('#14224A');
+  protected readonly secondaryButtonTextColorControl = this.formBuilder.nonNullable.control('#F8FAFC');
+  protected readonly buttonShapeControl = this.formBuilder.nonNullable.control<'sharp' | 'soft' | 'rounded' | 'pill'>(
+    'soft'
+  );
 
   protected readonly form = this.formBuilder.nonNullable.group({
     store_name: ['Aura', Validators.required],
@@ -462,6 +494,25 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly institutionalSectionWidthModeOptions: FormSelectOption[] = [
     { value: 'contained', label: 'Conteudo centralizado' },
     { value: 'full_width', label: 'Largura total' },
+  ];
+  protected readonly productListingShadowDirectionOptions: FormSelectOption[] = [
+    { value: 'bottom', label: 'Para baixo' },
+    { value: 'top', label: 'Para cima' },
+    { value: 'left', label: 'Para esquerda' },
+    { value: 'right', label: 'Para direita' },
+    { value: 'bottom-left', label: 'Diagonal esquerda' },
+    { value: 'bottom-right', label: 'Diagonal direita' },
+  ];
+  protected readonly productListingShadowIntensityOptions: FormSelectOption[] = [
+    { value: 'soft', label: 'Suave' },
+    { value: 'medium', label: 'Media' },
+    { value: 'strong', label: 'Forte' },
+  ];
+  protected readonly productListingButtonShapeOptions: FormSelectOption[] = [
+    { value: 'sharp', label: 'Reto' },
+    { value: 'soft', label: 'Curva leve' },
+    { value: 'rounded', label: 'Curva forte' },
+    { value: 'pill', label: 'Pill' },
   ];
   protected readonly bannerContentHorizontalOptions: FormSelectOption[] = [
     { value: 'left', label: 'Esquerda' },
@@ -760,6 +811,33 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         this.refreshInstalledFontSets();
         this.syncFontConfiguration();
         this.syncPreviewFontAsset();
+      });
+
+    this.secondaryButtonColorControl.valueChanges
+      .pipe(startWith(this.secondaryButtonColorControl.value))
+      .subscribe((value) => {
+        this.productListingConfig.update((current) => ({
+          ...current,
+          secondary_button_color: value || '#14224A',
+        }));
+      });
+
+    this.secondaryButtonTextColorControl.valueChanges
+      .pipe(startWith(this.secondaryButtonTextColorControl.value))
+      .subscribe((value) => {
+        this.productListingConfig.update((current) => ({
+          ...current,
+          secondary_button_text_color: value || '#F8FAFC',
+        }));
+      });
+
+    this.buttonShapeControl.valueChanges
+      .pipe(startWith(this.buttonShapeControl.value))
+      .subscribe((value) => {
+        this.productListingConfig.update((current) => ({
+          ...current,
+          button_shape: value || 'soft',
+        }));
       });
 
     await this.load();
@@ -1152,6 +1230,32 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     );
   }
 
+  protected updateProductListingBooleanField(field: keyof EditableProductListingConfig, event: Event): void {
+    const checked = (event.target as HTMLInputElement | null)?.checked ?? false;
+    this.productListingConfig.update((current) => ({
+      ...current,
+      [field]: checked,
+    }));
+  }
+
+  protected updateProductListingField(
+    field: keyof EditableProductListingConfig,
+    event: Event
+  ): void {
+    const value = (event.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null)?.value ?? '';
+    if (field === 'secondary_button_color') {
+      this.secondaryButtonColorControl.setValue(value || '#14224A', { emitEvent: false });
+    }
+    if (field === 'secondary_button_text_color') {
+      this.secondaryButtonTextColorControl.setValue(value || '#F8FAFC', { emitEvent: false });
+    }
+    this.productListingConfig.update((current) => ({
+      ...current,
+      [field]: field === 'border_width' ? Number(value) || 0 : value,
+      ...(field === 'card_background_color' ? { border_color: value } : {}),
+    }));
+  }
+
   protected async handleBannerDesktopSelected(index: number, event: Event): Promise<void> {
     await this.processBannerImageSelection(index, event, processStoreBannerDesktop, 'desktop');
   }
@@ -1261,6 +1365,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         custom_block_js: value.custom_block_js,
         feature_highlights: this.featureHighlights().map((item) => this.toFeatureHighlightPayload(item)),
         institutional_section: this.toInstitutionalSectionPayload(),
+        product_listing_config: this.toProductListingConfigPayload(),
         footer_links: this.footerLinks().map((item) => this.toNavigationLinkPayload(item)),
         footer_contact_title: value.footer_contact_title.trim(),
         footer_contact_text: value.footer_contact_text.trim(),
@@ -1388,6 +1493,18 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       this.footerLinks.set(this.mapFooterLinks(config.footer_links));
       this.featureHighlights.set(this.mapFeatureHighlights(config.feature_highlights));
       this.institutionalSectionConfig.set(this.mapInstitutionalSection(config.institutional_section));
+      this.productListingConfig.set(this.mapProductListingConfig(config.product_listing_config));
+      this.secondaryButtonColorControl.setValue(
+        this.mapProductListingConfig(config.product_listing_config).secondary_button_color,
+        { emitEvent: false }
+      );
+      this.secondaryButtonTextColorControl.setValue(
+        this.mapProductListingConfig(config.product_listing_config).secondary_button_text_color,
+        { emitEvent: false }
+      );
+      this.buttonShapeControl.setValue(this.mapProductListingConfig(config.product_listing_config).button_shape, {
+        emitEvent: false,
+      });
       this.refreshInstalledFontSets();
       this.syncFontConfiguration();
       this.syncPreviewFontAsset();
@@ -1915,6 +2032,35 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     };
   }
 
+  private toProductListingConfigPayload() {
+    const config = this.productListingConfig();
+    return {
+      show_buy_button: config.show_buy_button,
+      buy_button_label: config.buy_button_label.trim(),
+      buy_button_uppercase: config.buy_button_uppercase,
+      show_add_to_cart_button: config.show_add_to_cart_button,
+      add_to_cart_button_label: config.add_to_cart_button_label.trim(),
+      add_to_cart_button_uppercase: config.add_to_cart_button_uppercase,
+      show_price: config.show_price,
+      show_compare_price: config.show_compare_price,
+      show_tags: config.show_tags,
+      card_background_color: config.card_background_color,
+      show_border: config.show_border,
+      border_color: config.border_color.trim(),
+      border_width: Number(config.border_width) || 0,
+      show_shadow: config.show_shadow,
+      shadow_direction: config.shadow_direction,
+      shadow_intensity: config.shadow_intensity,
+      use_default_title_color: config.use_default_title_color,
+      title_text_color: config.title_text_color,
+      use_default_body_color: config.use_default_body_color,
+      body_text_color: config.body_text_color,
+      secondary_button_color: config.secondary_button_color,
+      secondary_button_text_color: config.secondary_button_text_color,
+      button_shape: this.buttonShapeControl.value,
+    };
+  }
+
   private mapResponseBanners(config: {
     banners?: StoreBannerPayload[];
     banner_desktop?: StoreImagePayload | null;
@@ -2131,6 +2277,59 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     };
   }
 
+  private mapProductListingConfig(value?: {
+    show_buy_button?: boolean;
+    buy_button_label?: string;
+    buy_button_uppercase?: boolean;
+    show_add_to_cart_button?: boolean;
+    add_to_cart_button_label?: string;
+    add_to_cart_button_uppercase?: boolean;
+    show_price?: boolean;
+    show_compare_price?: boolean;
+    show_tags?: boolean;
+    card_background_color?: string;
+    show_border?: boolean;
+    border_color?: string;
+    border_width?: number;
+    show_shadow?: boolean;
+    shadow_direction?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-left' | 'bottom-right';
+    shadow_intensity?: 'soft' | 'medium' | 'strong';
+    use_default_title_color?: boolean;
+    title_text_color?: string;
+    use_default_body_color?: boolean;
+    body_text_color?: string;
+    secondary_button_color?: string;
+    secondary_button_text_color?: string;
+    button_shape?: 'sharp' | 'soft' | 'rounded' | 'pill';
+  }): EditableProductListingConfig {
+    const defaults = this.createDefaultProductListingConfig();
+    return {
+      show_buy_button: value?.show_buy_button ?? defaults.show_buy_button,
+      buy_button_label: value?.buy_button_label ?? defaults.buy_button_label,
+      buy_button_uppercase: value?.buy_button_uppercase ?? defaults.buy_button_uppercase,
+      show_add_to_cart_button: value?.show_add_to_cart_button ?? defaults.show_add_to_cart_button,
+      add_to_cart_button_label: value?.add_to_cart_button_label ?? defaults.add_to_cart_button_label,
+      add_to_cart_button_uppercase: value?.add_to_cart_button_uppercase ?? defaults.add_to_cart_button_uppercase,
+      show_price: value?.show_price ?? defaults.show_price,
+      show_compare_price: value?.show_compare_price ?? defaults.show_compare_price,
+      show_tags: value?.show_tags ?? defaults.show_tags,
+      card_background_color: value?.card_background_color ?? defaults.card_background_color,
+      show_border: value?.show_border ?? defaults.show_border,
+      border_color: value?.border_color ?? defaults.border_color,
+      border_width: value?.border_width ?? defaults.border_width,
+      show_shadow: value?.show_shadow ?? defaults.show_shadow,
+      shadow_direction: value?.shadow_direction ?? defaults.shadow_direction,
+      shadow_intensity: value?.shadow_intensity ?? defaults.shadow_intensity,
+      use_default_title_color: value?.use_default_title_color ?? defaults.use_default_title_color,
+      title_text_color: value?.title_text_color ?? defaults.title_text_color,
+      use_default_body_color: value?.use_default_body_color ?? defaults.use_default_body_color,
+      body_text_color: value?.body_text_color ?? defaults.body_text_color,
+      secondary_button_color: value?.secondary_button_color ?? defaults.secondary_button_color,
+      secondary_button_text_color: value?.secondary_button_text_color ?? defaults.secondary_button_text_color,
+      button_shape: value?.button_shape ?? defaults.button_shape,
+    };
+  }
+
   private mapProductSectionConfig(
     key: ConfigurableProductSectionKey,
     value?: StoreProductSectionConfigPayload
@@ -2250,6 +2449,34 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
           display_mode: 'wrap',
         };
     }
+  }
+
+  private createDefaultProductListingConfig(): EditableProductListingConfig {
+    return {
+      show_buy_button: true,
+      buy_button_label: 'Comprar',
+      buy_button_uppercase: false,
+      show_add_to_cart_button: true,
+      add_to_cart_button_label: 'Add ao carrinho',
+      add_to_cart_button_uppercase: false,
+      show_price: true,
+      show_compare_price: true,
+      show_tags: true,
+      card_background_color: '#07153A',
+      show_border: true,
+      border_color: 'rgba(99, 102, 241, 0.2)',
+      border_width: 1,
+      show_shadow: true,
+      shadow_direction: 'bottom',
+      shadow_intensity: 'medium',
+      use_default_title_color: true,
+      title_text_color: '#F8FAFC',
+      use_default_body_color: true,
+      body_text_color: '#B5C0DC',
+      secondary_button_color: '#14224A',
+      secondary_button_text_color: '#F8FAFC',
+      button_shape: 'soft',
+    };
   }
 
   private normalizeFeatureHighlightIcon(icon: string | undefined): string {

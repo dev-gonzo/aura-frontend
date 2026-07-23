@@ -691,7 +691,7 @@
                     />
 
                     <app-store-color-field
-                      label="Cor do texto do botão"
+                      label="Cor do texto do botão principal"
                       description="Escolha a cor do texto que ficará sobre o botão principal."
                       usage="Use uma cor com contraste forte sobre a cor do botão para leitura imediata."
                       [control]="form.controls.button_text_color"
@@ -702,6 +702,32 @@
                       previewLabel="Comprar agora"
                       previewMode="text"
                       [previewBackground]="form.controls.button_color.value"
+                      [showPreview]="false"
+                    />
+
+                    <app-store-color-field
+                      label="Cor do botão secundário"
+                      description="Escolha a cor base do CTA secundário da listagem."
+                      usage="Use aqui a cor do `Add ao carrinho` e outras ações de apoio da vitrine."
+                      [control]="secondaryButtonColorControl"
+                      [required]="true"
+                      placeholder="#14224A"
+                      previewLabel="Add ao carrinho"
+                      previewMode="button"
+                      [previewTextColor]="secondaryButtonTextColorControl.value"
+                    />
+
+                    <app-store-color-field
+                      label="Cor do texto do botão secundário"
+                      description="Escolha a cor do texto que ficará sobre o botão secundário."
+                      usage="Use uma cor com contraste forte sobre o CTA secundário para garantir leitura imediata."
+                      [control]="secondaryButtonTextColorControl"
+                      [required]="true"
+                      placeholder="#F8FAFC"
+                      previewLabel="Add ao carrinho"
+                      previewMode="text"
+                      [previewBackground]="secondaryButtonColorControl.value"
+                      [showPreview]="false"
                     />
                   </div>
                 </section>
@@ -1741,118 +1767,339 @@
           <section class="content-card">
             <div class="section-heading">
               <span class="section-eyebrow">Produtos</span>
-              <h2>Curadoria da vitrine</h2>
-              <p>Separei os produtos nas visões que você pediu: categorias, destaques, promoções e lançamentos.</p>
+              <h2>Configuração da listagem</h2>
+              <p>Defina aqui o comportamento visual dos cards e botões dos produtos na home e no catálogo. As cores dos botões continuam vindo da aba de Cores e Tema.</p>
             </div>
 
-            <div class="products-toolbar">
-              <div class="tabs-grid compact">
-                @for (tab of productTabs; track tab.id) {
-                  <button
-                    type="button"
-                    class="tab-button compact"
-                    [class.is-active]="activeProductTab() === tab.id"
-                    (click)="setActiveProductSection(tab.id)"
-                  >
-                    <strong>{{ tab.label }}</strong>
-                  </button>
-                }
+            <div class="d-grid gap-4">
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="empty-state-card">
+                    <strong>Botão principal e secundário</strong>
+                    <p>O botão principal continua seguindo a identidade definida em `Cores e Tema`. Já o botão secundário pode receber uma cor própria nesta configuração.</p>
+                  </div>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                  <article class="banner-card h-100">
+                    <div class="section-heading compact">
+                      <span class="section-eyebrow">Comprar</span>
+                      <h3>Botão principal</h3>
+                      <p>Quando este botão estiver oculto, os ajustes de texto ficam bloqueados automaticamente.</p>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                      <label class="banner-toggle">
+                        <input
+                          type="checkbox"
+                          [checked]="productListingConfig().show_buy_button"
+                          (change)="updateProductListingBooleanField('show_buy_button', $event)"
+                        />
+                        <span>Exibir botão Comprar</span>
+                      </label>
+
+                      <div>
+                        <label class="native-field-label">Texto do botão</label>
+                        <input
+                          class="form-control manual-input"
+                          type="text"
+                          [value]="productListingConfig().buy_button_label"
+                          [disabled]="!productListingConfig().show_buy_button"
+                          placeholder="Comprar"
+                          (input)="updateProductListingField('buy_button_label', $event)"
+                        />
+                      </div>
+
+                      <label class="banner-toggle">
+                        <input
+                          type="checkbox"
+                          [checked]="productListingConfig().buy_button_uppercase"
+                          [disabled]="!productListingConfig().show_buy_button"
+                          (change)="updateProductListingBooleanField('buy_button_uppercase', $event)"
+                        />
+                        <span>Texto em maiúsculas</span>
+                      </label>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                  <article class="banner-card h-100">
+                    <div class="section-heading compact">
+                      <span class="section-eyebrow">Carrinho</span>
+                      <h3>Botão secundário</h3>
+                      <p>Use esta opção para decidir se a listagem mostra ou não o botão de adicionar ao carrinho.</p>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                      <label class="banner-toggle">
+                        <input
+                          type="checkbox"
+                          [checked]="productListingConfig().show_add_to_cart_button"
+                          (change)="updateProductListingBooleanField('show_add_to_cart_button', $event)"
+                        />
+                        <span>Exibir Add ao carrinho</span>
+                      </label>
+
+                      <div>
+                        <label class="native-field-label">Texto do botão</label>
+                        <input
+                          class="form-control manual-input"
+                          type="text"
+                          [value]="productListingConfig().add_to_cart_button_label"
+                          [disabled]="!productListingConfig().show_add_to_cart_button"
+                          placeholder="Add ao carrinho"
+                          (input)="updateProductListingField('add_to_cart_button_label', $event)"
+                        />
+                      </div>
+
+                      <label class="banner-toggle">
+                        <input
+                          type="checkbox"
+                          [checked]="productListingConfig().add_to_cart_button_uppercase"
+                          [disabled]="!productListingConfig().show_add_to_cart_button"
+                          (change)="updateProductListingBooleanField('add_to_cart_button_uppercase', $event)"
+                        />
+                        <span>Texto em maiúsculas</span>
+                      </label>
+                    </div>
+                  </article>
+                </div>
               </div>
 
-              <a routerLink="/loja/produtos" class="section-link">Abrir gestão completa de produtos</a>
+              <div class="row g-3">
+                <div class="col-12 col-lg-4">
+                  <label class="banner-toggle">
+                    <input
+                      type="checkbox"
+                      [checked]="productListingConfig().show_price"
+                      (change)="updateProductListingBooleanField('show_price', $event)"
+                    />
+                    <span>Exibir preço na listagem</span>
+                  </label>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                  <label class="banner-toggle">
+                    <input
+                      type="checkbox"
+                      [checked]="productListingConfig().show_compare_price"
+                      [disabled]="!productListingConfig().show_price"
+                      (change)="updateProductListingBooleanField('show_compare_price', $event)"
+                    />
+                    <span>Exibir valor riscado em promoção</span>
+                  </label>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                  <label class="banner-toggle">
+                    <input
+                      type="checkbox"
+                      [checked]="productListingConfig().show_tags"
+                      (change)="updateProductListingBooleanField('show_tags', $event)"
+                    />
+                    <span>Exibir tags e selos do card</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <article class="banner-card">
+                    <div class="section-heading compact">
+                      <span class="section-eyebrow">Card</span>
+                      <h3>Aparência do produto</h3>
+                      <p>Esses ajustes afetam o card compartilhado entre a home e a tela de produtos.</p>
+                    </div>
+
+                    <div class="row g-3">
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Cor de fundo do card</label>
+                        <div class="d-flex gap-2 align-items-center">
+                          <input
+                            class="form-control form-control-color"
+                            type="color"
+                            [value]="productListingConfig().card_background_color"
+                            (input)="updateProductListingField('card_background_color', $event)"
+                          />
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().card_background_color"
+                            placeholder="#07153A"
+                            (input)="updateProductListingField('card_background_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Formato do botão</label>
+                        <select
+                          class="form-select manual-select"
+                          [formControl]="buttonShapeControl"
+                        >
+                          @for (option of productListingButtonShapeOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="banner-toggle">
+                          <input
+                            type="checkbox"
+                            [checked]="productListingConfig().show_border"
+                            (change)="updateProductListingBooleanField('show_border', $event)"
+                          />
+                          <span>Exibir borda no card</span>
+                        </label>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="banner-toggle">
+                          <input
+                            type="checkbox"
+                            [checked]="productListingConfig().show_shadow"
+                            (change)="updateProductListingBooleanField('show_shadow', $event)"
+                          />
+                          <span>Exibir sombra no card</span>
+                        </label>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Cor da borda</label>
+                        <div class="d-flex gap-2 align-items-center">
+                          <input
+                            class="form-control form-control-color"
+                            type="color"
+                            [value]="productListingConfig().border_color"
+                            [disabled]="!productListingConfig().show_border"
+                            (input)="updateProductListingField('border_color', $event)"
+                          />
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().border_color"
+                            [disabled]="!productListingConfig().show_border"
+                            placeholder="#07153A"
+                            (input)="updateProductListingField('border_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Espessura da borda</label>
+                        <input
+                          class="form-control manual-input"
+                          type="number"
+                          min="0"
+                          max="6"
+                          [value]="productListingConfig().border_width"
+                          [disabled]="!productListingConfig().show_border"
+                          (input)="updateProductListingField('border_width', $event)"
+                        />
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Direção da sombra</label>
+                        <select
+                          class="form-select manual-select"
+                          [disabled]="!productListingConfig().show_shadow"
+                          [value]="productListingConfig().shadow_direction"
+                          (change)="updateProductListingField('shadow_direction', $event)"
+                        >
+                          @for (option of productListingShadowDirectionOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Intensidade da sombra</label>
+                        <select
+                          class="form-select manual-select"
+                          [disabled]="!productListingConfig().show_shadow"
+                          [value]="productListingConfig().shadow_intensity"
+                          (change)="updateProductListingField('shadow_intensity', $event)"
+                        >
+                          @for (option of productListingShadowIntensityOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="banner-toggle">
+                          <input
+                            type="checkbox"
+                            [checked]="productListingConfig().use_default_title_color"
+                            (change)="updateProductListingBooleanField('use_default_title_color', $event)"
+                          />
+                          <span>Usar cor padrão do sistema no título</span>
+                        </label>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="banner-toggle">
+                          <input
+                            type="checkbox"
+                            [checked]="productListingConfig().use_default_body_color"
+                            (change)="updateProductListingBooleanField('use_default_body_color', $event)"
+                          />
+                          <span>Usar cor padrão do sistema no texto secundário</span>
+                        </label>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Cor do título</label>
+                        <div class="d-flex gap-2 align-items-center">
+                          <input
+                            class="form-control form-control-color"
+                            type="color"
+                            [value]="productListingConfig().title_text_color"
+                            [disabled]="productListingConfig().use_default_title_color"
+                            (input)="updateProductListingField('title_text_color', $event)"
+                          />
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().title_text_color"
+                            [disabled]="productListingConfig().use_default_title_color"
+                            placeholder="#F8FAFC"
+                            (input)="updateProductListingField('title_text_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-6">
+                        <label class="native-field-label">Cor do texto secundário</label>
+                        <div class="d-flex gap-2 align-items-center">
+                          <input
+                            class="form-control form-control-color"
+                            type="color"
+                            [value]="productListingConfig().body_text_color"
+                            [disabled]="productListingConfig().use_default_body_color"
+                            (input)="updateProductListingField('body_text_color', $event)"
+                          />
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().body_text_color"
+                            [disabled]="productListingConfig().use_default_body_color"
+                            placeholder="#B5C0DC"
+                            (input)="updateProductListingField('body_text_color', $event)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div class="products-toolbar">
+                <a routerLink="/loja/produtos" class="section-link">Abrir gestão completa de produtos</a>
+              </div>
             </div>
-
-            @if (productsLoadError()) {
-              <div class="alert alert-danger py-2 mb-0">{{ productsLoadError() }}</div>
-            } @else if (!products().length) {
-              <div class="empty-state-card">
-                <strong>Nenhum produto configurado.</strong>
-                <p>Cadastre itens da loja para montar as seções da vitrine pública.</p>
-              </div>
-            } @else {
-              @if (activeProductTab() === 'categorias') {
-                <div class="product-group-stack">
-                  @for (group of categoryGroups(); track group.name) {
-                    <section class="product-group-card">
-                      <div class="product-group-head">
-                        <strong>{{ group.name }}</strong>
-                        <span>{{ group.items.length }} item(ns)</span>
-                      </div>
-
-                      <div class="product-mini-grid">
-                        @for (item of group.items; track item.id) {
-                          <article class="product-mini-card">
-                            <div class="product-mini-top">
-                              <strong>{{ item.nome_exibicao }}</strong>
-                              <span>Ordem {{ item.ordem }}</span>
-                            </div>
-                            <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
-                            <div class="product-mini-bottom">
-                              <span>{{ item.ativo ? 'Ativo' : 'Inativo' }}</span>
-                              <strong>{{ formatPrice(item.em_promocao ? item.preco_promocional : item.preco_venda) }}</strong>
-                            </div>
-                          </article>
-                        }
-                      </div>
-                    </section>
-                  }
-                </div>
-              }
-
-              @if (activeProductTab() === 'destaques') {
-                <div class="product-mini-grid">
-                  @for (item of featuredProducts(); track item.id) {
-                    <article class="product-mini-card">
-                      <div class="product-mini-top">
-                        <strong>{{ item.nome_exibicao }}</strong>
-                        <span>{{ item.categoria || 'Sem categoria' }}</span>
-                      </div>
-                      <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
-                      <div class="product-mini-bottom">
-                        <span>Destaque</span>
-                        <strong>{{ formatPrice(item.preco_venda) }}</strong>
-                      </div>
-                    </article>
-                  }
-                </div>
-              }
-
-              @if (activeProductTab() === 'promocoes') {
-                <div class="product-mini-grid">
-                  @for (item of promotionProducts(); track item.id) {
-                    <article class="product-mini-card is-promotion">
-                      <div class="product-mini-top">
-                        <strong>{{ item.nome_exibicao }}</strong>
-                        <span>{{ item.categoria || 'Sem categoria' }}</span>
-                      </div>
-                      <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
-                      <div class="product-mini-bottom promo-prices">
-                        <span>{{ formatPrice(item.preco_venda) }}</span>
-                        <strong>{{ formatPrice(item.preco_promocional) }}</strong>
-                      </div>
-                    </article>
-                  }
-                </div>
-              }
-
-              @if (activeProductTab() === 'lancamentos') {
-                <div class="product-mini-grid">
-                  @for (item of launchProducts(); track item.id) {
-                    <article class="product-mini-card">
-                      <div class="product-mini-top">
-                        <strong>{{ item.nome_exibicao }}</strong>
-                        <span>{{ item.categoria || 'Sem categoria' }}</span>
-                      </div>
-                      <p>{{ item.livro_titulo || 'Produto sem livro vinculado' }}</p>
-                      <div class="product-mini-bottom">
-                        <span>Lançamento</span>
-                        <strong>{{ formatPrice(item.em_promocao ? item.preco_promocional : item.preco_venda) }}</strong>
-                      </div>
-                    </article>
-                  }
-                </div>
-              }
-            }
           </section>
         }
       </div>

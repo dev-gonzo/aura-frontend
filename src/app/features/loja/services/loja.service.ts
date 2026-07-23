@@ -58,6 +58,32 @@ export interface StoreInstitutionalSectionPayload {
   background_color?: string;
 }
 
+export interface StoreProductListingConfigPayload {
+  show_buy_button?: boolean;
+  buy_button_label?: string;
+  buy_button_uppercase?: boolean;
+  show_add_to_cart_button?: boolean;
+  add_to_cart_button_label?: string;
+  add_to_cart_button_uppercase?: boolean;
+  show_price?: boolean;
+  show_compare_price?: boolean;
+  show_tags?: boolean;
+  card_background_color?: string;
+  show_border?: boolean;
+  border_color?: string;
+  border_width?: number;
+  show_shadow?: boolean;
+  shadow_direction?: 'top' | 'bottom' | 'left' | 'right' | 'bottom-left' | 'bottom-right';
+  shadow_intensity?: 'soft' | 'medium' | 'strong';
+  use_default_title_color?: boolean;
+  title_text_color?: string;
+  use_default_body_color?: boolean;
+  body_text_color?: string;
+  secondary_button_color?: string;
+  secondary_button_text_color?: string;
+  button_shape?: 'sharp' | 'soft' | 'rounded' | 'pill';
+}
+
 export type StoreProductSectionDisplayMode = 'wrap' | 'horizontal_scroll';
 export type StoreBannerContentPosition = 'top' | 'bottom' | 'left' | 'right' | 'center';
 export type StoreBannerContentHorizontalPosition = 'left' | 'center' | 'right';
@@ -190,6 +216,7 @@ export interface StoreSettingsPayload {
   custom_block_js?: string;
   feature_highlights?: StoreFeatureHighlightPayload[];
   institutional_section?: StoreInstitutionalSectionPayload;
+  product_listing_config?: StoreProductListingConfigPayload;
   footer_links?: StoreNavigationLinkPayload[];
   footer_contact_title?: string;
   footer_contact_text?: string;
