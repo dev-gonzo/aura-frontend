@@ -1380,6 +1380,16 @@
 
                       <div class="col-12 col-xl-6">
                         <label class="native-field-label">Imagem desktop</label>
+                        <div class="banner-preview-panel is-desktop">
+                          <span class="banner-preview-label">Prévia desktop</span>
+                          <div class="banner-editor-preview is-desktop is-thumbnail-only">
+                            @if (banner.desktopPreview || banner.mobilePreview; as bannerUrl) {
+                              <img [src]="banner.desktopPreview || banner.mobilePreview" alt="Prévia desktop do banner" />
+                            } @else {
+                              <div class="banner-editor-preview-placeholder"></div>
+                            }
+                          </div>
+                        </div>
                         <input
                           #desktopBannerInput
                           class="visually-hidden"
@@ -1396,18 +1406,28 @@
                         </button>
                         <span class="banner-upload-meta">
                           @if (banner.desktop) {
-                            Arquivo pronto: {{ banner.desktop.largura }} x {{ banner.desktop.altura }} px
+                            {{ banner.desktop.largura }} x {{ banner.desktop.altura }} px
                           } @else {
                             Nenhuma imagem desktop enviada ainda.
                           }
                         </span>
                         <small class="banner-upload-hint">
-                          Sugestão: largura entre 1400 e 1920 px, altura entre 500 e 620 px.
+                          Largura entre 1400 e 1920 px, altura entre 500 e 620 px.
                         </small>
                       </div>
 
                       <div class="col-12 col-xl-6">
                         <label class="native-field-label">Imagem mobile</label>
+                        <div class="banner-preview-panel is-mobile">
+                          <span class="banner-preview-label">Prévia mobile</span>
+                          <div class="banner-editor-preview is-mobile is-thumbnail-only">
+                            @if (banner.mobilePreview || banner.desktopPreview; as bannerUrl) {
+                              <img [src]="banner.mobilePreview || banner.desktopPreview" alt="Prévia mobile do banner" />
+                            } @else {
+                              <div class="banner-editor-preview-placeholder"></div>
+                            }
+                          </div>
+                        </div>
                         <input
                           #mobileBannerInput
                           class="visually-hidden"
@@ -1424,60 +1444,14 @@
                         </button>
                         <span class="banner-upload-meta">
                           @if (banner.mobile) {
-                            Arquivo pronto: {{ banner.mobile.largura }} x {{ banner.mobile.altura }} px
+                            {{ banner.mobile.largura }} x {{ banner.mobile.altura }} px
                           } @else {
                             Nenhuma imagem mobile enviada ainda.
                           }
                         </span>
                         <small class="banner-upload-hint">
-                          Sugestão: 1080 x 1440 px para manter a arte bem distribuída no mobile.
+                          1080 x 1440 px para manter a arte bem distribuída no mobile.
                         </small>
-                      </div>
-
-                      <div class="col-12">
-                        <div class="banner-preview-grid">
-                          <div class="banner-preview-panel is-desktop">
-                            <span class="banner-preview-label">Prévia desktop</span>
-                            <div class="banner-editor-preview is-desktop" [attr.data-pos-x]="banner.content_position_x" [attr.data-pos-y]="banner.content_position_y">
-                              @if (banner.desktopPreview || banner.mobilePreview; as bannerUrl) {
-                                <img [src]="banner.desktopPreview || banner.mobilePreview" alt="Prévia desktop do banner" />
-                              } @else {
-                                <div class="banner-editor-preview-placeholder"></div>
-                              }
-
-                              @if (banner.show_content) {
-                                <div class="banner-editor-preview-copy">
-                                  <strong>{{ banner.title || form.controls.hero_title.value || 'Título do banner' }}</strong>
-                                  <p>{{ banner.subtitle || form.controls.hero_subtitle.value || 'Texto sobreposto à imagem.' }}</p>
-                                  @if (banner.link_mode === 'button' && banner.button_label.trim()) {
-                                    <button type="button" class="banner-editor-preview-button">{{ banner.button_label }}</button>
-                                  }
-                                </div>
-                              }
-                            </div>
-                          </div>
-
-                          <div class="banner-preview-panel is-mobile">
-                            <span class="banner-preview-label">Prévia mobile</span>
-                            <div class="banner-editor-preview is-mobile" [attr.data-pos-x]="banner.content_position_x" [attr.data-pos-y]="banner.content_position_y">
-                              @if (banner.mobilePreview || banner.desktopPreview; as bannerUrl) {
-                                <img [src]="banner.mobilePreview || banner.desktopPreview" alt="Prévia mobile do banner" />
-                              } @else {
-                                <div class="banner-editor-preview-placeholder"></div>
-                              }
-
-                              @if (banner.show_content) {
-                                <div class="banner-editor-preview-copy">
-                                  <strong>{{ banner.title || form.controls.hero_title.value || 'Título do banner' }}</strong>
-                                  <p>{{ banner.subtitle || form.controls.hero_subtitle.value || 'Texto sobreposto à imagem.' }}</p>
-                                  @if (banner.link_mode === 'button' && banner.button_label.trim()) {
-                                    <button type="button" class="banner-editor-preview-button">{{ banner.button_label }}</button>
-                                  }
-                                </div>
-                              }
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </article>

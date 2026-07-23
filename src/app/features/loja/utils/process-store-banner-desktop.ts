@@ -6,7 +6,7 @@ export async function processStoreBannerDesktop(file: File): Promise<ProcessedIm
     outputLimitBytes: 350 * 1024,
     targetWidth: 1600,
     targetHeight: 560,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     outputMimeType: 'image/webp',
     outputQuality: 0.86,
     minQuality: 0.5,

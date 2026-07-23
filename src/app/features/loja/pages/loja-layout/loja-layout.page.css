@@ -778,6 +778,7 @@
 .banner-preview-panel {
   display: grid;
   gap: 0.55rem;
+  margin-bottom: 0.85rem;
 }
 
 .banner-preview-panel.is-desktop {
@@ -854,6 +855,16 @@
 
 .banner-editor-preview img {
   object-fit: cover;
+}
+
+.banner-editor-preview.is-thumbnail-only {
+  min-height: 9rem;
+  max-height: 150px;
+}
+
+.banner-editor-preview.is-thumbnail-only.is-mobile {
+  min-height: 9rem;
+  max-height: 150px;
 }
 
 .banner-editor-preview-placeholder {
