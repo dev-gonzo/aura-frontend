@@ -1,4 +1,4 @@
-﻿<section
+<section
   class="page-shell container-fluid px-0"
   [style.--store-accent]="form.controls.accent_color.value"
   [style.--store-button]="form.controls.button_color.value"
@@ -2063,6 +2063,228 @@
                             placeholder="#B5C0DC"
                             (input)="updateProductListingField('body_text_color', $event)"
                           />
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <hr class="border-secondary-subtle my-1" />
+                      </div>
+
+                      <div class="col-12">
+                        <div class="section-heading compact mb-0">
+                          <span class="section-eyebrow">Descrição</span>
+                          <h3>Seção de descrição do produto</h3>
+                          <p>Defina o fundo, a fonte, a cor do título e a cor do texto da descrição principal mostrada abaixo da faixa técnica.</p>
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Cor de fundo da descrição</label>
+                        <div class="color-inline-field">
+                          <label class="color-swatch" [class.is-empty]="!hasHexColor(productListingConfig().detail_description_background_color)">
+                            <span
+                              class="color-swatch-fill"
+                              [style.background]="hasHexColor(productListingConfig().detail_description_background_color) ? productListingConfig().detail_description_background_color : null"
+                            ></span>
+                            <input
+                              class="color-swatch-picker"
+                              type="color"
+                              [value]="optionalColorInputValue(productListingConfig().detail_description_background_color, '#FFFFFF')"
+                              (input)="updateProductListingField('detail_description_background_color', $event)"
+                            />
+                          </label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().detail_description_background_color"
+                            (input)="updateProductListingField('detail_description_background_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Cor do título da descrição</label>
+                        <div class="color-inline-field">
+                          <label class="color-swatch" [class.is-empty]="!hasHexColor(productListingConfig().detail_description_title_color)">
+                            <span
+                              class="color-swatch-fill"
+                              [style.background]="hasHexColor(productListingConfig().detail_description_title_color) ? productListingConfig().detail_description_title_color : null"
+                            ></span>
+                            <input
+                              class="color-swatch-picker"
+                              type="color"
+                              [value]="optionalColorInputValue(productListingConfig().detail_description_title_color, '#F8FAFC')"
+                              (input)="updateProductListingField('detail_description_title_color', $event)"
+                            />
+                          </label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().detail_description_title_color"
+                            (input)="updateProductListingField('detail_description_title_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Cor do texto da descrição</label>
+                        <div class="color-inline-field">
+                          <label class="color-swatch" [class.is-empty]="!hasHexColor(productListingConfig().detail_description_text_color)">
+                            <span
+                              class="color-swatch-fill"
+                              [style.background]="hasHexColor(productListingConfig().detail_description_text_color) ? productListingConfig().detail_description_text_color : null"
+                            ></span>
+                            <input
+                              class="color-swatch-picker"
+                              type="color"
+                              [value]="optionalColorInputValue(productListingConfig().detail_description_text_color, '#F8FAFC')"
+                              (input)="updateProductListingField('detail_description_text_color', $event)"
+                            />
+                          </label>
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().detail_description_text_color"
+                            (input)="updateProductListingField('detail_description_text_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-3">
+                        <label class="native-field-label">Fonte da descrição</label>
+                        <select
+                          class="form-select manual-select"
+                          [value]="productListingConfig().detail_description_font_family"
+                          (change)="updateProductListingField('detail_description_font_family', $event)"
+                        >
+                          @for (option of themeFontOptions(); track option.value) {
+                            <option
+                              [value]="option.value"
+                              [selected]="productListingConfig().detail_description_font_family === option.value"
+                            >
+                              {{ option.label }}
+                            </option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <article class="banner-card">
+                    <div class="section-heading compact">
+                      <span class="section-eyebrow">Produto</span>
+                      <h3>Faixa de destaque da tela</h3>
+                      <p>Defina a aparência e os itens técnicos exibidos abaixo da compra na página do produto.</p>
+                    </div>
+
+                    <div class="row g-3">
+                      <div class="col-12 col-lg-4">
+                        <label class="native-field-label">Cor de fundo da faixa</label>
+                        <div class="d-flex gap-2 align-items-center">
+                          <input
+                            class="form-control form-control-color"
+                            type="color"
+                            [value]="productListingConfig().detail_strip_background_color"
+                            (input)="updateProductListingField('detail_strip_background_color', $event)"
+                          />
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().detail_strip_background_color"
+                            placeholder="#111111"
+                            (input)="updateProductListingField('detail_strip_background_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-4">
+                        <label class="native-field-label">Cor do texto da faixa</label>
+                        <div class="d-flex gap-2 align-items-center">
+                          <input
+                            class="form-control form-control-color"
+                            type="color"
+                            [value]="productListingConfig().detail_strip_text_color"
+                            (input)="updateProductListingField('detail_strip_text_color', $event)"
+                          />
+                          <input
+                            class="form-control manual-input"
+                            type="text"
+                            [value]="productListingConfig().detail_strip_text_color"
+                            placeholder="#F8FAFC"
+                            (input)="updateProductListingField('detail_strip_text_color', $event)"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-lg-4">
+                        <label class="native-field-label">Fonte da faixa</label>
+                        <select
+                          class="form-select manual-select"
+                          [value]="productListingConfig().detail_strip_font_family"
+                          (change)="updateProductListingField('detail_strip_font_family', $event)"
+                        >
+                          @for (option of themeFontOptions(); track option.value) {
+                            <option
+                              [value]="option.value"
+                              [selected]="productListingConfig().detail_strip_font_family === option.value"
+                            >
+                              {{ option.label }}
+                            </option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-12">
+                        <div class="d-grid gap-3">
+                          @for (item of productListingConfig().detail_strip_items; track item.key; let i = $index) {
+                            <article class="highlight-card">
+                              <div class="row g-3 align-items-start">
+                                <div class="col-12 col-lg-3">
+                                  <label class="banner-toggle">
+                                    <input
+                                      type="checkbox"
+                                      [checked]="item.visible"
+                                      (change)="updateProductDetailStripItem(i, 'visible', $any($event.target).checked)"
+                                    />
+                                    <span>Exibir {{ item.label }}</span>
+                                  </label>
+                                </div>
+
+                                <div class="col-12 col-lg-3">
+                                  <label class="native-field-label">Rótulo</label>
+                                  <input
+                                    class="form-control manual-input"
+                                    type="text"
+                                    [value]="item.label"
+                                    (input)="updateProductDetailStripItem(i, 'label', $any($event.target).value)"
+                                  />
+                                </div>
+
+                                <div class="col-12 col-lg-3">
+                                  <app-form-icon-select
+                                    label="Ícone"
+                                    [options]="productDetailStripIconOptions"
+                                    [value]="item.icon"
+                                    (valueChange)="updateProductDetailStripItem(i, 'icon', $event)"
+                                  />
+                                </div>
+
+                                <div class="col-12 col-lg-3">
+                                  <label class="native-field-label">Campo</label>
+                                  <input
+                                    class="form-control manual-input"
+                                    type="text"
+                                    [value]="item.key"
+                                    disabled
+                                  />
+                                </div>
+                              </div>
+                            </article>
+                          }
                         </div>
                       </div>
                     </div>

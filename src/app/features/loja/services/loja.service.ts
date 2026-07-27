@@ -82,6 +82,21 @@ export interface StoreProductListingConfigPayload {
   secondary_button_color?: string;
   secondary_button_text_color?: string;
   button_shape?: 'sharp' | 'soft' | 'rounded' | 'pill';
+  detail_description_background_color?: string;
+  detail_description_title_color?: string;
+  detail_description_text_color?: string;
+  detail_description_font_family?: string;
+  detail_strip_background_color?: string;
+  detail_strip_text_color?: string;
+  detail_strip_font_family?: string;
+  detail_strip_items?: StoreProductDetailStripItemPayload[];
+}
+
+export interface StoreProductDetailStripItemPayload {
+  key: 'categories' | 'pages' | 'language' | 'format' | 'weight' | 'finish';
+  label: string;
+  icon: string;
+  visible: boolean;
 }
 
 export type StoreProductSectionDisplayMode = 'wrap' | 'horizontal_scroll';

@@ -181,6 +181,21 @@ interface EditableProductListingConfig {
   secondary_button_color: string;
   secondary_button_text_color: string;
   button_shape: 'sharp' | 'soft' | 'rounded' | 'pill';
+  detail_description_background_color: string;
+  detail_description_title_color: string;
+  detail_description_text_color: string;
+  detail_description_font_family: string;
+  detail_strip_background_color: string;
+  detail_strip_text_color: string;
+  detail_strip_font_family: string;
+  detail_strip_items: EditableProductDetailStripItem[];
+}
+
+interface EditableProductDetailStripItem {
+  key: 'categories' | 'pages' | 'language' | 'format' | 'weight' | 'finish';
+  label: string;
+  icon: string;
+  visible: boolean;
 }
 
 interface EditableSectionOrderItem {
@@ -234,6 +249,15 @@ const FIXED_MENU_LINKS: ReadonlyArray<EditableLink> = [
   styleUrl: './loja-layout.page.css',
 })
 export class LojaLayoutPage implements OnInit, OnDestroy {
+  private readonly supportedProductDetailStripKeys = new Set<EditableProductDetailStripItem['key']>([
+    'categories',
+    'pages',
+    'language',
+    'format',
+    'weight',
+    'finish',
+  ]);
+
   private readonly formBuilder = inject(FormBuilder);
   private readonly lojaService = inject(LojaService);
   private readonly document = inject(DOCUMENT);
@@ -477,6 +501,16 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     label: option.label,
     iconClass: resolveFeatureHighlightIconClass(option.value),
   }));
+  protected readonly productDetailStripIconOptions: FormIconSelectOption[] = [
+    { value: 'tags', label: 'Categorias', iconClass: 'fa-solid fa-tags' },
+    { value: 'book-open', label: 'Paginas', iconClass: 'fa-solid fa-book-open' },
+    { value: 'language', label: 'Idioma', iconClass: 'fa-solid fa-language' },
+    { value: 'ruler-combined', label: 'Formato do livro', iconClass: 'fa-solid fa-ruler-combined' },
+    { value: 'weight-hanging', label: 'Peso', iconClass: 'fa-solid fa-weight-hanging' },
+    { value: 'book', label: 'Acabamento', iconClass: 'fa-solid fa-book' },
+    { value: 'shapes', label: 'Estrutura', iconClass: 'fa-solid fa-shapes' },
+    { value: 'layer-group', label: 'Faixa', iconClass: 'fa-solid fa-layer-group' },
+  ];
   protected readonly featureHighlightTextAlignOptions: FormSelectOption[] = [
     { value: 'left', label: 'Esquerda' },
     { value: 'center', label: 'Centro' },
@@ -576,6 +610,35 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       value: family,
       label: family,
       imported: importedFamilies.has(family),
+    }));
+  });
+  protected readonly themeFontOptions = computed<FormSelectOption[]>(() => {
+    const themeFamilies = [
+      this.form.controls.font_family.value,
+      this.form.controls.font_secondary_family.value,
+      this.form.controls.font_menu_family.value,
+      this.form.controls.font_button_family.value,
+      this.form.controls.font_highlight_family.value,
+      this.productListingConfig().detail_description_font_family,
+      this.productListingConfig().detail_strip_font_family,
+    ]
+      .map((family) => (family || '').trim())
+      .filter((family) => family.length > 0);
+
+    const importedFamilies = new Set(this.detectedEmbedFamilies());
+    const mergedOptions: FormSelectOption[] = [
+      ...this.detectedFontOptions(),
+      ...themeFamilies.map((family) => ({
+        value: family,
+        label: family,
+        imported: importedFamilies.has(family),
+      })),
+    ];
+    const options = Array.from(new Map(mergedOptions.map((option) => [option.value, option])).values());
+
+    return options.map((option) => ({
+      ...option,
+      imported: option.imported ?? importedFamilies.has(option.value),
     }));
   });
   protected readonly categoryGroups = computed(() => {
@@ -1238,6 +1301,15 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     }));
   }
 
+  protected optionalColorInputValue(value: string, fallback = '#000000'): string {
+    const trimmed = value.trim();
+    return /^#[0-9A-Fa-f]{6}$/.test(trimmed) ? trimmed : fallback;
+  }
+
+  protected hasHexColor(value: string): boolean {
+    return /^#[0-9A-Fa-f]{6}$/.test(value.trim());
+  }
+
   protected updateProductListingField(
     field: keyof EditableProductListingConfig,
     event: Event
@@ -1253,6 +1325,19 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       ...current,
       [field]: field === 'border_width' ? Number(value) || 0 : value,
       ...(field === 'card_background_color' ? { border_color: value } : {}),
+    }));
+  }
+
+  protected updateProductDetailStripItem(
+    index: number,
+    field: keyof EditableProductDetailStripItem,
+    value: string | boolean
+  ): void {
+    this.productListingConfig.update((current) => ({
+      ...current,
+      detail_strip_items: current.detail_strip_items.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [field]: value } : item
+      ),
     }));
   }
 
@@ -2058,6 +2143,19 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       secondary_button_color: config.secondary_button_color,
       secondary_button_text_color: config.secondary_button_text_color,
       button_shape: this.buttonShapeControl.value,
+      detail_description_background_color: config.detail_description_background_color,
+      detail_description_title_color: config.detail_description_title_color,
+      detail_description_text_color: config.detail_description_text_color,
+      detail_description_font_family: config.detail_description_font_family.trim(),
+      detail_strip_background_color: config.detail_strip_background_color,
+      detail_strip_text_color: config.detail_strip_text_color,
+      detail_strip_font_family: config.detail_strip_font_family.trim(),
+      detail_strip_items: config.detail_strip_items.map((item) => ({
+        key: item.key,
+        label: item.label.trim(),
+        icon: item.icon,
+        visible: item.visible,
+      })),
     };
   }
 
@@ -2301,8 +2399,20 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     secondary_button_color?: string;
     secondary_button_text_color?: string;
     button_shape?: 'sharp' | 'soft' | 'rounded' | 'pill';
+    detail_description_background_color?: string;
+    detail_description_title_color?: string;
+    detail_description_text_color?: string;
+    detail_description_font_family?: string;
+    detail_strip_background_color?: string;
+    detail_strip_text_color?: string;
+    detail_strip_font_family?: string;
+    detail_strip_items?: EditableProductDetailStripItem[];
   }): EditableProductListingConfig {
     const defaults = this.createDefaultProductListingConfig();
+    const normalizedDetailStripItems = value?.detail_strip_items?.filter((item) =>
+      this.supportedProductDetailStripKeys.has(item.key)
+    );
+
     return {
       show_buy_button: value?.show_buy_button ?? defaults.show_buy_button,
       buy_button_label: value?.buy_button_label ?? defaults.buy_button_label,
@@ -2327,6 +2437,17 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       secondary_button_color: value?.secondary_button_color ?? defaults.secondary_button_color,
       secondary_button_text_color: value?.secondary_button_text_color ?? defaults.secondary_button_text_color,
       button_shape: value?.button_shape ?? defaults.button_shape,
+      detail_description_background_color:
+        value?.detail_description_background_color ?? defaults.detail_description_background_color,
+      detail_description_title_color:
+        value?.detail_description_title_color ?? defaults.detail_description_title_color,
+      detail_description_text_color: value?.detail_description_text_color ?? defaults.detail_description_text_color,
+      detail_description_font_family:
+        value?.detail_description_font_family ?? defaults.detail_description_font_family,
+      detail_strip_background_color: value?.detail_strip_background_color ?? defaults.detail_strip_background_color,
+      detail_strip_text_color: value?.detail_strip_text_color ?? defaults.detail_strip_text_color,
+      detail_strip_font_family: value?.detail_strip_font_family ?? defaults.detail_strip_font_family,
+      detail_strip_items: normalizedDetailStripItems?.length ? normalizedDetailStripItems : defaults.detail_strip_items,
     };
   }
 
@@ -2476,6 +2597,21 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       secondary_button_color: '#14224A',
       secondary_button_text_color: '#F8FAFC',
       button_shape: 'soft',
+      detail_description_background_color: '',
+      detail_description_title_color: '',
+      detail_description_text_color: '',
+      detail_description_font_family: 'Segoe UI',
+      detail_strip_background_color: '#111111',
+      detail_strip_text_color: '#F8FAFC',
+      detail_strip_font_family: 'Segoe UI',
+      detail_strip_items: [
+        { key: 'categories', label: 'Categorias', icon: 'tags', visible: true },
+        { key: 'pages', label: 'Paginas', icon: 'book-open', visible: true },
+        { key: 'language', label: 'Idioma', icon: 'language', visible: true },
+        { key: 'format', label: 'Formato do Livro', icon: 'ruler-combined', visible: true },
+        { key: 'weight', label: 'Peso', icon: 'weight-hanging', visible: true },
+        { key: 'finish', label: 'Acabamento', icon: 'book', visible: true },
+      ],
     };
   }
 
