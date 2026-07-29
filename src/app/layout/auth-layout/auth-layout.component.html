@@ -10,7 +10,7 @@
       <div class="row g-0 flex-nowrap dashboard-frame">
         <aside class="dashboard-sidebar col-12 col-xl-auto" [class.is-open]="sidebarOpen()">
           <div class="brand-row">
-            <a routerLink="/" class="brand-mark" (click)="closeSidebar()">A</a>
+            <a routerLink="/painel" class="brand-mark" (click)="closeSidebar()">A</a>
             <div class="brand-copy">
               <strong>Aura</strong>
               <span>Admin da Editora</span>
@@ -26,7 +26,7 @@
                   class="sidebar-link"
                   [routerLink]="item.route"
                   routerLinkActive="is-active"
-                  [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                  [routerLinkActiveOptions]="{ exact: item.route === '/painel' }"
                   (click)="closeSidebar()"
                 >
                   <span>{{ item.label }}</span>

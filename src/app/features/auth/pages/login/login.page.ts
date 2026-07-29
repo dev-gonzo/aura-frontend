@@ -59,7 +59,7 @@ export class LoginPage {
     try {
       const session = await this.authService.login(this.form.getRawValue());
       this.submitted.set(false);
-      await this.router.navigate([session.precisaTrocarSenha ? '/trocar-senha' : '/']);
+      await this.router.navigate([session.precisaTrocarSenha ? '/trocar-senha' : '/painel']);
     } catch (error) {
       this.errorMessage.set(processApiError(error));
     } finally {

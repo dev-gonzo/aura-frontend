@@ -1,0 +1,318 @@
+<main class="entry-shell">
+  <header class="landing-header">
+    <div class="container">
+      <div class="header-row">
+        <a class="brand-link" href="/" (click)="$event.preventDefault()">
+          <span class="brand-mark"><i class="fa-regular fa-bookmark"></i></span>
+          <span class="brand-text">Páginas</span>
+        </a>
+
+        <nav class="main-nav d-none d-lg-flex" aria-label="Principal">
+          @for (item of navItems; track item) {
+            <a href="/" (click)="$event.preventDefault()">{{ item }}</a>
+          }
+        </nav>
+
+        <div class="header-actions">
+          <button class="login-link" type="button" (click)="goToLogin()">Entrar</button>
+          <app-button (click)="goToSignup()">Começar grátis</app-button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-12 col-xl-5">
+          <div class="hero-copy-column">
+            <h1 class="hero-title">
+              A plataforma de e-commerce feita para <span>editoras e autores.</span>
+            </h1>
+
+            <p class="hero-copy">
+              Venda livros físicos e digitais, gerencie seus pedidos, leitores e lançamentos em um só lugar.
+            </p>
+
+            <div class="hero-actions">
+              <app-button (click)="goToSignup()">Começar grátis</app-button>
+              <app-button variant="secondary" [outline]="true" (click)="goToPrimaryAction()">
+                Ver demonstração
+              </app-button>
+            </div>
+
+            <div class="hero-benefits row g-3">
+              @for (benefit of heroBenefits; track benefit) {
+                <div class="col-12 col-md-4">
+                  <article class="benefit-card">
+                    <span class="benefit-icon"><i class="fa-regular fa-star"></i></span>
+                    <strong>{{ benefit }}</strong>
+                  </article>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-7">
+          <section class="dashboard-card">
+            <div class="dashboard-sidebar">
+              <div class="dashboard-brand">
+                <span class="mini-brand-mark"><i class="fa-regular fa-bookmark"></i></span>
+                <strong>Páginas</strong>
+              </div>
+
+              <ul class="dashboard-menu">
+                <li class="is-active"><i class="fa-regular fa-compass"></i> Início</li>
+                <li><i class="fa-regular fa-book-open"></i> Produtos</li>
+                <li><i class="fa-regular fa-credit-card"></i> Pedidos</li>
+                <li><i class="fa-regular fa-user"></i> Clientes</li>
+                <li><i class="fa-regular fa-chart-bar"></i> Marketing</li>
+                <li><i class="fa-regular fa-bell"></i> Relatórios</li>
+                <li><i class="fa-regular fa-gear"></i> Configurações</li>
+              </ul>
+            </div>
+
+            <div class="dashboard-content">
+              <div class="dashboard-topbar">
+                <div>
+                  <span class="eyebrow">Visão geral</span>
+                  <h2>Receita, pedidos e leitores no mesmo painel.</h2>
+                </div>
+
+                <div class="dashboard-user">Editora Aurora</div>
+              </div>
+
+              <div class="stats-grid">
+                <article class="stat-box">
+                  <span>Receita</span>
+                  <strong>R$ 28.540,00</strong>
+                  <small>+32% este mês</small>
+                </article>
+
+                <article class="stat-box">
+                  <span>Pedidos</span>
+                  <strong>354</strong>
+                  <small>+18% este mês</small>
+                </article>
+
+                <article class="stat-box">
+                  <span>Livros vendidos</span>
+                  <strong>1.259</strong>
+                  <small>+24% este mês</small>
+                </article>
+
+                <article class="stat-box">
+                  <span>Visitantes</span>
+                  <strong>12.860</strong>
+                  <small>+21% este mês</small>
+                </article>
+              </div>
+
+              <div class="dashboard-grid">
+                <article class="chart-card">
+                  <div class="card-header">
+                    <div>
+                      <strong>Receita</strong>
+                      <span>Últimos 30 dias</span>
+                    </div>
+                    <a href="/" (click)="$event.preventDefault()">Ver relatório</a>
+                  </div>
+
+                  <div class="chart-area">
+                    <div class="chart-line"></div>
+                  </div>
+                </article>
+
+                <article class="orders-card">
+                  <div class="card-header">
+                    <div>
+                      <strong>Pedidos recentes</strong>
+                      <span>Últimas vendas</span>
+                    </div>
+                    <a href="/" (click)="$event.preventDefault()">Ver todos</a>
+                  </div>
+
+                  <ul class="order-list">
+                    <li><span>#1048</span><strong>Juliana S.</strong><em>R$ 89,90</em></li>
+                    <li><span>#1047</span><strong>Marcos L.</strong><em>R$ 129,90</em></li>
+                    <li><span>#1046</span><strong>Beatriz A.</strong><em>R$ 59,90</em></li>
+                    <li><span>#1045</span><strong>Ana C.</strong><em>R$ 149,90</em></li>
+                  </ul>
+                </article>
+
+                <article class="catalog-card">
+                  <div class="card-header">
+                    <div>
+                      <strong>Livros mais vendidos</strong>
+                      <span>Últimos 30 dias</span>
+                    </div>
+                    <a href="/" (click)="$event.preventDefault()">Ver catálogo</a>
+                  </div>
+
+                  <ul class="catalog-list">
+                    <li>
+                      <span class="book-thumb"></span>
+                      <div>
+                        <strong>O silêncio das páginas</strong>
+                        <small>329 vendas</small>
+                      </div>
+                    </li>
+                    <li>
+                      <span class="book-thumb"></span>
+                      <div>
+                        <strong>Cartas do futuro</strong>
+                        <small>284 vendas</small>
+                      </div>
+                    </li>
+                    <li>
+                      <span class="book-thumb"></span>
+                      <div>
+                        <strong>O colecionador de histórias</strong>
+                        <small>198 vendas</small>
+                      </div>
+                    </li>
+                  </ul>
+                </article>
+
+                <article class="stock-card">
+                  <div class="card-header">
+                    <div>
+                      <strong>Estoque</strong>
+                      <span>Resumo rápido</span>
+                    </div>
+                  </div>
+
+                  <div class="stock-content">
+                    <div class="stock-circle">
+                      <strong>1.284</strong>
+                      <span>exemplares</span>
+                    </div>
+
+                    <ul class="stock-legend">
+                      <li><span class="legend-dot is-primary"></span> Em estoque</li>
+                      <li><span class="legend-dot is-warning"></span> Baixo estoque</li>
+                      <li><span class="legend-dot is-danger"></span> Sem estoque</li>
+                    </ul>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="container">
+      <div class="features-panel">
+        <span class="section-eyebrow">Feito para quem cria histórias</span>
+        <h2>Tudo o que você precisa para vender mais e se conectar com leitores</h2>
+
+        <div class="row g-4">
+          @for (highlight of platformHighlights; track highlight.title) {
+            <div class="col-12 col-md-6 col-xl">
+              <article class="feature-card h-100">
+                <span class="feature-icon"><i [class]="highlight.icon"></i></span>
+                <h3>{{ highlight.title }}</h3>
+                <p>{{ highlight.description }}</p>
+              </article>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="row g-4 align-items-start">
+        <div class="col-12 col-xl-4">
+          <div class="testimonials-copy">
+            <span class="section-eyebrow">Quem usa, recomenda</span>
+            <h2>Plataforma completa, suporte que entende do mercado editorial.</h2>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-8">
+          <div class="row g-3">
+            @for (item of testimonials; track item.author) {
+              <div class="col-12 col-md-4">
+                <article class="testimonial-card h-100">
+                  <span class="quote-mark">"</span>
+                  <p>{{ item.quote }}</p>
+                  <div class="testimonial-author">
+                    <span class="author-avatar">{{ item.author.charAt(0) }}</span>
+                    <div>
+                      <strong>{{ item.author }}</strong>
+                      <span>{{ item.role }}</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-panel">
+        <div class="cta-copy">
+          <span class="section-eyebrow is-light">Comece agora</span>
+          <h2>Sua história merece chegar mais longe.</h2>
+          <p>Crie sua loja gratuitamente e comece a vender hoje mesmo.</p>
+
+          <div class="cta-actions">
+            <app-button (click)="goToSignup()">Começar grátis</app-button>
+            <app-button variant="secondary" [outline]="true" (click)="goToPrimaryAction()">
+              Falar com especialista
+            </app-button>
+          </div>
+        </div>
+
+        <div class="cta-illustration" aria-hidden="true">
+          <div class="book-shape is-first"></div>
+          <div class="book-shape is-second"></div>
+          <div class="book-shape is-third"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="brand-link" href="/" (click)="$event.preventDefault()">
+            <span class="brand-mark"><i class="fa-regular fa-bookmark"></i></span>
+            <span class="brand-text">Páginas</span>
+          </a>
+          <p>A plataforma de e-commerce feita para editoras e autores.</p>
+        </div>
+
+        <div class="footer-links">
+          @for (column of footerColumns; track column.title) {
+            <div class="footer-column">
+              <strong>{{ column.title }}</strong>
+              @for (link of column.links; track link) {
+                <a href="/" (click)="$event.preventDefault()">{{ link }}</a>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Páginas. Todos os direitos reservados.</span>
+        <div class="footer-bottom-links">
+          <a href="/" (click)="$event.preventDefault()">Termos de uso</a>
+          <a href="/" (click)="$event.preventDefault()">Política de privacidade</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</main>

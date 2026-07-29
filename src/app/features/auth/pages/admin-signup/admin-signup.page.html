@@ -1,0 +1,233 @@
+<main class="signup-shell">
+  <header class="signup-topbar">
+    <div class="container">
+      <div class="topbar-panel">
+        <button class="back-link" type="button" (click)="goToHome()">
+          <i class="fa-solid fa-arrow-left"></i>
+          Voltar para a apresentação
+        </button>
+
+        <app-button variant="secondary" [outline]="true" (click)="goToLogin()">Já tenho acesso</app-button>
+      </div>
+    </div>
+  </header>
+
+  <section class="signup-section">
+    <div class="container">
+      <div class="row g-4 g-xl-5 align-items-start">
+        <div class="col-12 col-xl-5">
+          <div class="content-panel">
+            <span class="section-kicker">Escolha o plano</span>
+            <h1>Comece no plano que faz mais sentido para criar sua loja agora.</h1>
+            <p>
+              Selecione como você quer entrar na plataforma. O plano escolhido já acompanha este primeiro cadastro.
+            </p>
+
+            <div class="plan-list">
+              @for (plan of planCards; track plan.value) {
+                <button
+                  class="plan-card"
+                  type="button"
+                  [class.is-selected]="isPlanSelected(plan.value)"
+                  (click)="selectPlan(plan.value)"
+                >
+                  <div class="plan-card-top">
+                    <div>
+                      <span class="plan-name">{{ plan.label }}</span>
+                      <strong class="plan-price">{{ plan.price }}</strong>
+                    </div>
+
+                    @if (isPlanSelected(plan.value)) {
+                      <span class="plan-badge">Selecionado</span>
+                    }
+                  </div>
+
+                  <span class="plan-subtitle">{{ plan.subtitle }}</span>
+                  <p>{{ plan.description }}</p>
+
+                  <ul class="plan-features">
+                    @for (highlight of plan.highlights; track highlight) {
+                      <li>{{ highlight }}</li>
+                    }
+                  </ul>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-7">
+          <section class="form-panel">
+            <div class="form-header">
+              <span class="section-kicker">Acesso imediato</span>
+              <h2>Crie sua loja</h2>
+              <p>
+                Use os dados da pessoa responsável pelo primeiro acesso administrativo. Assim que concluir, a entrada
+                no painel já fica liberada para começar a configurar sua loja.
+              </p>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+              <div class="row g-3">
+                <div class="col-12">
+                  <app-form-select
+                    [control]="form.controls.tipo_operacao"
+                    [options]="operationTypeOptions"
+                    label="Tipo da operação"
+                    [showPlaceholderOption]="false"
+                    [required]="true"
+                    [invalid]="hasFieldError('tipo_operacao')"
+                    [errorText]="getFieldError('tipo_operacao')"
+                  />
+                </div>
+
+                <div class="col-12">
+                  @if (hasFieldError('plano_inicial')) {
+                    <div class="plan-inline-error">{{ getFieldError('plano_inicial') }}</div>
+                  }
+                </div>
+
+                <div class="col-12">
+                  <app-form-input
+                    [control]="form.controls.nome_operacao"
+                    label="Nome da loja"
+                    placeholder="Ex.: Editora Aurora"
+                    helperText="Use o nome da editora ou do autor."
+                    [required]="true"
+                    [invalid]="hasFieldError('nome_operacao')"
+                    [errorText]="getFieldError('nome_operacao')"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <app-form-input
+                    [control]="form.controls.dominio"
+                    label="Domínio da loja"
+                    placeholder="Ex.: minhacasaeditorial.com.br"
+                    helperText="Informe somente o domínio (sem http, https e sem www)."
+                    [required]="true"
+                    [invalid]="hasFieldError('dominio')"
+                    [errorText]="getFieldError('dominio')"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <app-form-input
+                    [control]="form.controls.responsavel_nome"
+                    label="Responsável principal"
+                    placeholder="Quem vai administrar a conta"
+                    [required]="true"
+                    [invalid]="hasFieldError('responsavel_nome')"
+                    [errorText]="getFieldError('responsavel_nome')"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    [control]="form.controls.documento"
+                    label="CPF ou CNPJ do responsável"
+                    placeholder="CPF ou CNPJ"
+                    [required]="true"
+                    [invalid]="hasFieldError('documento')"
+                    [errorText]="getFieldError('documento')"
+                    (inputEvent)="handleDocumentoInput()"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    [control]="form.controls.data_nascimento"
+                    type="date"
+                    label="Data de nascimento"
+                    [required]="true"
+                    [invalid]="hasFieldError('data_nascimento')"
+                    [errorText]="getFieldError('data_nascimento')"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    [control]="form.controls.whatsapp"
+                    label="WhatsApp"
+                    placeholder="Contato com DDD"
+                    [required]="true"
+                    [invalid]="hasFieldError('whatsapp')"
+                    [errorText]="getFieldError('whatsapp')"
+                    (inputEvent)="handleWhatsappInput()"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    [control]="form.controls.email"
+                    type="email"
+                    label="Email principal"
+                    placeholder="voce@empresa.com.br"
+                    autocomplete="email"
+                    [required]="true"
+                    [invalid]="hasFieldError('email')"
+                    [errorText]="getFieldError('email')"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    [control]="form.controls.senha"
+                    type="password"
+                    label="Senha"
+                    placeholder="Defina a senha de acesso"
+                    autocomplete="new-password"
+                    [required]="true"
+                    [invalid]="hasFieldError('senha')"
+                    [errorText]="getFieldError('senha')"
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <app-form-input
+                    [control]="form.controls.confirmar_senha"
+                    type="password"
+                    label="Confirmar senha"
+                    placeholder="Repita a senha"
+                    autocomplete="new-password"
+                    [required]="true"
+                    [invalid]="hasFieldError('confirmar_senha')"
+                    [errorText]="getFieldError('confirmar_senha')"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <app-form-textarea
+                    [control]="form.controls.mensagem"
+                    label="Contexto da sua operação"
+                    placeholder="Conte rapidamente o momento da sua operação, o que você já vende hoje ou o que deseja estruturar."
+                    helperText="Opcional. Esse campo ajuda a personalizar melhor a configuração inicial."
+                    [rows]="4"
+                    [autoGrow]="true"
+                    [invalid]="hasFieldError('mensagem')"
+                    [errorText]="getFieldError('mensagem')"
+                  />
+                </div>
+              </div>
+
+              @if (errorMessage()) {
+                <div class="alert alert-danger signup-alert" role="alert">{{ errorMessage() }}</div>
+              }
+
+              <div class="form-actions">
+                <app-button type="submit" [block]="true" [disabled]="loading()">
+                  @if (loading()) {
+                    Criando acesso...
+                  } @else {
+                    Criar acesso e entrar
+                  }
+                </app-button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

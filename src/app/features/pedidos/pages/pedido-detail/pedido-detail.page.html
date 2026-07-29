@@ -1,0 +1,189 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Pedidos"
+    [title]="pedido()?.codigo || 'Detalhe do pedido'"
+    description="Consulte dados do comprador, itens, totais e a etapa atual da entrega."
+  >
+    <a class="btn btn-outline-secondary" routerLink="/painel/pedidos">Voltar para pedidos</a>
+  </app-page-header>
+
+  @if (loading()) {
+    <section class="state-card">
+      <strong>Carregando pedido...</strong>
+      <span>Preparando o detalhe completo da operação.</span>
+    </section>
+  } @else if (errorMessage()) {
+    <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+  } @else if (pedido()) {
+    <div class="row g-4">
+      <div class="col-12 col-xl-8">
+        <div class="content-stack">
+          <section class="panel-card">
+            <div class="section-head">
+              <div>
+                <span class="section-kicker">Resumo</span>
+                <h2>{{ pedido()!.cliente_nome }}</h2>
+              </div>
+              <span class="status-badge" [ngClass]="statusClass(pedido()!.status)">
+                {{ statusLabel(pedido()!.status) }}
+              </span>
+            </div>
+
+            <div class="summary-grid row g-3">
+              <div class="col-12 col-md-6">
+                <article class="summary-item">
+                  <span>Canal de venda</span>
+                  <strong>{{ pedido()!.canal_venda }}</strong>
+                </article>
+              </div>
+              <div class="col-12 col-md-6">
+                <article class="summary-item">
+                  <span>Total do pedido</span>
+                  <strong>{{ formatCurrency(pedido()!.total) }}</strong>
+                </article>
+              </div>
+              <div class="col-12 col-md-6">
+                <article class="summary-item">
+                  <span>Email</span>
+                  <strong>{{ pedido()!.cliente_email || '-' }}</strong>
+                </article>
+              </div>
+              <div class="col-12 col-md-6">
+                <article class="summary-item">
+                  <span>WhatsApp</span>
+                  <strong>{{ pedido()!.cliente_whatsapp || '-' }}</strong>
+                </article>
+              </div>
+              <div class="col-12 col-md-6">
+                <article class="summary-item">
+                  <span>Criado em</span>
+                  <strong>{{ formatDate(pedido()!.criado_em) }}</strong>
+                </article>
+              </div>
+              <div class="col-12 col-md-6">
+                <article class="summary-item">
+                  <span>Atualizado em</span>
+                  <strong>{{ formatDate(pedido()!.atualizado_em) }}</strong>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card">
+            <div class="section-head">
+              <div>
+                <span class="section-kicker">Itens</span>
+                <h2>Produtos do pedido</h2>
+              </div>
+            </div>
+
+            <div class="item-list">
+              @for (item of pedido()!.itens; track item.livro_id + '-' + item.titulo_livro) {
+                <article class="item-card">
+                  <div>
+                    <h3>{{ item.titulo_livro }}</h3>
+                    <p>{{ item.autor_nome }}</p>
+                  </div>
+
+                  <div class="item-meta">
+                    <span>Qtd. {{ item.quantidade }}</span>
+                    <strong>{{ formatCurrency(item.subtotal) }}</strong>
+                    <small>{{ formatCurrency(item.preco_unitario) }} por unidade</small>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+
+          @if (pedido()!.entrega) {
+            <section class="panel-card">
+              <div class="section-head">
+                <div>
+                  <span class="section-kicker">Entrega</span>
+                  <h2>Acompanhamento</h2>
+                </div>
+              </div>
+
+              <div class="summary-grid row g-3">
+                <div class="col-12 col-md-6">
+                  <article class="summary-item">
+                    <span>Tipo</span>
+                    <strong>{{ pedido()!.entrega!.tipo_entrega }}</strong>
+                  </article>
+                </div>
+                <div class="col-12 col-md-6">
+                  <article class="summary-item">
+                    <span>Status da entrega</span>
+                    <strong>{{ pedido()!.entrega!.status_entrega }}</strong>
+                  </article>
+                </div>
+                <div class="col-12 col-md-6">
+                  <article class="summary-item">
+                    <span>Transportadora</span>
+                    <strong>{{ pedido()!.entrega!.transportadora || '-' }}</strong>
+                  </article>
+                </div>
+                <div class="col-12 col-md-6">
+                  <article class="summary-item">
+                    <span>Rastreio</span>
+                    <strong>{{ pedido()!.entrega!.codigo_rastreio || '-' }}</strong>
+                  </article>
+                </div>
+                <div class="col-12">
+                  <article class="summary-item">
+                    <span>Destinatário</span>
+                    <strong>{{ pedido()!.entrega!.destinatario_nome }}</strong>
+                    <small>{{ addressLabel() || 'Endereço ainda não informado.' }}</small>
+                  </article>
+                </div>
+              </div>
+            </section>
+          }
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4">
+        <div class="aside-stack">
+          <section class="panel-card totals-card">
+            <div class="section-head">
+              <div>
+                <span class="section-kicker">Financeiro</span>
+                <h2>Totais</h2>
+              </div>
+            </div>
+
+            <div class="total-line">
+              <span>Subtotal</span>
+              <strong>{{ formatCurrency(pedido()!.subtotal) }}</strong>
+            </div>
+            <div class="total-line">
+              <span>Desconto</span>
+              <strong>{{ formatCurrency(pedido()!.desconto) }}</strong>
+            </div>
+            <div class="total-line">
+              <span>Frete</span>
+              <strong>{{ formatCurrency(pedido()!.frete) }}</strong>
+            </div>
+            <div class="total-line is-grand">
+              <span>Total</span>
+              <strong>{{ formatCurrency(pedido()!.total) }}</strong>
+            </div>
+          </section>
+
+          @if (pedido()!.observacao) {
+            <section class="panel-card">
+              <div class="section-head">
+                <div>
+                  <span class="section-kicker">Observação</span>
+                  <h2>Anotações</h2>
+                </div>
+              </div>
+
+              <p class="notes-copy">{{ pedido()!.observacao }}</p>
+            </section>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</section>

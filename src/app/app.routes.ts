@@ -7,6 +7,7 @@ import { LIVROS_ROUTES } from './features/livros/livros.routes';
 import { LOJA_ROUTES } from './features/loja/loja.routes';
 import { LOGISTICA_ROUTES } from './features/logistica/logistica.routes';
 import { PAGAMENTOS_ROUTES } from './features/pagamentos/pagamentos.routes';
+import { PEDIDOS_ROUTES } from './features/pedidos/pedidos.routes';
 import { adminGuard, authGuard, userCreateOrSelfEditGuard } from './auth/guards/auth.guard';
 import { HomePage } from './features/home/home.page';
 import { NOT_FOUND_ROUTES } from './features/not-found/not-found.routes';
@@ -17,7 +18,7 @@ import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component'
 export const routes: Routes = [
   ...AUTH_ROUTES,
   {
-    path: '',
+    path: 'painel',
     canActivate: [authGuard],
     component: AuthLayoutComponent,
     children: [
@@ -35,6 +36,7 @@ export const routes: Routes = [
       ...LOJA_ROUTES,
       ...LOGISTICA_ROUTES,
       ...PAGAMENTOS_ROUTES,
+      ...PEDIDOS_ROUTES,
       ...EDITAIS_ROUTES,
       {
         path: 'usuarios/novo',

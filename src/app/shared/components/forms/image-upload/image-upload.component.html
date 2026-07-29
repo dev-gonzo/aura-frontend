@@ -18,6 +18,7 @@
     [class.is-invalid]="invalid"
     [class.is-circle]="shape === 'circle'"
     [class.is-free]="layout === 'free'"
+    [class.is-thumbnail]="previewMode === 'thumbnail'"
     [class.is-full-width]="fullWidth"
     [attr.aria-label]="ariaLabel"
     (click)="openPicker()"
@@ -25,7 +26,7 @@
     @if (previewUrl) {
       <img
         class="image-preview"
-        [class.is-contain]="previewFit === 'contain'"
+        [class.is-contain]="previewFit === 'contain' || previewMode === 'thumbnail'"
         [src]="previewUrl"
         alt="Prévia da imagem"
         (load)="handlePreviewLoad()"

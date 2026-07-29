@@ -1,0 +1,148 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Pedidos"
+    title="Gestão de pedidos"
+    description="Acompanhe os pedidos da operação, filtre por status e abra o detalhe completo de cada compra."
+  />
+
+  <div class="row g-4">
+    <div class="col-12">
+      <section class="search-panel">
+        <label class="search-box" for="order-search">
+          <span class="search-icon">⌕</span>
+          <input
+            id="order-search"
+            type="search"
+            [value]="searchTerm()"
+            (input)="updateSearch($event)"
+            placeholder="Buscar por código, cliente ou email"
+          />
+          @if (searchTerm()) {
+            <button type="button" class="clear-button" (click)="clearSearch()" aria-label="Limpar busca">
+              Limpar
+            </button>
+          }
+        </label>
+
+        <div class="status-filter-list">
+          @for (status of statusFilters; track status) {
+            <button
+              type="button"
+              class="status-filter"
+              [class.is-active]="selectedStatus() === status"
+              (click)="selectStatus(status)"
+            >
+              {{ status === 'TODOS' ? 'Todos' : statusLabel(status) }}
+              <small>{{ getStatusCount(status) }}</small>
+            </button>
+          }
+        </div>
+      </section>
+    </div>
+
+    <div class="col-12">
+      <section class="summary-grid row g-3">
+        <div class="col-12 col-md-4">
+          <article class="summary-card h-100">
+            <span>Total encontrado</span>
+            <strong>{{ totalPedidos() }}</strong>
+            <small>Pedidos retornados pela operação atual.</small>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <article class="summary-card h-100">
+            <span>Valor em tela</span>
+            <strong>{{ formatCurrency(totalFaturado()) }}</strong>
+            <small>Soma dos pedidos filtrados nesta listagem.</small>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <article class="summary-card h-100">
+            <span>Pedidos pagos/entregues</span>
+            <strong>{{ pedidosPagos() }}</strong>
+            <small>Pedidos que já avançaram na operação.</small>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="list-panel">
+    <div class="list-head">
+      <div>
+        <h2>Listagem</h2>
+        <p>{{ resultLabel() }}</p>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="empty-state">
+        <strong>Carregando pedidos...</strong>
+        <span>Preparando a visão operacional da loja.</span>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+    } @else if (pedidos().length === 0) {
+      <div class="empty-state">
+        <strong>Nenhum pedido encontrado.</strong>
+        <span>Ajuste os filtros ou aguarde novos pedidos entrarem na operação.</span>
+      </div>
+    } @else {
+      <div class="pedido-list">
+        @for (pedido of pedidos(); track trackPedido(pedido)) {
+          <article class="pedido-card">
+            <div class="pedido-main">
+              <div class="pedido-identity">
+                <div class="pedido-code">{{ pedido.codigo }}</div>
+                <div class="pedido-name-block">
+                  <h3>{{ pedido.cliente_nome }}</h3>
+                  @if (pedido.cliente_email) {
+                    <p class="pedido-email">{{ pedido.cliente_email }}</p>
+                  }
+                </div>
+              </div>
+
+              <div class="pedido-info-block">
+                <span class="meta-label">Canal</span>
+                <strong>{{ pedido.canal_venda }}</strong>
+              </div>
+
+              <div class="pedido-info-block">
+                <span class="meta-label">Itens</span>
+                <strong>{{ pedido.itens_quantidade }}</strong>
+              </div>
+
+              <div class="pedido-info-block">
+                <span class="meta-label">Total</span>
+                <strong>{{ formatCurrency(pedido.total) }}</strong>
+              </div>
+
+              <div class="pedido-info-block pedido-info-wide">
+                <span class="meta-label">Criado em</span>
+                <strong>{{ formatDate(pedido.criado_em) }}</strong>
+              </div>
+
+              <div class="pedido-status-block">
+                <span class="status-badge" [ngClass]="statusClass(pedido.status)">
+                  {{ statusLabel(pedido.status) }}
+                </span>
+              </div>
+
+              <div class="pedido-action-block">
+                <a
+                  class="pedido-action-link"
+                  [routerLink]="['/painel/pedidos', pedido.id]"
+                  [attr.aria-label]="'Abrir pedido ' + pedido.codigo"
+                >
+                  Ver detalhe
+                </a>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</section>

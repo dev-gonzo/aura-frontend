@@ -4,7 +4,7 @@
         title="Gestão de usuários"
         description="Busca única por nome, CPF, pseudônimo ou WhatsApp com filtro rápido por perfil."
       >
-        <a class="btn btn-primary" routerLink="/usuarios/novo">Cadastrar usuário</a>
+        <a class="btn btn-primary" routerLink="/painel/usuarios/novo">Cadastrar usuário</a>
       </app-page-header>
 
       <div class="row g-4">
@@ -161,7 +161,7 @@
                   <div class="user-action-block">
                     <a
                       class="user-icon-button"
-                      routerLink="/usuarios/novo"
+                      routerLink="/painel/usuarios/novo"
                       [queryParams]="{ editar: user.id }"
                       [attr.aria-label]="'Editar ' + user.nome_completo"
                       title="Editar usuário"

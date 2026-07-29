@@ -25,6 +25,7 @@ export class ImageUploadComponent {
   @Input() shape: 'square' | 'circle' = 'square';
   @Input() layout: 'square' | 'free' = 'square';
   @Input() previewFit: 'cover' | 'contain' = 'cover';
+  @Input() previewMode: 'default' | 'thumbnail' = 'default';
   @Input() fullWidth = false;
 
   @Output() readonly fileSelected = new EventEmitter<Event>();

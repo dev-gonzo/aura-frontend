@@ -1,0 +1,71 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Loja"
+    title="Domínio"
+    description="Esse domínio identifica a sua loja. Enquanto ele não estiver apontado, use a URL temporária de preview para testar."
+  >
+    <a routerLink="/painel/loja/layout" class="header-link">Voltar para layout</a>
+  </app-page-header>
+
+  @if (loading()) {
+    <div class="state-card">
+      <span>Carregando domínio...</span>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="state-card is-error">
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+    @if (successMessage()) {
+      <div class="state-card is-success">
+        <span>{{ successMessage() }}</span>
+      </div>
+    }
+
+    <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="save()">
+      <div class="col-12 col-xl-7">
+        <section class="content-card">
+          <div class="section-heading">
+            <span class="section-eyebrow">Configuração</span>
+            <h2>Qual é o domínio da sua loja?</h2>
+            <p>Informe apenas o domínio, sem http, https e sem www.</p>
+          </div>
+
+          <app-form-input
+            [control]="form.controls.dominio"
+            label="Domínio da loja *"
+            placeholder="ex: minhacasaeditorial.com.br"
+            helperText="Esse valor será usado para resolver o tenant da sua loja."
+            [invalid]="hasFieldError('dominio')"
+            [errorText]="getFieldError('dominio')"
+            autocomplete="off"
+          />
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-5">
+        <section class="content-card">
+          <div class="section-heading compact">
+            <span class="section-eyebrow">URL temporária</span>
+            <h2>Preview por domínio</h2>
+            <p>Use esse caminho para testar sem precisar apontar o domínio agora.</p>
+          </div>
+
+          <div class="preview-card">
+            <div class="preview-label">Local</div>
+            <div class="preview-value">{{ localPreviewUrl() }}</div>
+            <div class="preview-label mt-3">Caminho</div>
+            <div class="preview-value is-muted">{{ previewPath() }}</div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 d-flex justify-content-end">
+        <app-button type="submit" [disabled]="saving()">
+          {{ saving() ? 'Salvando...' : 'Salvar domínio' }}
+        </app-button>
+      </div>
+    </form>
+  }
+</section>

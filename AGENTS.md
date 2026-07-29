@@ -106,6 +106,8 @@ Estas regras são obrigatórias:
 - O label do campo deve ficar vermelho quando houver erro.
 - A borda do campo deve ficar vermelha quando houver erro.
 - O helper de erro deve ficar abaixo do campo.
+- Campos só devem exibir erro visual após tentativa de envio do formulário (submit).
+- Não exibir erro visual baseado em `touched`/`blur` (o usuário pode navegar pelos campos sem “tomar vermelho” antes de tentar salvar).
 - Não usar banner genérico para erro de validação de formulário.
 - Mensagens técnicas do backend devem ser traduzidas para texto humano.
 - Nunca mostrar nomes como `endereco_principal`, `nome_completo`, `data_nascimento` ou qualquer outro `snake_case`.
@@ -146,6 +148,7 @@ Estas regras são obrigatórias:
 - Página deve usar componentes de `shared`.
 - Página pode conter lógica de montagem de payload, busca e integração.
 - Página deve ficar responsável por traduzir erro de backend para o campo certo.
+- Quando um módulo administrativo já possui backend disponível, não usar `localStorage`, cache local ou fallback fake para simular persistência ou listagem.
 - Toda estrutura de página deve partir de `container`, `container-fluid`, `row` e `col-*` do Bootstrap.
 - Não criar estrutura principal de layout baseada em grid autoral quando o Bootstrap resolver a composição.
 

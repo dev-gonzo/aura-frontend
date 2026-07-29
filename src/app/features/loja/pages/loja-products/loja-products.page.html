@@ -4,9 +4,9 @@
     title="Produtos da loja"
     description="Gerencie a vitrine por categorias, destaques, promoções e lançamentos."
   >
-    <a routerLink="/loja/layout" class="header-link">Editar layout</a>
-    <a routerLink="/loja/categorias" class="header-link">Gerenciar categorias</a>
-    <a routerLink="/loja/produtos/novo" class="header-link is-primary">Novo produto</a>
+    <a routerLink="/painel/loja/layout" class="header-link">Editar layout</a>
+    <a routerLink="/painel/loja/categorias" class="header-link">Gerenciar categorias</a>
+    <a routerLink="/painel/loja/produtos/novo" class="header-link is-primary">Novo produto</a>
   </app-page-header>
 
   <section class="filter-card">
@@ -120,7 +120,7 @@
       <strong>Nenhum produto encontrado.</strong>
       <p>Ajuste os filtros ou cadastre o primeiro produto da vitrine.</p>
       <div class="d-flex flex-wrap gap-2">
-        <a routerLink="/loja/produtos/novo" class="header-link is-primary">Cadastrar produto</a>
+        <a routerLink="/painel/loja/produtos/novo" class="header-link is-primary">Cadastrar produto</a>
       </div>
     </div>
   } @else {
@@ -190,7 +190,7 @@
                     Duplicar
                   }
                 </button>
-                <a [routerLink]="['/loja/produtos', item.id]" class="edit-link">Editar</a>
+                <a [routerLink]="['/painel/loja/produtos', item.id]" class="edit-link">Editar</a>
               </div>
             </div>
           </div>

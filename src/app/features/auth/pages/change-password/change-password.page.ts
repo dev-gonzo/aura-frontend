@@ -94,7 +94,7 @@ export class ChangePasswordPage {
       });
       this.message.set('Senha atualizada com sucesso.');
       this.submitted.set(false);
-      await this.router.navigate(['/']);
+      await this.router.navigate(['/painel']);
     } catch (error) {
       this.errorMessage.set(processApiError(error));
     } finally {

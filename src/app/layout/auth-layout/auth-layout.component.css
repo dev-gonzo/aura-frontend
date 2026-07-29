@@ -35,6 +35,10 @@
       flex-direction: column;
       gap: 1.5rem;
       padding: 1.25rem 1rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
       background: rgba(15, 23, 42, 0.96);
       border-right: 1px solid rgba(148, 163, 184, 0.16);
       transform: translateX(-100%);
@@ -44,6 +48,29 @@
 
     .dashboard-sidebar.is-open {
       transform: translateX(0);
+    }
+
+    .dashboard-sidebar:hover {
+      scrollbar-color: rgba(79, 70, 229, 0.55) transparent;
+    }
+
+    .dashboard-sidebar::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .dashboard-sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .dashboard-sidebar::-webkit-scrollbar-thumb {
+      background: transparent;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    .dashboard-sidebar:hover::-webkit-scrollbar-thumb {
+      background: rgba(79, 70, 229, 0.55);
     }
 
     .brand-row {

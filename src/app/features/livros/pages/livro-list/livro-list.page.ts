@@ -239,7 +239,7 @@ export class LivroListPage {
         })),
       });
 
-      await this.router.navigate(['/loja/produtos', duplicatedId]);
+      await this.router.navigate(['/painel/loja/produtos', duplicatedId]);
     } catch (error) {
       this.errorMessage.set(processApiError(error));
     } finally {

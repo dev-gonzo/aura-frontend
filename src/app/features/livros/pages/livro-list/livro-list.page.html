@@ -4,7 +4,7 @@
     title="Gestão de livros"
     description="Gerencie os produtos da loja marcados como livro com o mesmo fluxo visual da vitrine."
   >
-    <a routerLink="/loja/produtos/novo" class="header-link is-primary">Cadastrar livro</a>
+    <a routerLink="/painel/loja/produtos/novo" class="header-link is-primary">Cadastrar livro</a>
   </app-page-header>
 
   <section class="filter-card">
@@ -93,7 +93,7 @@
       <strong>Nenhum livro encontrado.</strong>
       <p>Ajuste os filtros ou cadastre o primeiro livro pelo fluxo de produtos.</p>
       <div class="d-flex flex-wrap gap-2">
-        <a routerLink="/loja/produtos/novo" class="header-link is-primary">Cadastrar livro</a>
+        <a routerLink="/painel/loja/produtos/novo" class="header-link is-primary">Cadastrar livro</a>
       </div>
     </div>
   } @else {
@@ -163,7 +163,7 @@
                     Duplicar
                   }
                 </button>
-                <a [routerLink]="['/loja/produtos', item.id]" class="edit-link">Editar</a>
+                <a [routerLink]="['/painel/loja/produtos', item.id]" class="edit-link">Editar</a>
               </div>
             </div>
           </div>

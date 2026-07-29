@@ -1,0 +1,247 @@
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-panel,
+.list-panel,
+.summary-card,
+.pedido-card {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.88));
+  box-shadow: 0 20px 45px rgba(2, 6, 23, 0.24);
+}
+
+.search-panel,
+.list-panel {
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+}
+
+.search-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.68);
+}
+
+.search-box input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #f8fafc;
+}
+
+.search-box input::placeholder {
+  color: rgba(148, 163, 184, 0.72);
+}
+
+.search-icon,
+.clear-button {
+  color: #cbd5e1;
+}
+
+.clear-button {
+  border: 0;
+  background: transparent;
+  font-size: 0.9rem;
+}
+
+.status-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.status-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: rgba(30, 41, 59, 0.72);
+  color: #e2e8f0;
+  border-radius: 999px;
+  padding: 0.6rem 0.9rem;
+  font-weight: 600;
+}
+
+.status-filter small {
+  color: #93c5fd;
+}
+
+.status-filter.is-active {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.42), rgba(59, 130, 246, 0.32));
+  border-color: rgba(129, 140, 248, 0.5);
+}
+
+.summary-card {
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  height: 100%;
+}
+
+.summary-card span,
+.meta-label {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summary-card strong {
+  display: block;
+  margin-top: 0.55rem;
+  color: #f8fafc;
+  font-size: 1.8rem;
+}
+
+.summary-card small {
+  display: block;
+  margin-top: 0.45rem;
+  color: #cbd5e1;
+}
+
+.list-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.list-head h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.2rem;
+}
+
+.list-head p {
+  margin: 0.35rem 0 0;
+  color: #94a3b8;
+}
+
+.empty-state {
+  display: grid;
+  gap: 0.35rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #cbd5e1;
+}
+
+.empty-state strong {
+  color: #f8fafc;
+}
+
+.pedido-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.pedido-card {
+  border-radius: 1.25rem;
+  padding: 1rem 1.15rem;
+}
+
+.pedido-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.pedido-identity {
+  display: flex;
+  gap: 0.95rem;
+  align-items: center;
+}
+
+.pedido-code {
+  min-width: 6.5rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.95rem;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.28), rgba(30, 41, 59, 0.92));
+  color: #e0e7ff;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pedido-name-block h3 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.08rem;
+}
+
+.pedido-email {
+  margin: 0.3rem 0 0;
+  color: #cbd5e1;
+}
+
+.pedido-info-block strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: #f8fafc;
+}
+
+.pedido-status-block,
+.pedido-action-block {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.2rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.status-badge.is-success {
+  background: rgba(16, 185, 129, 0.18);
+  color: #6ee7b7;
+}
+
+.status-badge.is-warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fcd34d;
+}
+
+.status-badge.is-danger {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fda4af;
+}
+
+.status-badge.is-muted {
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+}
+
+.pedido-action-link {
+  color: #a5b4fc;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (min-width: 992px) {
+  .pedido-main {
+    grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(120px, 1fr)) auto auto;
+    align-items: center;
+  }
+
+  .pedido-info-wide {
+    min-width: 160px;
+  }
+}

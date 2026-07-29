@@ -3,22 +3,22 @@ import { CanActivateFn, Router } from '@angular/router';
 
 import { AuthService } from '../service/auth.service';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAuthenticated()) {
+  if (await authService.ensureAuthenticated()) {
     return true;
   }
 
   return router.createUrlTree(['/login']);
 };
 
-export const guestGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (!authService.isAuthenticated()) {
+  if (!(await authService.ensureAuthenticated())) {
     return true;
   }
 
@@ -26,14 +26,14 @@ export const guestGuard: CanActivateFn = () => {
     return router.createUrlTree(['/trocar-senha']);
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/painel']);
 };
 
-export const mustChangePasswordGuard: CanActivateFn = () => {
+export const mustChangePasswordGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (!authService.isAuthenticated()) {
+  if (!(await authService.ensureAuthenticated())) {
     return router.createUrlTree(['/login']);
   }
 
@@ -41,14 +41,14 @@ export const mustChangePasswordGuard: CanActivateFn = () => {
     return true;
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/painel']);
 };
 
-export const adminGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (!authService.isAuthenticated()) {
+  if (!(await authService.ensureAuthenticated())) {
     return router.createUrlTree(['/login']);
   }
 
@@ -56,14 +56,18 @@ export const adminGuard: CanActivateFn = () => {
     return true;
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/painel']);
 };
 
-export const userCreateOrSelfEditGuard: CanActivateFn = (route) => {
+export const userCreateOrSelfEditGuard: CanActivateFn = async (route) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const session = authService.session();
 
+  if (!(await authService.ensureAuthenticated())) {
+    return router.createUrlTree(['/login']);
+  }
+
+  const session = authService.session();
   if (!session) {
     return router.createUrlTree(['/login']);
   }
@@ -77,5 +81,5 @@ export const userCreateOrSelfEditGuard: CanActivateFn = (route) => {
     return true;
   }
 
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/painel']);
 };

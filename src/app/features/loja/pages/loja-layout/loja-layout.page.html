@@ -14,7 +14,7 @@
     title="Layout e identidade"
     description="Organize a loja em blocos reais da storefront: header, menu, banner, bloco customizado, vitrines, destaques institucionais e rodapé."
   >
-    <a routerLink="/loja/produtos" class="header-link">Gerenciar produtos</a>
+    <a routerLink="/painel/loja/produtos" class="header-link">Gerenciar produtos</a>
   </app-page-header>
 
   @if (loading()) {
@@ -239,6 +239,7 @@
                       [previewUrl]="logoPreview()"
                       placeholderTitle="Logo não enviada"
                       placeholderSubtitle="Clique para enviar a logo"
+                      previewMode="thumbnail"
                       [fullWidth]="true"
                       (fileSelected)="handleLogoSelected($event)"
                     />
@@ -250,6 +251,7 @@
                       [previewUrl]="faviconPreview()"
                       placeholderTitle="Favicon não enviado"
                       placeholderSubtitle="Clique para enviar o favicon"
+                      previewMode="thumbnail"
                       (fileSelected)="handleFaviconSelected($event)"
                     />
                   </div>
@@ -2293,7 +2295,7 @@
               </div>
 
               <div class="products-toolbar">
-                <a routerLink="/loja/produtos" class="section-link">Abrir gestão completa de produtos</a>
+                <a routerLink="/painel/loja/produtos" class="section-link">Abrir gestão completa de produtos</a>
               </div>
             </div>
           </section>
@@ -2335,7 +2337,7 @@
                 }
               </button>
 
-              <a routerLink="/loja/produtos" class="sidebar-link-button">Ir para produtos</a>
+              <a routerLink="/painel/loja/produtos" class="sidebar-link-button">Ir para produtos</a>
             </div>
 
             @if (successMessage()) {

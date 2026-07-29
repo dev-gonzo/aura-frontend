@@ -96,7 +96,7 @@ export class CreateUserPage implements OnInit {
   protected readonly canShowAdminActions = computed(
     () => this.canManageUsers() && this.isEditMode() && !!this.editingUser()
   );
-  protected readonly backRoute = computed(() => (this.canManageUsers() ? '/usuarios' : '/'));
+  protected readonly backRoute = computed(() => (this.canManageUsers() ? '/painel/usuarios' : '/painel'));
   protected readonly backLabel = computed(() =>
     this.canManageUsers() ? 'Voltar para usuários' : 'Voltar ao painel'
   );

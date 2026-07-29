@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { processApiError } from '../../../../core/utils/process-api-error';
 import { PageHeaderComponent } from '../../../../shared/components/layout/page-header/page-header.component';
 import { UsuarioListItem, UsuariosService } from '../../services/usuarios.service';
 
@@ -163,9 +164,6 @@ export class UserListPage implements OnInit {
 }
 
 function extractErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return 'Nao foi possivel carregar a listagem de usuarios.';
+  const message = processApiError(error).trim();
+  return message || 'Nao foi possivel carregar a listagem de usuarios.';
 }

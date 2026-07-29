@@ -51,6 +51,7 @@ import { processStoreBannerDesktop } from '../../utils/process-store-banner-desk
 import { processStoreBannerMobile } from '../../utils/process-store-banner-mobile';
 import { processStoreFavicon } from '../../utils/process-store-favicon';
 import { processStoreLogo } from '../../utils/process-store-logo';
+import { TenantService } from '../../services/tenant.service';
 
 type LayoutField =
   | 'store_name'
@@ -260,6 +261,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly lojaService = inject(LojaService);
+  private readonly tenantService = inject(TenantService);
   private readonly document = inject(DOCUMENT);
   private readonly priceFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -839,9 +841,11 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly previewMobileProductPlaceholders = computed(() =>
     Array.from({ length: Number(this.previewMobileProductsPerRow()) || 1 }, (_, index) => index)
   );
+  protected readonly tenantDomain = signal('localhost');
   protected readonly previewUrl = computed(() => {
     const hostname = globalThis.location?.hostname || 'localhost';
-    return `http://${hostname}:4202/preview`;
+    const domain = (this.tenantDomain() || 'localhost').trim() || 'localhost';
+    return `http://${hostname}:4202/preview/${domain}`;
   });
   protected readonly previewFontFamily = computed(() => this.toCssFontStack(this.form.controls.font_family.value));
   protected readonly previewMenuFontFamily = computed(() =>
@@ -861,12 +865,6 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       .subscribe((mode) => {
         this.syncDesktopProductsPerRow(mode);
       });
-
-    // #region debug-point E:menu-background-form-changes
-    this.form.controls.menu_background_mode.valueChanges.subscribe((mode) => {
-      fetch('http://127.0.0.1:7777/event', { method: 'POST', body: JSON.stringify({ sessionId: 'menu-bg-persist', runId: 'pre-fix', hypothesisId: 'E', location: 'loja-layout.page.ts:menu_background_mode.valueChanges', msg: '[DEBUG] menu_background_mode changed in form control', data: { menu_background_mode: mode }, ts: Date.now() }) }).catch(() => {});
-    });
-    // #endregion
 
     this.form.controls.font_import_url.valueChanges
       .pipe(startWith(this.form.controls.font_import_url.value))
@@ -903,7 +901,20 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         }));
       });
 
+    await this.loadTenantDomain();
     await this.load();
+  }
+
+  private async loadTenantDomain(): Promise<void> {
+    try {
+      const response = await this.tenantService.getDomain();
+      const domain = (response?.dominio || '').trim();
+      if (domain) {
+        this.tenantDomain.set(domain);
+      }
+    } catch {
+      return;
+    }
   }
 
   ngOnDestroy(): void {

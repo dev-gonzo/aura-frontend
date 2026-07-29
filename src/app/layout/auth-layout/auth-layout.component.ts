@@ -53,7 +53,7 @@ export class AuthLayoutComponent implements OnInit {
     const sections: NavSection[] = [
       {
         title: 'Painel',
-        items: [{ label: 'Dashboard', route: '/', badge: 'Ao vivo' }],
+        items: [{ label: 'Dashboard', route: '/painel', badge: 'Ao vivo' }],
       },
     ];
 
@@ -61,28 +61,30 @@ export class AuthLayoutComponent implements OnInit {
       sections.push({
         title: 'Catálogo',
         items: [
-          { label: 'Autores', route: '/autores' },
-          { label: 'Livros', route: '/livros' },
-          { label: 'Editais', route: '/editais' },
-          { label: 'Usuários', route: '/usuarios' },
+          { label: 'Autores', route: '/painel/autores' },
+          { label: 'Livros', route: '/painel/livros' },
+          { label: 'Editais', route: '/painel/editais' },
+          { label: 'Usuários', route: '/painel/usuarios' },
         ],
       });
       sections.push({
         title: 'Loja',
         items: [
-          { label: 'Layout', route: '/loja/layout' },
-          { label: 'Categorias', route: '/loja/categorias' },
-          { label: 'Produtos', route: '/loja/produtos' },
+          { label: 'Domínio', route: '/painel/loja/dominio' },
+          { label: 'Layout', route: '/painel/loja/layout' },
+          { label: 'Categorias', route: '/painel/loja/categorias' },
+          { label: 'Produtos', route: '/painel/loja/produtos' },
+          { label: 'Pedidos', route: '/painel/pedidos' },
         ],
       });
       sections.push({
         title: 'Configurações',
         items: [
-          { label: 'Integrações', route: '/loja/integracoes' },
-          { label: 'Fretes', route: '/logistica/cotacao' },
-          { label: 'Logística', route: '/logistica/configuracao' },
-          { label: 'Pagamentos', route: '/pagamentos/configuracao' },
-          { label: 'Checkout', route: '/pagamentos/checkout' },
+          { label: 'Integrações', route: '/painel/loja/integracoes' },
+          { label: 'Fretes', route: '/painel/logistica/cotacao' },
+          { label: 'Logística', route: '/painel/logistica/configuracao' },
+          { label: 'Pagamentos', route: '/painel/pagamentos/configuracao' },
+          { label: 'Checkout', route: '/painel/pagamentos/checkout' },
         ],
       });
     }
@@ -149,7 +151,7 @@ export class AuthLayoutComponent implements OnInit {
 
   protected async goToProfile(): Promise<void> {
     this.profileMenuOpen.set(false);
-    await this.router.navigate(['/usuarios/novo'], {
+    await this.router.navigate(['/painel/usuarios/novo'], {
       queryParams: { editar: this.authService.session()?.userId ?? '' },
     });
   }

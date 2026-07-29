@@ -1,0 +1,206 @@
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.content-stack,
+.aside-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel-card,
+.state-card {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.88));
+  box-shadow: 0 20px 45px rgba(2, 6, 23, 0.24);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+}
+
+.state-card {
+  display: grid;
+  gap: 0.35rem;
+  color: #cbd5e1;
+}
+
+.state-card strong {
+  color: #f8fafc;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.section-kicker {
+  display: inline-block;
+  margin-bottom: 0.4rem;
+  color: #93c5fd;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-head h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.2rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.2rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.status-badge.is-success {
+  background: rgba(16, 185, 129, 0.18);
+  color: #6ee7b7;
+}
+
+.status-badge.is-warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fcd34d;
+}
+
+.status-badge.is-danger {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fda4af;
+}
+
+.status-badge.is-muted {
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+}
+
+.summary-item,
+.item-card {
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.52);
+  border-radius: 1.1rem;
+  padding: 1rem;
+  height: 100%;
+}
+
+.summary-item span,
+.total-line span {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summary-item strong,
+.total-line strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: #f8fafc;
+}
+
+.summary-item small {
+  display: block;
+  margin-top: 0.4rem;
+  color: #cbd5e1;
+}
+
+.item-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.item-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.item-card h3 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.item-card p,
+.item-meta small {
+  margin: 0.3rem 0 0;
+  color: #cbd5e1;
+}
+
+.item-meta {
+  text-align: right;
+}
+
+.item-meta span {
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.item-meta strong {
+  display: block;
+  margin-top: 0.2rem;
+  color: #f8fafc;
+}
+
+.totals-card {
+  position: sticky;
+  top: 6.25rem;
+}
+
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.total-line span,
+.total-line strong {
+  margin: 0;
+}
+
+.total-line.is-grand {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.total-line.is-grand strong {
+  font-size: 1.2rem;
+}
+
+.notes-copy {
+  margin: 0;
+  color: #cbd5e1;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 991.98px) {
+  .item-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .item-meta {
+    text-align: left;
+  }
+
+  .totals-card {
+    position: static;
+  }
+}
