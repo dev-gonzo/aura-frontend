@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { AuthService } from '../../../../auth/service/auth.service';
 import { processApiError } from '../../../../core/utils/process-api-error';
@@ -10,7 +11,7 @@ import { ButtonComponent } from '../../../../shared/components/actions/button/bu
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ButtonComponent],
   templateUrl: './login.page.html',
   styleUrl: './login.page.css'
 })
@@ -30,7 +31,7 @@ export class LoginPage {
 
   protected hasFieldError(field: 'login' | 'senha'): boolean {
     const control = this.form.controls[field];
-    return control.invalid && (control.dirty || this.submitted());
+    return control.invalid && this.submitted();
   }
 
   protected getFieldError(field: 'login' | 'senha'): string {
@@ -46,10 +47,13 @@ export class LoginPage {
     queueMicrotask(() => input.focus());
   }
 
+  protected async goToSignup(): Promise<void> {
+    await this.router.navigate(['/cadastro']);
+  }
+
   protected async submit(): Promise<void> {
     this.submitted.set(true);
     if (this.form.invalid) {
-      this.form.markAllAsTouched();
       return;
     }
 
@@ -61,6 +65,17 @@ export class LoginPage {
       this.submitted.set(false);
       await this.router.navigate([session.precisaTrocarSenha ? '/trocar-senha' : '/painel']);
     } catch (error) {
+      if (error instanceof HttpErrorResponse) {
+        if (error.status === 0) {
+          this.errorMessage.set('Nao foi possivel acessar o sistema agora. Tente novamente em instantes.');
+          return;
+        }
+        if (error.status === 401) {
+          this.errorMessage.set('Usuario ou senha invalidos.');
+          return;
+        }
+      }
+
       this.errorMessage.set(processApiError(error));
     } finally {
       this.loading.set(false);

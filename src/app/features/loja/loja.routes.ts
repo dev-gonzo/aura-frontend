@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { adminGuard } from '../../auth/guards/auth.guard';
 import { LojaCategoriesPage } from './pages/loja-categories/loja-categories.page';
+import { LojaAbandonedCartsPage } from './pages/loja-abandoned-carts/loja-abandoned-carts.page';
 import { LojaDomainPage } from './pages/loja-domain/loja-domain.page';
 import { LojaIntegrationsPage } from './pages/loja-integrations/loja-integrations.page';
 import { LojaLayoutPage } from './pages/loja-layout/loja-layout.page';
@@ -18,6 +19,11 @@ export const LOJA_ROUTES: Routes = [
     path: 'loja/layout',
     canActivate: [adminGuard],
     component: LojaLayoutPage,
+  },
+  {
+    path: 'loja/carrinhos-abandonados',
+    canActivate: [adminGuard],
+    component: LojaAbandonedCartsPage,
   },
   {
     path: 'loja/produtos',

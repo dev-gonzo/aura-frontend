@@ -32,6 +32,7 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy {
   @Input() required = false;
   @Input() invalid = false;
   @Input() minHeight = '11rem';
+  @Input() onInsertImage?: () => void;
 
   private static nextId = 0;
   protected readonly inputId = `markdown-editor-${MarkdownEditorComponent.nextId++}`;
@@ -42,30 +43,24 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
+    const actions = ['bold', 'italic', 'underline', 'ulist', 'olist'] as any[];
+    if (this.onInsertImage) {
+      actions.push({
+        name: 'image',
+        icon: '<i class="fa-regular fa-image"></i>',
+        title: 'Inserir imagem',
+        result: () => {
+          this.onInsertImage?.();
+          return true;
+        },
+      });
+    }
+
     host.innerHTML = '';
     this.editor = init({
       element: host,
       defaultParagraphSeparator: 'div',
-      actions: [
-        'bold',
-        'italic',
-        'underline',
-        'ulist',
-        'olist',
-        {
-          name: 'link',
-          icon: '&#128279;',
-          title: 'Inserir link',
-          result: () => {
-            const url = globalThis.prompt('Informe a URL do link');
-            if (!url?.trim()) {
-              return false;
-            }
-            exec('createLink', url.trim());
-            return true;
-          },
-        },
-      ],
+      actions,
       onChange: (value) => {
         if (this.syncingFromControl) {
           return;
@@ -114,6 +109,17 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy {
     if (host) {
       host.innerHTML = '';
     }
+  }
+
+  insertHtml(html: string): void {
+    if (!this.editor) {
+      return;
+    }
+    exec('insertHTML', html);
+  }
+
+  getEditableElement(): HTMLDivElement | null {
+    return this.editor?.content ?? null;
   }
 }
 

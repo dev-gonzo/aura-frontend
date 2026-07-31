@@ -1,0 +1,127 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="CMS"
+    [title]="tipoLabel()"
+    description="Gerencie conteúdos, aprove publicações e organize seu material editorial."
+  >
+    <app-button (click)="create()" [disabled]="loading()">
+      @if (loading()) {
+        Criando...
+      } @else {
+        Novo {{ tipoLabel() }}
+      }
+    </app-button>
+  </app-page-header>
+
+  <section class="filter-card">
+    <form class="row g-3 align-items-end" [formGroup]="filterForm" (ngSubmit)="load(1)">
+      <div class="col-12 col-md">
+        <app-form-input
+          label="Busca"
+          [control]="filterForm.controls.search"
+          placeholder="Buscar por título ou slug"
+        />
+      </div>
+
+      <div class="col-12 col-md-4 col-xl-3">
+        <app-form-select
+          label="Status"
+          [control]="filterForm.controls.status"
+          [options]="statusOptions"
+          placeholder="Todos os status"
+        />
+      </div>
+
+      <div class="col-12 col-xl-auto">
+        <div class="filter-actions">
+          <app-button type="button" variant="secondary" [outline]="true" (click)="clearFilters()">
+            Limpar
+          </app-button>
+          <app-button type="submit" [disabled]="loading()">
+            @if (loading()) {
+              Buscando...
+            } @else {
+              Filtrar
+            }
+          </app-button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="result-head">
+    <strong>{{ resultLabel() }}</strong>
+    <div class="pager">
+      <button class="pager-button" type="button" (click)="goToPrevious()" [disabled]="page() <= 1 || loading()">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <span class="pager-label">Página {{ page() }} de {{ totalPages() }}</span>
+      <button
+        class="pager-button"
+        type="button"
+        (click)="goToNext()"
+        [disabled]="page() >= totalPages() || loading()"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </section>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+  }
+
+  <section class="list-grid">
+    <div class="cms-table-head">
+      <span>Título</span>
+      <span>Status</span>
+      <span>Publicação</span>
+      <span class="actions-head">Ações</span>
+    </div>
+
+    @for (item of items(); track item.id) {
+      <article class="cms-card">
+        <div class="cms-main">
+          <div class="cms-title-block">
+            <span class="meta-label">Conteúdo</span>
+            <h2>{{ item.draft_titulo || '(Sem título)' }}</h2>
+            <small class="meta-helper">/{{ item.draft_slug }}</small>
+          </div>
+
+          <div class="cms-info-block">
+            <span class="meta-label">Status</span>
+            <span class="status-chip" [ngClass]="getStatusClass(item.draft_status)">
+              {{ getStatusLabel(item.draft_status) }}
+            </span>
+          </div>
+
+          <div class="cms-info-block">
+            <span class="meta-label">Publicação</span>
+            @if (item.published_at) {
+              <strong>{{ item.published_at | date: 'dd/MM/yyyy HH:mm' }}</strong>
+            } @else {
+              <strong>Não publicado</strong>
+            }
+          </div>
+
+          <div class="cms-action-block">
+            <button
+              type="button"
+              class="cms-icon-button"
+              (click)="goToEdit(item.id)"
+              [attr.aria-label]="'Editar ' + (item.draft_titulo || 'conteúdo')"
+              title="Editar"
+            >
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <article class="empty-card">
+        <strong>Nenhum conteúdo cadastrado</strong>
+        <span>Crie o primeiro conteúdo para começar seu CMS.</span>
+      </article>
+    }
+  </section>
+</section>

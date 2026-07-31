@@ -1,0 +1,118 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Loja"
+    title="Carrinhos abandonados"
+    description="Acompanhe carrinhos que ficaram parados e podem virar oportunidades de recuperação."
+  />
+
+  <section class="list-panel">
+    <div class="list-head">
+      <div>
+        <h2>Listagem</h2>
+        <p>{{ totalCarts() === 1 ? '1 carrinho encontrado' : totalCarts() + ' carrinhos encontrados' }}</p>
+      </div>
+
+      <app-button type="button" variant="secondary" (click)="reload()" [disabled]="loading()">
+        Recarregar
+      </app-button>
+    </div>
+
+    @if (loading()) {
+      <div class="empty-state">
+        <strong>Carregando carrinhos...</strong>
+        <span>Preparando a lista de oportunidades.</span>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+    } @else if (carts().length === 0) {
+      <div class="empty-state">
+        <strong>Nenhum carrinho abandonado.</strong>
+        <span>Quando houver atividade parada, ela aparece aqui.</span>
+      </div>
+    } @else {
+      <div class="cart-list">
+        @for (cart of carts(); track cart.id) {
+          <article class="cart-card">
+            <div class="cart-main">
+              <div class="cart-identity">
+                <div class="cart-email">
+                  {{ cart.customer_email || 'Sem email informado' }}
+                </div>
+                <div class="cart-meta">
+                  <span>{{ cart.items_count }} item(ns)</span>
+                  <span>•</span>
+                  <span>{{ formatCurrency(cart.total) }}</span>
+                  <span>•</span>
+                  <span>Última atividade: {{ formatDate(cart.last_activity_at) }}</span>
+                </div>
+              </div>
+
+              <div class="cart-action">
+                <button type="button" class="cart-action-link" (click)="openDetail(cart)">Ver detalhes</button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</section>
+
+@if (detailModalOpen()) {
+  <app-modal
+    title="Detalhe do carrinho"
+    subtitle="Itens e valores registrados na última atividade."
+    maxWidth="48rem"
+    (close)="closeDetail()"
+  >
+    <div modal-body>
+      @if (detailLoading()) {
+        <div class="empty-state modal-empty">
+          <strong>Carregando detalhes...</strong>
+          <span>Aguarde um instante.</span>
+        </div>
+      } @else if (detailErrorMessage()) {
+        <div class="alert alert-danger mb-0">{{ detailErrorMessage() }}</div>
+      } @else if (!selectedCart()) {
+        <div class="empty-state modal-empty">
+          <strong>Nenhuma informação disponível.</strong>
+          <span>Tente recarregar a lista.</span>
+        </div>
+      } @else {
+        <div class="detail-grid">
+          <div class="detail-card">
+            <span class="detail-label">Email</span>
+            <strong>{{ selectedCart()?.customer_email || 'Sem email informado' }}</strong>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Total</span>
+            <strong>{{ formatCurrency(selectedCart()?.total || 0) }}</strong>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Última atividade</span>
+            <strong>{{ formatDate(selectedCart()?.last_activity_at || '') }}</strong>
+          </div>
+        </div>
+
+        <div class="items-panel">
+          <h3>Itens</h3>
+          <ul class="items-list">
+            @for (item of (selectedCart()?.items || []); track $index) {
+              <li class="items-row">
+                <span class="items-title">{{ itemLabel(item) }}</span>
+                <span class="items-qty">x{{ itemQuantity(item) }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <div modal-footer>
+      <div class="modal-actions">
+        <app-button type="button" variant="secondary" (click)="closeDetail()">Fechar</app-button>
+      </div>
+    </div>
+  </app-modal>
+}
+

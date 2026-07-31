@@ -4,6 +4,7 @@ import { guestGuard, mustChangePasswordGuard } from '../../auth/guards/auth.guar
 import { AdminEntryPage } from './pages/admin-entry/admin-entry.page';
 import { AdminSignupPage } from './pages/admin-signup/admin-signup.page';
 import { ChangePasswordPage } from './pages/change-password/change-password.page';
+import { ForgotPasswordPage } from './pages/forgot-password/forgot-password.page';
 import { LoginPage } from './pages/login/login.page';
 
 export const AUTH_ROUTES: Routes = [
@@ -15,6 +16,11 @@ export const AUTH_ROUTES: Routes = [
     path: 'login',
     canActivate: [guestGuard],
     component: LoginPage,
+  },
+  {
+    path: 'recuperar-senha',
+    canActivate: [guestGuard],
+    component: ForgotPasswordPage,
   },
   {
     path: 'cadastro',

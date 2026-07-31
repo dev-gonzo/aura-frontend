@@ -20,6 +20,7 @@
     [class.is-free]="layout === 'free'"
     [class.is-thumbnail]="previewMode === 'thumbnail'"
     [class.is-full-width]="fullWidth"
+    [disabled]="disabled"
     [attr.aria-label]="ariaLabel"
     (click)="openPicker()"
   >

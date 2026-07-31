@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.editor-inline-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.image-modal-help {
+  color: rgba(148, 163, 184, 0.92);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+

@@ -79,7 +79,7 @@ export class AdminSignupPage {
 
   protected readonly form = this.formBuilder.nonNullable.group({
     tipo_operacao: ['EDITORA', Validators.required],
-    plano_inicial: ['BASIC', Validators.required],
+    plano_inicial: ['FREE', Validators.required],
     nome_operacao: ['', [Validators.required, Validators.maxLength(255)]],
     dominio: ['', [Validators.required, Validators.maxLength(255)]],
     responsavel_nome: ['', [Validators.required, Validators.maxLength(255)]],

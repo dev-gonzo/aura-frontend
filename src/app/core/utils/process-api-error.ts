@@ -1,5 +1,8 @@
 export function processApiError(error: unknown): string {
   if (typeof error === 'string') {
+    if (error === 'Failed to fetch') {
+      return 'Nao foi possivel acessar o sistema agora. Tente novamente em instantes.';
+    }
     return error;
   }
 

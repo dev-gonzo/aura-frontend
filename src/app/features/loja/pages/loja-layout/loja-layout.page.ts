@@ -272,6 +272,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
   protected readonly publishing = signal(false);
+  protected readonly resettingDraft = signal(false);
   protected readonly submitted = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly successMessage = signal('');
@@ -306,6 +307,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly activeSectionEditor = signal<ConfigurableProductSectionKey | null>(null);
   protected readonly installFontModalOpen = signal(false);
   protected readonly manageFontsModalOpen = signal(false);
+  protected readonly resetDraftModalOpen = signal(false);
   protected readonly installFontUrl = signal('');
   protected readonly installFontErrorMessage = signal('');
   protected readonly productListingConfig = signal<EditableProductListingConfig>(this.createDefaultProductListingConfig());
@@ -1492,6 +1494,34 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       this.errorMessage.set(processApiError(error));
     } finally {
       this.publishing.set(false);
+    }
+  }
+
+  protected openResetDraftModal(): void {
+    if (!this.hasUnpublishedChanges()) {
+      return;
+    }
+    this.resetDraftModalOpen.set(true);
+  }
+
+  protected closeResetDraftModal(): void {
+    this.resetDraftModalOpen.set(false);
+  }
+
+  protected async confirmResetDraft(): Promise<void> {
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.resettingDraft.set(true);
+
+    try {
+      await this.lojaService.resetDraftConfig();
+      this.successMessage.set('Rascunho restaurado com sucesso.');
+      this.resetDraftModalOpen.set(false);
+      await this.load();
+    } catch (error) {
+      this.errorMessage.set(processApiError(error));
+    } finally {
+      this.resettingDraft.set(false);
     }
   }
 

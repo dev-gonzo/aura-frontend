@@ -29,6 +29,12 @@
     box-shadow 0.2s ease;
 }
 
+.image-trigger.is-free {
+  width: 100%;
+  aspect-ratio: auto;
+  min-height: 12rem;
+}
+
 .image-trigger.is-full-width {
   width: 100%;
 }

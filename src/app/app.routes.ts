@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { AUTH_ROUTES } from './features/auth/auth.routes';
 import { AUTORES_ROUTES } from './features/autores/autores.routes';
+import { CMS_ROUTES } from './features/cms/cms.routes';
 import { EDITAIS_ROUTES } from './features/editais/editais.routes';
 import { LIVROS_ROUTES } from './features/livros/livros.routes';
 import { LOJA_ROUTES } from './features/loja/loja.routes';
@@ -32,6 +33,7 @@ export const routes: Routes = [
         component: UserListPage,
       },
       ...AUTORES_ROUTES,
+      ...CMS_ROUTES,
       ...LIVROS_ROUTES,
       ...LOJA_ROUTES,
       ...LOGISTICA_ROUTES,

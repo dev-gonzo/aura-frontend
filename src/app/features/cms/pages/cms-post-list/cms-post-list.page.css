@@ -1,0 +1,265 @@
+:host {
+  display: block;
+}
+
+.page-shell,
+.list-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.filter-card,
+.cms-card,
+.empty-card {
+  padding: 1.1rem 1.2rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.82);
+}
+
+.filter-actions,
+.cms-action-block,
+.cms-main {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.filter-actions,
+.cms-action-block {
+  flex-wrap: wrap;
+}
+
+.result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.result-head strong,
+.cms-card h2,
+.empty-card strong {
+  color: #f8fafc;
+}
+
+.result-head strong {
+  font-size: 1rem;
+}
+
+.pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #94a3b8;
+}
+
+.pager-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(2, 6, 23, 0.22);
+  color: rgba(226, 232, 240, 0.84);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.pager-button:disabled {
+  opacity: 0.55;
+}
+
+.pager-button:not(:disabled):hover {
+  background: rgba(2, 6, 23, 0.4);
+  border-color: rgba(129, 140, 248, 0.24);
+  transform: translateY(-1px);
+}
+
+.pager-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.cms-table-head {
+  display: none;
+}
+
+.cms-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.cms-main {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.cms-main > * {
+  min-width: 0;
+}
+
+.cms-title-block,
+.cms-info-block {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.cms-title-block h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #e2e8f0;
+}
+
+.meta-label,
+.empty-card span,
+.meta-helper {
+  color: #94a3b8;
+}
+
+.meta-label {
+  display: block;
+  font-size: 0.82rem;
+}
+
+.meta-helper {
+  display: block;
+  font-size: 0.82rem;
+  word-break: break-word;
+}
+
+.cms-info-block strong {
+  color: #e2e8f0;
+  line-height: 1.45;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-chip.status-draft {
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+}
+
+.status-chip.status-review {
+  background: rgba(59, 130, 246, 0.18);
+  color: #bfdbfe;
+}
+
+.status-chip.status-approved {
+  background: rgba(16, 185, 129, 0.18);
+  color: #86efac;
+}
+
+.status-chip.status-rejected {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+}
+
+.cms-action-block {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.cms-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  background: rgba(79, 70, 229, 0.16);
+  color: #c7d2fe;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cms-icon-button:hover {
+  background: rgba(79, 70, 229, 0.28);
+  border-color: rgba(129, 140, 248, 0.36);
+  color: #eef2ff;
+  transform: translateY(-1px);
+}
+
+.empty-card {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: center;
+  text-align: center;
+  padding-block: 2rem;
+}
+
+@media (max-width: 767.98px) {
+  .filter-card,
+  .cms-card,
+  .empty-card {
+    padding: 0.95rem;
+  }
+
+  .filter-actions {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pager {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 768px) {
+  .cms-table-head {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 3fr)
+      minmax(11rem, 1fr)
+      minmax(7rem, 0.8fr)
+      minmax(6.25rem, 6.25rem);
+    gap: 1.25rem;
+    padding: 0 1.2rem;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .actions-head {
+    text-align: right;
+  }
+
+  .cms-main {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 3fr)
+      minmax(11rem, 1fr)
+      minmax(7rem, 0.8fr)
+      minmax(6.25rem, 6.25rem);
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .cms-action-block {
+    justify-content: flex-end;
+  }
+}
+

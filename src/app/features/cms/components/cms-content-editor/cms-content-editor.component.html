@@ -1,0 +1,66 @@
+<div class="cms-content-editor">
+  <app-markdown-editor
+    #contentEditor
+    label="Conteúdo"
+    [control]="control"
+    [placeholder]="placeholder"
+    [minHeight]="minHeight"
+    [onInsertImage]="openImageModal.bind(this)"
+  />
+
+  @if (imageModalOpen()) {
+    <app-modal
+      title="Inserir imagem"
+      subtitle="Selecione a imagem que deseja inserir no conteúdo."
+      maxWidth="48rem"
+      (close)="closeImageModal()"
+    >
+      <div modal-body>
+        <div class="row g-3">
+          <div class="col-12 col-lg-6">
+            <app-image-upload
+              label="Imagem"
+              placeholderTitle="Nenhuma imagem selecionada"
+              placeholderSubtitle="Clique para enviar"
+              [previewUrl]="imagePreviewUrl()"
+              accept="image/*"
+              layout="free"
+              previewFit="contain"
+              [fullWidth]="true"
+              (fileSelected)="onImageSelected($event)"
+            />
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <app-form-input
+              label="Texto alternativo"
+              [control]="imageForm.controls.alt"
+              placeholder="Opcional"
+            />
+            <div class="image-modal-help mt-2">
+              <span>Recomendado para acessibilidade e compartilhamento.</span>
+            </div>
+          </div>
+
+          @if (imageErrorMessage()) {
+            <div class="col-12">
+              <div class="alert alert-danger mb-0">{{ imageErrorMessage() }}</div>
+            </div>
+          }
+        </div>
+      </div>
+      <div modal-footer class="d-flex gap-2">
+        <app-button type="button" variant="secondary" [outline]="true" (click)="closeImageModal()">
+          Cancelar
+        </app-button>
+        <app-button type="button" [disabled]="imageProcessing()" (click)="insertImageIntoContent()">
+          @if (imageProcessing()) {
+            Inserindo...
+          } @else {
+            Inserir
+          }
+        </app-button>
+      </div>
+    </app-modal>
+  }
+</div>

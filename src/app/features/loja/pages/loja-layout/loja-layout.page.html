@@ -2327,6 +2327,19 @@
               <button
                 type="button"
                 class="sidebar-link-button action-button"
+                [disabled]="resettingDraft() || !hasUnpublishedChanges()"
+                (click)="openResetDraftModal()"
+              >
+                @if (resettingDraft()) {
+                  Restaurando rascunho...
+                } @else {
+                  Restaurar versão publicada
+                }
+              </button>
+
+              <button
+                type="button"
+                class="sidebar-link-button action-button"
                 [disabled]="publishing() || !hasUnpublishedChanges()"
                 (click)="publishDraft()"
               >
@@ -2391,6 +2404,32 @@
       <div class="modal-actions">
         <app-button type="button" variant="secondary" (click)="closeInstallFontModal()">Cancelar</app-button>
         <app-button type="button" (click)="addInstalledFonts()">Adicionar fonte</app-button>
+      </div>
+    </div>
+  </app-modal>
+}
+
+@if (resetDraftModalOpen()) {
+  <app-modal
+    title="Restaurar versão publicada"
+    subtitle="Ao restaurar, todas as alterações do rascunho serão descartadas e você verá novamente a versão publicada."
+    maxWidth="44rem"
+    (close)="closeResetDraftModal()"
+  >
+    <div modal-body>
+      <div class="section-heading compact">
+        <span class="section-eyebrow">Rascunho</span>
+        <h2>Descartar alterações</h2>
+        <p>Essa ação não publica nada. Ela apenas remove o rascunho atual.</p>
+      </div>
+    </div>
+
+    <div modal-footer>
+      <div class="modal-actions">
+        <app-button type="button" variant="secondary" (click)="closeResetDraftModal()">Cancelar</app-button>
+        <app-button type="button" [disabled]="resettingDraft()" (click)="confirmResetDraft()">
+          Restaurar
+        </app-button>
       </div>
     </div>
   </app-modal>

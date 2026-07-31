@@ -1,0 +1,335 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="CMS"
+    [title]="pageTitle()"
+    description="Edite o rascunho, envie para revisão, aprove e publique quando estiver pronto."
+  >
+    <app-button type="button" variant="secondary" [outline]="true" (click)="goBack()" [disabled]="saving()">
+      Voltar
+    </app-button>
+    @if (!isNew()) {
+      <app-button
+        type="button"
+        variant="danger"
+        [outline]="true"
+        (click)="deletePost()"
+        [disabled]="saving() || loading()"
+      >
+        Excluir
+      </app-button>
+    }
+    <app-button type="button" (click)="save()" [disabled]="saving() || loading()">
+      @if (saving()) {
+        Salvando...
+      } @else {
+        Salvar rascunho
+      }
+    </app-button>
+  </app-page-header>
+
+  <section class="status-strip">
+    <span class="status-chip" [ngClass]="draftStatusClass()">
+      {{ draftStatusLabel() }}
+    </span>
+    <span class="status-dot"></span>
+    <span class="status-meta">
+      @if (post()?.published_at) {
+        Publicado em {{ post()?.published_at | date: 'dd/MM/yyyy HH:mm' }}
+      } @else {
+        Não publicado
+      }
+    </span>
+  </section>
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger mb-0">{{ errorMessage() }}</div>
+  }
+
+  <section class="content-grid">
+    <form class="form-panel" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="row g-3">
+        <div class="col-12">
+          <app-form-input
+            label="Título"
+            [required]="true"
+            [control]="form.controls.draft_titulo"
+            [invalid]="hasFieldError('draft_titulo')"
+            [errorText]="getFieldError('draft_titulo')"
+            placeholder="Ex.: Como escrever um conto curto"
+          />
+        </div>
+
+        <div class="col-12">
+          <app-form-input
+            label="Slug"
+            [control]="form.controls.draft_slug"
+            [invalid]="hasFieldError('draft_slug')"
+            [errorText]="getFieldError('draft_slug')"
+            placeholder="Ex.: como-escrever-um-conto-curto"
+            helperText="Gerado automaticamente pelo título."
+          />
+        </div>
+
+        <div class="col-12">
+          <app-form-textarea
+            label="Texto de destaque"
+            [control]="form.controls.draft_resumo"
+            [invalid]="hasFieldError('draft_resumo')"
+            [errorText]="getFieldError('draft_resumo')"
+            [rows]="4"
+            [autoGrow]="true"
+            placeholder="Escreva uma chamada curta para exibição na listagem e nos cards."
+            helperText="Até 140 caracteres. Usado como chamada nos cards."
+          />
+        </div>
+
+        <div class="col-12">
+          <app-cms-content-editor
+            [control]="form.controls.draft_conteudo_html"
+            minHeight="16rem"
+            [disabled]="saving() || loading()"
+          ></app-cms-content-editor>
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <app-image-upload
+            label="Capa (desktop)"
+            placeholderTitle="Nenhuma imagem enviada"
+            placeholderSubtitle="Recomendado: 1080 x 1080"
+            accept="image/*"
+            layout="free"
+            previewFit="contain"
+            [fullWidth]="true"
+            [disabled]="saving() || loading() || cardImageProcessing()"
+            [previewUrl]="cardImagePreviewUrl()"
+            (fileSelected)="handleCardImageSelected($event)"
+          />
+          <div class="cover-helper mt-2">Usada na listagem e compartilhamento. Sugestão: 1080 x 1080.</div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <app-image-upload
+            label="Banner (mobile)"
+            placeholderTitle="Nenhum banner enviado"
+            placeholderSubtitle="Recomendado: 1080 x 1440"
+            accept="image/*"
+            layout="free"
+            previewFit="contain"
+            [fullWidth]="true"
+            [disabled]="saving() || loading() || coverMobileProcessing()"
+            [previewUrl]="coverMobilePreviewUrl()"
+            (fileSelected)="handleCoverMobileSelected($event)"
+          />
+          <div class="cover-helper mt-2">Capa interna do post. Sugestão: 1080 x 1440.</div>
+        </div>
+
+        <div class="col-12">
+          <app-image-upload
+            label="Banner (desktop)"
+            placeholderTitle="Nenhum banner enviado"
+            placeholderSubtitle="Recomendado: 1200 x 400"
+            accept="image/*"
+            layout="free"
+            previewFit="contain"
+            [fullWidth]="true"
+            [disabled]="saving() || loading() || coverDesktopProcessing()"
+            [previewUrl]="coverDesktopPreviewUrl()"
+            (fileSelected)="handleCoverDesktopSelected($event)"
+          />
+          <div class="cover-helper mt-2">Capa interna do post. Sugestão: 1200 x 400.</div>
+        </div>
+
+        <div class="col-12">
+          <app-form-input
+            label="SEO title"
+            [control]="form.controls.draft_seo_title"
+            placeholder="Título para buscadores"
+          />
+        </div>
+
+        @if (coverErrorMessage()) {
+          <div class="col-12">
+            <div class="alert alert-danger mb-0">{{ coverErrorMessage() }}</div>
+          </div>
+        }
+
+        <div class="col-12">
+          <app-form-textarea
+            label="SEO description"
+            [control]="form.controls.draft_seo_description"
+            [rows]="3"
+            [autoGrow]="true"
+            placeholder="Descrição para buscadores e para o preview ao compartilhar."
+            helperText="Usada em buscadores e no preview de compartilhamento."
+          />
+        </div>
+
+        <div class="col-12">
+          <app-form-input
+            label="SEO tags"
+            [control]="form.controls.draft_seo_tags"
+            placeholder="Ex.: livros, contos, literatura"
+            helperText="Separe por vírgulas."
+          />
+        </div>
+      </div>
+    </form>
+
+    <aside class="action-panel">
+      <div class="panel-card">
+        <strong class="panel-title">Fluxo de publicação</strong>
+        <span class="panel-copy">Acompanhe a etapa atual e avance quando o rascunho estiver pronto.</span>
+
+        <div class="workflow-steps">
+          <div class="workflow-step" [class.is-active]="currentStage() === 'RASCUNHO'" [class.is-done]="currentStage() !== 'RASCUNHO'">
+            <span class="workflow-index">1</span>
+            <div class="workflow-body">
+              <strong>Rascunho</strong>
+              <span>Edite e salve o conteúdo.</span>
+            </div>
+          </div>
+          <div
+            class="workflow-step"
+            [class.is-active]="currentStage() === 'EM_REVISAO'"
+            [class.is-done]="currentStage() === 'APROVADO' || currentStage() === 'PUBLICADO'"
+          >
+            <span class="workflow-index">2</span>
+            <div class="workflow-body">
+              <strong>Em revisão</strong>
+              <span>Aguardando aprovação.</span>
+            </div>
+          </div>
+          <div
+            class="workflow-step"
+            [class.is-active]="currentStage() === 'APROVADO'"
+            [class.is-done]="currentStage() === 'PUBLICADO'"
+          >
+            <span class="workflow-index">3</span>
+            <div class="workflow-body">
+              <strong>Aprovado</strong>
+              <span>Pronto para publicar.</span>
+            </div>
+          </div>
+          <div class="workflow-step" [class.is-active]="currentStage() === 'PUBLICADO'" [class.is-done]="false">
+            <span class="workflow-index">4</span>
+            <div class="workflow-body">
+              <strong>Publicado</strong>
+              <span>Visível na vitrine.</span>
+            </div>
+          </div>
+        </div>
+
+        @if (workflowHint()) {
+          <div class="workflow-hint" [class.is-warning]="hasUnsavedChanges()" [class.is-muted]="!hasUnsavedChanges()">
+            {{ workflowHint() }}
+          </div>
+        }
+
+        <div class="panel-actions">
+          @if (shouldShowSubmitForReview()) {
+            <app-button
+              type="button"
+              variant="secondary"
+              [outline]="true"
+              [disabled]="workflowBlocked()"
+              (click)="submitForReview()"
+            >
+              Enviar para revisão
+            </app-button>
+          }
+
+          @if (shouldShowApproveReject()) {
+            <app-button type="button" [disabled]="workflowBlocked()" (click)="approve()">Aprovar</app-button>
+            <app-button
+              type="button"
+              variant="danger"
+              [outline]="true"
+              [disabled]="workflowBlocked()"
+              (click)="openRejectModal()"
+            >
+              Reprovar
+            </app-button>
+          }
+
+          @if (shouldShowPublish()) {
+            <app-button type="button" [disabled]="workflowBlocked()" (click)="publish()">Publicar</app-button>
+          }
+
+          @if (shouldShowUnpublish()) {
+            <app-button
+              type="button"
+              variant="secondary"
+              [outline]="true"
+              [disabled]="workflowBlocked()"
+              (click)="unpublish()"
+            >
+              Despublicar
+            </app-button>
+          }
+
+          <app-button
+            type="button"
+            variant="danger"
+            [outline]="true"
+            [disabled]="saving() || loading() || isArchived()"
+            (click)="archive()"
+          >
+            Arquivar
+          </app-button>
+        </div>
+      </div>
+
+      @if (post()?.draft_review_notes) {
+        <div class="panel-card panel-notes">
+          <strong class="panel-title">Notas da revisão</strong>
+          <p class="notes-text">{{ post()?.draft_review_notes }}</p>
+        </div>
+      }
+    </aside>
+  </section>
+
+  @if (rejectModalOpen()) {
+    <app-modal
+      title="Reprovar conteúdo"
+      subtitle="Informe o motivo para facilitar ajustes antes de uma nova revisão."
+      maxWidth="42rem"
+      (close)="closeRejectModal()"
+    >
+      <div modal-body>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label text-light">Motivo *</label>
+            <textarea
+              class="form-control"
+              rows="4"
+              [value]="rejectNotes()"
+              (input)="rejectNotes.set(($any($event.target).value || '').toString())"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div modal-footer class="d-flex gap-2">
+        <app-button type="button" variant="secondary" [outline]="true" (click)="closeRejectModal()">
+          Cancelar
+        </app-button>
+        <app-button type="button" variant="danger" (click)="confirmReject()">Reprovar</app-button>
+      </div>
+    </app-modal>
+  }
+
+  @if (confirmModalOpen()) {
+    <app-modal
+      [title]="confirmModalTitle()"
+      [subtitle]="confirmModalText()"
+      maxWidth="42rem"
+      (close)="closeConfirmModal()"
+    >
+      <div modal-footer class="d-flex gap-2">
+        <app-button type="button" variant="secondary" [outline]="true" (click)="closeConfirmModal()">
+          Cancelar
+        </app-button>
+        <app-button type="button" (click)="confirmModal()">Confirmar</app-button>
+      </div>
+    </app-modal>
+  }
+</section>

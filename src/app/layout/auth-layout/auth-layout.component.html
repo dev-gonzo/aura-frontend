@@ -10,10 +10,12 @@
       <div class="row g-0 flex-nowrap dashboard-frame">
         <aside class="dashboard-sidebar col-12 col-xl-auto" [class.is-open]="sidebarOpen()">
           <div class="brand-row">
-            <a routerLink="/painel" class="brand-mark" (click)="closeSidebar()">A</a>
+            <a routerLink="/painel" class="brand-mark brand-mark-logo" (click)="closeSidebar()">
+              <img class="brand-logo" src="assets/logo.png" alt="Aura Loja Virtual" />
+            </a>
             <div class="brand-copy">
-              <strong>Aura</strong>
-              <span>Admin da Editora</span>
+              <strong>Aura Loja Virtual</strong>
+              <span>Painel administrativo</span>
             </div>
           </div>
 

@@ -27,6 +27,7 @@ export class ImageUploadComponent {
   @Input() previewFit: 'cover' | 'contain' = 'cover';
   @Input() previewMode: 'default' | 'thumbnail' = 'default';
   @Input() fullWidth = false;
+  @Input() disabled = false;
 
   @Output() readonly fileSelected = new EventEmitter<Event>();
   @Output() readonly previewLoad = new EventEmitter<void>();
@@ -35,6 +36,9 @@ export class ImageUploadComponent {
   protected readonly inputId = `image-upload-${ImageUploadComponent.nextId++}`;
 
   protected openPicker(): void {
+    if (this.disabled) {
+      return;
+    }
     if (this.fileInput?.nativeElement) {
       this.fileInput.nativeElement.value = '';
       this.fileInput.nativeElement.click();

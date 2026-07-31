@@ -57,6 +57,17 @@ export class AuthLayoutComponent implements OnInit {
       },
     ];
 
+    if (this.authService.hasRole('ADMIN') || this.authService.hasRole('EDITOR')) {
+      sections.push({
+        title: 'Conteúdo',
+        items: [
+          { label: 'Contos', route: '/painel/cms/contos' },
+          { label: 'Artigos', route: '/painel/cms/artigos' },
+          { label: 'Blog', route: '/painel/cms/blog' },
+        ],
+      });
+    }
+
     if (this.authService.isAdmin()) {
       sections.push({
         title: 'Catálogo',
@@ -72,6 +83,7 @@ export class AuthLayoutComponent implements OnInit {
         items: [
           { label: 'Domínio', route: '/painel/loja/dominio' },
           { label: 'Layout', route: '/painel/loja/layout' },
+          { label: 'Carrinhos', route: '/painel/loja/carrinhos-abandonados' },
           { label: 'Categorias', route: '/painel/loja/categorias' },
           { label: 'Produtos', route: '/painel/loja/produtos' },
           { label: 'Pedidos', route: '/painel/pedidos' },

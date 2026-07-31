@@ -342,6 +342,10 @@ export class LojaService {
     await firstValueFrom(this.http.post(`${this.apiBaseUrl}/loja/configuracao/publicar`, {}));
   }
 
+  async resetDraftConfig(): Promise<void> {
+    await firstValueFrom(this.http.post(`${this.apiBaseUrl}/loja/configuracao/rascunho/reset`, {}));
+  }
+
   async listProducts(): Promise<StoreProductListItem[]> {
     return firstValueFrom(this.http.get<StoreProductListResponse>(`${this.apiBaseUrl}/loja/produtos`)).then(
       (response) => response.items

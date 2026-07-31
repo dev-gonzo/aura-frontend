@@ -59,6 +59,21 @@ export const adminGuard: CanActivateFn = async () => {
   return router.createUrlTree(['/painel']);
 };
 
+export const editorOrAdminGuard: CanActivateFn = async () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!(await authService.ensureAuthenticated())) {
+    return router.createUrlTree(['/login']);
+  }
+
+  if (authService.hasRole('ADMIN') || authService.hasRole('EDITOR')) {
+    return true;
+  }
+
+  return router.createUrlTree(['/painel']);
+};
+
 export const userCreateOrSelfEditGuard: CanActivateFn = async (route) => {
   const authService = inject(AuthService);
   const router = inject(Router);
