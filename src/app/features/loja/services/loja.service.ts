@@ -38,7 +38,15 @@ export interface StoreNavigationLinkPayload {
   kind?: StoreNavigationLinkKind;
 }
 
-export type StoreNavigationLinkKind = 'home' | 'products' | 'categories' | 'contact' | 'custom';
+export type StoreNavigationLinkKind =
+  | 'home'
+  | 'products'
+  | 'categories'
+  | 'contact'
+  | 'cms_contos'
+  | 'cms_artigos'
+  | 'cms_blog'
+  | 'custom';
 
 export interface StoreFeatureHighlightPayload {
   title: string;
@@ -168,11 +176,18 @@ export interface StoreIntegrationsPayload {
   tiktok_pixel_id?: string;
 }
 
+export interface StoreCmsConfigPayload {
+  contos: boolean;
+  artigos: boolean;
+  blog: boolean;
+}
+
 export interface StoreSettingsPayload {
   store_name: string;
   store_subtitle?: string;
   store_description?: string;
   store_tags?: string;
+  cms_config?: StoreCmsConfigPayload;
   store_in_maintenance?: boolean;
   maintenance_title?: string;
   maintenance_message?: string;
@@ -235,6 +250,14 @@ export interface StoreSettingsPayload {
   footer_links?: StoreNavigationLinkPayload[];
   footer_contact_title?: string;
   footer_contact_text?: string;
+  contact_store_name?: string;
+  contact_cnpj?: string;
+  contact_phone?: string;
+  contact_whatsapp?: string;
+  contact_email?: string;
+  contact_hours?: string;
+  contact_address?: string;
+  contact_map_embed_url?: string;
   launches_section?: StoreProductSectionConfigPayload;
   featured_section?: StoreProductSectionConfigPayload;
   promotions_section?: StoreProductSectionConfigPayload;
@@ -246,6 +269,19 @@ export interface StoreSettingsResponse extends StoreSettingsPayload {
   draft_updated_at: string;
   published_at: string;
   has_unpublished_changes: boolean;
+}
+
+export interface StoreContactSettingsPayload {
+  footer_contact_title?: string;
+  footer_contact_text?: string;
+  contact_store_name?: string;
+  contact_cnpj?: string;
+  contact_phone?: string;
+  contact_whatsapp?: string;
+  contact_email?: string;
+  contact_hours?: string;
+  contact_address?: string;
+  contact_map_embed_url?: string;
 }
 
 export interface StoreProductPayload {
@@ -336,6 +372,10 @@ export class LojaService {
 
   async updateIntegrations(payload: StoreIntegrationsPayload): Promise<void> {
     await firstValueFrom(this.http.put(`${this.apiBaseUrl}/loja/configuracao/integracoes`, payload));
+  }
+
+  async updateContact(payload: StoreContactSettingsPayload): Promise<void> {
+    await firstValueFrom(this.http.put(`${this.apiBaseUrl}/loja/configuracao/contato`, payload));
   }
 
   async publishConfig(): Promise<void> {

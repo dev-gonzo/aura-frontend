@@ -59,4 +59,40 @@ export const CMS_ROUTES: Routes = [
     component: CmsPostEditorPage,
     data: { tipo: 'BLOG' },
   },
+  {
+    path: 'cms/paginas',
+    canActivate: [editorOrAdminGuard],
+    component: CmsPostListPage,
+    data: { tipo: 'PAGINA' },
+  },
+  {
+    path: 'cms/paginas/novo',
+    canActivate: [editorOrAdminGuard],
+    component: CmsPostEditorPage,
+    data: { tipo: 'PAGINA' },
+  },
+  {
+    path: 'cms/paginas/:id/editar',
+    canActivate: [editorOrAdminGuard],
+    component: CmsPostEditorPage,
+    data: { tipo: 'PAGINA' },
+  },
+  {
+    path: 'cms/landing-produtos',
+    canActivate: [editorOrAdminGuard],
+    component: CmsPostListPage,
+    data: { tipo: 'LANDING_PRODUTOS' },
+  },
+  {
+    path: 'cms/landing-produtos/novo',
+    canActivate: [editorOrAdminGuard],
+    component: CmsPostEditorPage,
+    data: { tipo: 'LANDING_PRODUTOS' },
+  },
+  {
+    path: 'cms/landing-produtos/:id/editar',
+    canActivate: [editorOrAdminGuard],
+    component: CmsPostEditorPage,
+    data: { tipo: 'LANDING_PRODUTOS' },
+  },
 ];

@@ -1,0 +1,153 @@
+<section class="page-shell container-fluid px-0">
+  <app-page-header
+    eyebrow="Loja"
+    title="Contato"
+    description="Configure os dados que aparecem na página /contato da vitrine. Todos os campos são opcionais e o salvamento já publica na loja."
+  />
+
+  @if (loading()) {
+    <div class="state-card">
+      <span>Carregando configurações de contato...</span>
+    </div>
+  } @else {
+    <form class="row g-4 align-items-start" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="col-12 col-xl-8">
+        <section class="content-card">
+          <div class="section-heading">
+            <span class="section-eyebrow">Página de contato</span>
+            <h2>Informações do atendimento</h2>
+            <p>Preencha apenas o que você quiser exibir. Campos vazios não aparecem na vitrine.</p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-lg-4">
+              <app-form-input
+                label="Título do contato"
+                [control]="form.controls.footer_contact_title"
+                placeholder="Ex.: Fale com a loja"
+              />
+            </div>
+
+            <div class="col-12 col-lg-8">
+              <app-form-textarea
+                label="Texto de apoio"
+                [control]="form.controls.footer_contact_text"
+                [rows]="3"
+                placeholder="Mensagem curta exibida no topo da página."
+              />
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <app-form-input
+                label="Nome da loja"
+                [control]="form.controls.contact_store_name"
+                placeholder="Ex.: Aura Editora"
+              />
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <app-form-input
+                label="CNPJ"
+                [control]="form.controls.contact_cnpj"
+                inputmode="numeric"
+                placeholder="00.000.000/0000-00"
+                (inputEvent)="formatContactCnpjInput($event)"
+              />
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <app-form-input
+                label="Telefone"
+                [control]="form.controls.contact_phone"
+                inputmode="numeric"
+                placeholder="(11) 99999-9999"
+                (inputEvent)="formatContactPhoneInput($event)"
+              />
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <app-form-input
+                label="WhatsApp"
+                [control]="form.controls.contact_whatsapp"
+                inputmode="numeric"
+                placeholder="(11) 99999-9999"
+                (inputEvent)="formatContactWhatsappInput($event)"
+              />
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <app-form-input
+                label="E-mail"
+                type="email"
+                autocomplete="email"
+                [control]="form.controls.contact_email"
+                placeholder="contato@sualoja.com.br"
+              />
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <app-form-textarea
+                label="Horário de atendimento"
+                [control]="form.controls.contact_hours"
+                [rows]="3"
+                placeholder="Ex.: Seg a Sex, 09h às 18h"
+              />
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <app-form-textarea
+                label="Endereço"
+                [control]="form.controls.contact_address"
+                [rows]="3"
+                placeholder="Rua, número, bairro, cidade - UF"
+              />
+            </div>
+
+            <div class="col-12">
+              <app-form-input
+                label="URL do mapa (embed)"
+                [control]="form.controls.contact_map_embed_url"
+                placeholder="https://www.google.com/maps/embed?..."
+                helperText="Cole a URL de incorporação do Google Maps ou OpenStreetMap. Se estiver vazia, o mapa não aparece."
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-4 sidebar-column">
+        <div class="sidebar-stack">
+          <aside class="content-card sticky-actions">
+            <div class="section-heading compact">
+              <span class="section-eyebrow">Ações</span>
+              <h2>Salvar e visualizar</h2>
+              <p>O salvamento já publica na loja. Use o preview para conferir como fica na vitrine.</p>
+            </div>
+
+            <div class="action-stack">
+              <app-button type="submit" [block]="true" [disabled]="saving()">
+                @if (saving()) {
+                  Salvando contato...
+                } @else {
+                  Salvar contato
+                }
+              </app-button>
+
+              <a [href]="previewUrl()" target="_blank" rel="noreferrer" class="sidebar-link-button">
+                Abrir preview do contato
+              </a>
+            </div>
+
+            @if (successMessage()) {
+              <div class="alert alert-success py-2 mb-0 mt-3">{{ successMessage() }}</div>
+            }
+
+            @if (errorMessage()) {
+              <div class="alert alert-danger py-2 mb-0 mt-3">{{ errorMessage() }}</div>
+            }
+          </aside>
+        </div>
+      </div>
+    </form>
+  }
+</section>

@@ -7,6 +7,7 @@ import { RouterLink } from '@angular/router';
 import { startWith } from 'rxjs';
 
 import { processApiError } from '../../../../core/utils/process-api-error';
+import { digitsOnly } from '../../../../core/utils/masks';
 import { StoreColorFieldComponent } from '../../components/store-color-field/store-color-field.component';
 import { ButtonComponent } from '../../../../shared/components/actions/button/button.component';
 import { ModalComponent } from '../../../../shared/components/feedback/modal/modal.component';
@@ -105,11 +106,19 @@ type LayoutField =
   | 'custom_block_js'
   | 'institutional_section_display_mode'
   | 'institutional_section_width_mode'
-  | 'institutional_section_background_color'
-  | 'footer_contact_title'
-  | 'footer_contact_text';
+  | 'institutional_section_background_color';
 
-type LayoutTab = 'dados' | 'cabecalho' | 'cores' | 'layout' | 'menu' | 'banners' | 'bloco' | 'produtos' | 'destaques' | 'rodape';
+type LayoutTab =
+  | 'dados'
+  | 'cabecalho'
+  | 'cores'
+  | 'layout'
+  | 'menu'
+  | 'banners'
+  | 'bloco'
+  | 'produtos'
+  | 'destaques'
+  | 'rodape';
 type ProductViewTab = 'categorias' | 'destaques' | 'promocoes' | 'lancamentos';
 type EditableMenuLinkKind = StoreNavigationLinkKind;
 
@@ -225,7 +234,10 @@ const FIXED_MENU_LINKS: ReadonlyArray<EditableLink> = [
   { kind: 'home', label: 'Início', url: '#topo', visible: true },
   { kind: 'products', label: 'Produtos', url: '/produtos', visible: true },
   { kind: 'categories', label: 'Categorias', url: '__categories__', visible: true },
-  { kind: 'contact', label: 'Contato', url: '#rodape', visible: true },
+  { kind: 'cms_contos', label: 'Contos', url: '/contos', visible: true },
+  { kind: 'cms_artigos', label: 'Artigos', url: '/artigos', visible: true },
+  { kind: 'cms_blog', label: 'Blog', url: '/blog', visible: true },
+  { kind: 'contact', label: 'Contato', url: '/contato', visible: true },
 ];
 
 @Component({
@@ -403,8 +415,6 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     institutional_section_display_mode: ['cards' as 'cards' | 'continuous'],
     institutional_section_width_mode: ['contained' as 'contained' | 'full_width'],
     institutional_section_background_color: ['#0F172A', Validators.required],
-    footer_contact_title: ['Fale com a loja'],
-    footer_contact_text: ['Use este espaço para telefone, WhatsApp, e-mail e horários de atendimento.'],
   });
   private readonly formValue = toSignal(this.form.valueChanges.pipe(startWith(this.form.getRawValue())), {
     initialValue: this.form.getRawValue(),
@@ -415,6 +425,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     { id: 'layout' as const, label: 'Layout', description: 'Organize a ordem dos blocos da home' },
     { id: 'menu' as const, label: 'Menu', description: 'Cadastre e ajuste os links da navegação' },
     { id: 'banners' as const, label: 'Banner Principal', description: 'Monte a sequência do carrossel' },
+    { id: 'cms' as const, label: 'Conteúdos', description: 'Defina quais tipos aparecem na loja' },
     { id: 'bloco' as const, label: 'Bloco Customizado', description: 'Cole HTML, CSS e JS do cliente' },
     { id: 'produtos' as const, label: 'Produtos', description: 'Configure categorias, destaque, promoções e lançamentos' },
     { id: 'destaques' as const, label: 'Destaques Padronizados', description: 'Preencha os cards institucionais da loja' },
@@ -1129,6 +1140,12 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         return 'Abre a listagem completa de produtos.';
       case 'categories':
         return 'Mostra o acesso de categorias do catalogo.';
+      case 'cms_contos':
+        return 'Abre a listagem de contos na vitrine.';
+      case 'cms_artigos':
+        return 'Abre a listagem de artigos na vitrine.';
+      case 'cms_blog':
+        return 'Abre a listagem do blog na vitrine.';
       case 'contact':
         return 'Leva o cliente para a area de contato no rodape.';
       default:
@@ -1394,16 +1411,14 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       const value = this.form.getRawValue();
       const banners = this.banners().map((item, order) => this.toBannerPayload(item, order));
       const firstBanner = banners.find((item) => item.active) ?? banners[0] ?? null;
-
-      // #region debug-point A:before-update-config
-      fetch('http://127.0.0.1:7777/event', { method: 'POST', body: JSON.stringify({ sessionId: 'menu-bg-persist', runId: 'pre-fix', hypothesisId: 'A', location: 'loja-layout.page.ts:submit', msg: '[DEBUG] admin submit payload snapshot before PUT', data: { menu_background_mode: value.menu_background_mode, content_width_mode: value.content_width_mode, menu_color: value.menu_color, menu_text_color: value.menu_text_color }, ts: Date.now() }) }).catch(() => {});
-      // #endregion
+      const cmsConfig = this.deriveCmsConfigFromMenuLinks(this.menuLinks());
 
       await this.lojaService.updateConfig({
         store_name: value.store_name.trim(),
         store_subtitle: value.store_subtitle.trim(),
         store_description: value.store_description.trim(),
         store_tags: value.store_tags.trim(),
+        cms_config: cmsConfig,
         store_in_maintenance: value.store_in_maintenance,
         maintenance_title: value.maintenance_title.trim(),
         maintenance_message: value.maintenance_message.trim(),
@@ -1465,8 +1480,6 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         institutional_section: this.toInstitutionalSectionPayload(),
         product_listing_config: this.toProductListingConfigPayload(),
         footer_links: this.footerLinks().map((item) => this.toNavigationLinkPayload(item)),
-        footer_contact_title: value.footer_contact_title.trim(),
-        footer_contact_text: value.footer_contact_text.trim(),
         launches_section: this.toProductSectionPayload('launches'),
         featured_section: this.toProductSectionPayload('featured'),
         promotions_section: this.toProductSectionPayload('promotions'),
@@ -1594,10 +1607,6 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         institutional_section_width_mode:
           config.institutional_section?.width_mode === 'full_width' ? 'full_width' : 'contained',
         institutional_section_background_color: config.institutional_section?.background_color || '#0F172A',
-        footer_contact_title: config.footer_contact_title || 'Fale com a loja',
-        footer_contact_text:
-          config.footer_contact_text ||
-          'Use este espaço para telefone, WhatsApp, e-mail e horários de atendimento.',
       });
       this.syncDesktopProductsPerRow(this.form.controls.content_width_mode.value);
       this.updatedAt.set(config.updated_at || '');
@@ -1609,7 +1618,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       this.logoPreview.set(this.payloadToPreviewUrl(config.logo));
       this.faviconPreview.set(this.payloadToPreviewUrl(config.favicon));
       this.banners.set(this.mapResponseBanners(config));
-      this.menuLinks.set(this.mapNavigationLinks(config.menu_links));
+      this.menuLinks.set(this.mapNavigationLinks(config.menu_links, config.cms_config));
       this.productSectionConfigs.set({
         launches: this.mapProductSectionConfig('launches', config.launches_section),
         featured: this.mapProductSectionConfig('featured', config.featured_section),
@@ -2256,9 +2265,12 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     return [];
   }
 
-  private mapNavigationLinks(items?: StoreNavigationLinkPayload[]): EditableLink[] {
+  private mapNavigationLinks(
+    items?: StoreNavigationLinkPayload[],
+    cmsConfig?: { contos?: boolean; artigos?: boolean; blog?: boolean }
+  ): EditableLink[] {
     if (!items?.length) {
-      return FIXED_MENU_LINKS.map((item) => ({ ...item }));
+      return FIXED_MENU_LINKS.map((item) => ({ ...item, visible: this.fixedMenuLinkDefaultVisibility(item.kind, cmsConfig) }));
     }
 
     const normalized = items
@@ -2266,7 +2278,9 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
       .filter((item): item is EditableLink => !!item);
 
     const existingKinds = new Set(normalized.filter((item) => item.kind !== 'custom').map((item) => item.kind));
-    const missingFixedItems = FIXED_MENU_LINKS.filter((item) => !existingKinds.has(item.kind)).map((item) => ({ ...item }));
+    const missingFixedItems = FIXED_MENU_LINKS
+      .filter((item) => !existingKinds.has(item.kind))
+      .map((item) => ({ ...item, visible: this.fixedMenuLinkDefaultVisibility(item.kind, cmsConfig) }));
     return [...normalized, ...missingFixedItems];
   }
 
@@ -2340,6 +2354,12 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
         return 'products';
       case 'categories':
         return 'categories';
+      case 'cms_contos':
+        return 'cms_contos';
+      case 'cms_artigos':
+        return 'cms_artigos';
+      case 'cms_blog':
+        return 'cms_blog';
       case 'contact':
         return 'contact';
       default:
@@ -2359,10 +2379,44 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
     if (normalizedLabel === 'categorias' || normalizedUrl === '__categories__') {
       return 'categories';
     }
-    if (normalizedLabel === 'contato' || normalizedUrl === '#rodape') {
+    if (normalizedLabel === 'contos' || normalizedUrl === '/contos') {
+      return 'cms_contos';
+    }
+    if (normalizedLabel === 'artigos' || normalizedUrl === '/artigos') {
+      return 'cms_artigos';
+    }
+    if (normalizedLabel === 'blog' || normalizedUrl === '/blog') {
+      return 'cms_blog';
+    }
+    if (normalizedLabel === 'contato' || normalizedUrl === '#rodape' || normalizedUrl === '/contato') {
       return 'contact';
     }
     return 'custom';
+  }
+
+  private fixedMenuLinkDefaultVisibility(
+    kind: EditableMenuLinkKind,
+    cmsConfig?: { contos?: boolean; artigos?: boolean; blog?: boolean }
+  ): boolean {
+    switch (kind) {
+      case 'cms_contos':
+        return cmsConfig?.contos ?? true;
+      case 'cms_artigos':
+        return cmsConfig?.artigos ?? true;
+      case 'cms_blog':
+        return cmsConfig?.blog ?? true;
+      default:
+        return true;
+    }
+  }
+
+  private deriveCmsConfigFromMenuLinks(items: EditableLink[]): { contos: boolean; artigos: boolean; blog: boolean } {
+    const byKind = new Map(items.map((item) => [item.kind, item.visible] as const));
+    return {
+      contos: byKind.get('cms_contos') ?? false,
+      artigos: byKind.get('cms_artigos') ?? false,
+      blog: byKind.get('cms_blog') ?? false,
+    };
   }
 
   private mapFeatureHighlights(items?: StoreFeatureHighlightPayload[]): EditableHighlight[] {

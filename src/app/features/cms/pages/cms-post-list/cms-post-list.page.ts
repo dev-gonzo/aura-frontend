@@ -8,6 +8,7 @@ import { ButtonComponent } from '../../../../shared/components/actions/button/bu
 import { FormInputComponent } from '../../../../shared/components/forms/input/form-input.component';
 import { FormSelectComponent } from '../../../../shared/components/forms/select/form-select.component';
 import { PageHeaderComponent } from '../../../../shared/components/layout/page-header/page-header.component';
+import { ModalComponent } from '../../../../shared/components/feedback/modal/modal.component';
 import {
   CmsPostListItem,
   CmsPostsService,
@@ -29,6 +30,7 @@ import {
     FormInputComponent,
     FormSelectComponent,
     ButtonComponent,
+    ModalComponent,
   ],
   templateUrl: './cms-post-list.page.html',
   styleUrl: './cms-post-list.page.css',
@@ -45,6 +47,10 @@ export class CmsPostListPage {
   protected readonly total = signal(0);
   protected readonly page = signal(1);
   protected readonly totalPages = signal(1);
+  protected readonly confirmModalOpen = signal(false);
+  protected readonly confirmModalTitle = signal('');
+  protected readonly confirmModalText = signal('');
+  protected readonly confirmAction = signal<(() => Promise<void>) | null>(null);
 
   protected readonly tipo = computed(() => String(this.route.snapshot.data['tipo'] ?? 'BLOG'));
   protected readonly tipoLabel = computed(() => getCmsTypeLabel(this.tipo()));
@@ -137,12 +143,58 @@ export class CmsPostListPage {
     await this.load(current + 1);
   }
 
+  protected openConfirmModal(title: string, text: string, action: () => Promise<void>): void {
+    this.confirmModalTitle.set(title);
+    this.confirmModalText.set(text);
+    this.confirmAction.set(action);
+    this.confirmModalOpen.set(true);
+  }
+
+  protected closeConfirmModal(): void {
+    this.confirmModalOpen.set(false);
+    this.confirmAction.set(null);
+  }
+
+  protected async confirmModal(): Promise<void> {
+    const action = this.confirmAction();
+    this.closeConfirmModal();
+    if (!action) {
+      return;
+    }
+
+    this.loading.set(true);
+    this.errorMessage.set('');
+    try {
+      await action();
+      await this.load(this.page());
+    } catch (error) {
+      this.errorMessage.set(processApiError(error));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  protected requestDelete(item: CmsPostListItem): void {
+    const title = item.draft_titulo || 'conteúdo';
+    this.openConfirmModal(
+      'Excluir conteúdo',
+      `Essa ação remove "${title}" permanentemente. Esta operação não pode ser desfeita.`,
+      async () => {
+        await this.cmsPostsService.delete(item.id);
+      }
+    );
+  }
+
   private tipoRouteSegment(): string {
     switch (this.tipo().toUpperCase()) {
       case 'CONTO':
         return 'contos';
       case 'ARTIGO':
         return 'artigos';
+      case 'PAGINA':
+        return 'paginas';
+      case 'LANDING_PRODUTOS':
+        return 'landing-produtos';
       default:
         return 'blog';
     }

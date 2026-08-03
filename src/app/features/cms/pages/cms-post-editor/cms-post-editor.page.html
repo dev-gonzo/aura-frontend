@@ -91,6 +91,103 @@
           ></app-cms-content-editor>
         </div>
 
+        @if (isLandingProdutos()) {
+          <div class="col-12">
+            <div class="landing-products-card">
+              <div class="landing-products-head">
+                <strong>Produtos da landing</strong>
+                <span>Selecione e ordene os produtos exibidos nesta página.</span>
+              </div>
+
+              @if (productsLoadError()) {
+                <div class="alert alert-danger mb-3">{{ productsLoadError() }}</div>
+              }
+
+              <div class="row g-3">
+                <div class="col-12 col-xl-6">
+                  <label class="native-field-label">Buscar produto</label>
+                  <input
+                    class="form-control manual-input"
+                    type="text"
+                    [value]="productsSearch()"
+                    placeholder="Buscar por nome ou slug"
+                    (input)="updateProductsSearch($event)"
+                    [disabled]="productsLoading() || saving() || loading()"
+                  />
+
+                  <div class="product-picker-list mt-2" [class.is-loading]="productsLoading()">
+                    @for (item of filteredProducts(); track item.id) {
+                      <label class="product-picker-item">
+                        <input
+                          type="checkbox"
+                          [checked]="isProductSelected(item.id)"
+                          (change)="toggleProductSelection(item.id, $event)"
+                          [disabled]="saving() || loading()"
+                        />
+                        <span class="product-picker-name">{{ item.nome_exibicao }}</span>
+                        <small class="product-picker-slug">{{ item.slug }}</small>
+                      </label>
+                    }
+                  </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                  <div class="landing-products-selected-head">
+                    <strong>Selecionados ({{ selectedProductIDs().length }})</strong>
+                    <span>Arrume a ordem que aparece na vitrine.</span>
+                  </div>
+
+                  <div class="selected-products-list">
+                    @for (id of selectedProductIDs(); track id) {
+                      <div class="selected-product-item">
+                        <div class="selected-product-copy">
+                          <strong>{{ selectedProductName(id) }}</strong>
+                          <span>{{ selectedProductSlug(id) }}</span>
+                        </div>
+
+                        <div class="selected-product-actions">
+                          <button
+                            type="button"
+                            class="section-icon-button"
+                            [disabled]="saving() || loading()"
+                            aria-label="Subir produto"
+                            title="Subir produto"
+                            (click)="moveSelectedProduct(id, -1)"
+                          >
+                            <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="section-icon-button"
+                            [disabled]="saving() || loading()"
+                            aria-label="Descer produto"
+                            title="Descer produto"
+                            (click)="moveSelectedProduct(id, 1)"
+                          >
+                            <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="section-icon-button is-danger"
+                            [disabled]="saving() || loading()"
+                            aria-label="Remover produto"
+                            title="Remover produto"
+                            (click)="removeSelectedProduct(id)"
+                          >
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
         <div class="col-12 col-lg-6">
           <app-image-upload
             label="Capa (desktop)"

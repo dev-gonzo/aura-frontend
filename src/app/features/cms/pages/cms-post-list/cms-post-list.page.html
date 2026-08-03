@@ -114,6 +114,15 @@
             >
               <i class="fa-solid fa-pen"></i>
             </button>
+            <button
+              type="button"
+              class="cms-icon-button is-danger"
+              (click)="requestDelete(item)"
+              [attr.aria-label]="'Excluir ' + (item.draft_titulo || 'conteúdo')"
+              title="Excluir"
+            >
+              <i class="fa-solid fa-trash"></i>
+            </button>
           </div>
         </div>
       </article>
@@ -124,4 +133,20 @@
       </article>
     }
   </section>
+
+  @if (confirmModalOpen()) {
+    <app-modal
+      [title]="confirmModalTitle()"
+      [subtitle]="confirmModalText()"
+      maxWidth="42rem"
+      (close)="closeConfirmModal()"
+    >
+      <div modal-footer class="d-flex gap-2">
+        <app-button type="button" variant="secondary" [outline]="true" (click)="closeConfirmModal()">
+          Cancelar
+        </app-button>
+        <app-button type="button" variant="danger" (click)="confirmModal()">Confirmar</app-button>
+      </div>
+    </app-modal>
+  }
 </section>

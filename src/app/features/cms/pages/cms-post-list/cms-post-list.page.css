@@ -199,6 +199,18 @@
   transform: translateY(-1px);
 }
 
+.cms-icon-button.is-danger {
+  border-color: rgba(248, 113, 113, 0.22);
+  background: rgba(239, 68, 68, 0.16);
+  color: rgba(254, 202, 202, 0.95);
+}
+
+.cms-icon-button.is-danger:hover {
+  background: rgba(239, 68, 68, 0.28);
+  border-color: rgba(248, 113, 113, 0.36);
+  color: #fee2e2;
+}
+
 .empty-card {
   display: grid;
   gap: 0.4rem;
@@ -262,4 +274,3 @@
     justify-content: flex-end;
   }
 }
-

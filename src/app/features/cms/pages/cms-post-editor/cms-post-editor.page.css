@@ -200,6 +200,162 @@
   font-weight: 600;
 }
 
+.landing-products-card {
+  padding: 1rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(2, 6, 23, 0.35);
+}
+
+.landing-products-head {
+  display: grid;
+  gap: 0.2rem;
+  margin-bottom: 0.85rem;
+}
+
+.landing-products-head strong {
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+.landing-products-head span {
+  color: rgba(148, 163, 184, 0.92);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.product-picker-list {
+  max-height: 20rem;
+  overflow: auto;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.product-picker-list.is-loading {
+  opacity: 0.7;
+}
+
+.product-picker-item {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  gap: 0.6rem;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  cursor: pointer;
+}
+
+.product-picker-item:last-child {
+  border-bottom: 0;
+}
+
+.product-picker-item input {
+  margin-top: 0.15rem;
+}
+
+.product-picker-name {
+  display: block;
+  color: rgba(226, 232, 240, 0.92);
+  font-weight: 700;
+}
+
+.product-picker-slug {
+  display: block;
+  margin-top: 0.15rem;
+  color: rgba(148, 163, 184, 0.9);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.landing-products-selected-head {
+  display: grid;
+  gap: 0.15rem;
+  margin-bottom: 0.65rem;
+}
+
+.landing-products-selected-head strong {
+  color: rgba(226, 232, 240, 0.92);
+  font-weight: 800;
+}
+
+.landing-products-selected-head span {
+  color: rgba(148, 163, 184, 0.9);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.selected-products-list {
+  display: grid;
+  gap: 0.5rem;
+  max-height: 20rem;
+  overflow: auto;
+}
+
+.selected-product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.selected-product-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.1rem;
+}
+
+.selected-product-copy strong {
+  color: rgba(226, 232, 240, 0.92);
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-product-copy span {
+  color: rgba(148, 163, 184, 0.9);
+  font-size: 0.82rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-product-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.section-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(2, 6, 23, 0.35);
+  color: rgba(226, 232, 240, 0.92);
+}
+
+.section-icon-button:hover:not(:disabled) {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.section-icon-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.section-icon-button.is-danger {
+  border-color: rgba(248, 113, 113, 0.22);
+  color: rgba(252, 165, 165, 0.92);
+}
+
 @media (max-width: 991.98px) {
   .form-panel,
   .panel-card,

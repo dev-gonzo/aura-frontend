@@ -38,8 +38,11 @@ export function getCmsTypeLabel(value: string): string {
       return 'Conto';
     case 'ARTIGO':
       return 'Artigo';
+    case 'PAGINA':
+      return 'Página';
+    case 'LANDING_PRODUTOS':
+      return 'Landing de produtos';
     default:
       return 'Blog';
   }
 }
-

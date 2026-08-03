@@ -64,6 +64,8 @@ export class AuthLayoutComponent implements OnInit {
           { label: 'Contos', route: '/painel/cms/contos' },
           { label: 'Artigos', route: '/painel/cms/artigos' },
           { label: 'Blog', route: '/painel/cms/blog' },
+          { label: 'Páginas', route: '/painel/cms/paginas' },
+          { label: 'Landing de produtos', route: '/painel/cms/landing-produtos' },
         ],
       });
     }
@@ -83,6 +85,7 @@ export class AuthLayoutComponent implements OnInit {
         items: [
           { label: 'Domínio', route: '/painel/loja/dominio' },
           { label: 'Layout', route: '/painel/loja/layout' },
+          { label: 'Contato', route: '/painel/loja/contato' },
           { label: 'Carrinhos', route: '/painel/loja/carrinhos-abandonados' },
           { label: 'Categorias', route: '/painel/loja/categorias' },
           { label: 'Produtos', route: '/painel/loja/produtos' },

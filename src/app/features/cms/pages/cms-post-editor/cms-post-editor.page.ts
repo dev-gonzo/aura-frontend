@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { processApiError } from '../../../../core/utils/process-api-error';
+import { LojaService, StoreProductListItem } from '../../../loja/services/loja.service';
 import { ButtonComponent } from '../../../../shared/components/actions/button/button.component';
 import { ImageUploadComponent } from '../../../../shared/components/forms/image-upload/image-upload.component';
 import { FormInputComponent } from '../../../../shared/components/forms/input/form-input.component';
@@ -41,6 +42,7 @@ export class CmsPostEditorPage {
   private readonly router = inject(Router);
   private readonly cmsPostsService = inject(CmsPostsService);
   private readonly cmsImagesService = inject(CmsImagesService);
+  private readonly lojaService = inject(LojaService);
   private readonly formBuilder = inject(FormBuilder);
 
   @ViewChild(CmsContentEditorComponent) private readonly contentEditor?: CmsContentEditorComponent;
@@ -73,6 +75,13 @@ export class CmsPostEditorPage {
   protected readonly id = computed(() => String(this.route.snapshot.paramMap.get('id') ?? ''));
   protected readonly isNew = computed(() => !this.id());
   protected readonly pageTitle = computed(() => (this.isNew() ? `Novo ${this.tipoLabel()}` : `Editar ${this.tipoLabel()}`));
+  protected readonly isLandingProdutos = computed(() => this.tipo().toUpperCase() === 'LANDING_PRODUTOS');
+
+  protected readonly productsLoading = signal(false);
+  protected readonly productsLoadError = signal('');
+  protected readonly productsSearch = signal('');
+  protected readonly products = signal<StoreProductListItem[]>([]);
+  protected readonly productsById = computed(() => new Map(this.products().map((item) => [item.id, item] as const)));
 
   protected readonly draftStatusLabel = computed(() => getCmsDraftStatusLabel(this.post()?.draft_status ?? ''));
   protected readonly draftStatusClass = computed(() => getCmsDraftStatusClass(this.post()?.draft_status ?? ''));
@@ -121,6 +130,21 @@ export class CmsPostEditorPage {
     draft_seo_title: [''],
     draft_seo_description: [''],
     draft_seo_tags: [''],
+    draft_product_ids: this.formBuilder.nonNullable.control<string[]>([]),
+  });
+
+  protected readonly selectedProductIDs = computed(() => this.form.controls.draft_product_ids.value);
+  protected readonly filteredProducts = computed(() => {
+    const term = this.productsSearch().trim().toLowerCase();
+    const items = this.products();
+    if (!term) {
+      return items;
+    }
+    return items.filter((item) => {
+      const name = (item.nome_exibicao || '').toLowerCase();
+      const slug = (item.slug || '').toLowerCase();
+      return name.includes(term) || slug.includes(term);
+    });
   });
 
   constructor() {
@@ -141,6 +165,7 @@ export class CmsPostEditorPage {
         draft_seo_title: '',
         draft_seo_description: '',
         draft_seo_tags: '',
+        draft_product_ids: [],
       });
       this.form.controls.draft_slug.disable({ emitEvent: false });
       this.form.markAsPristine();
@@ -150,6 +175,7 @@ export class CmsPostEditorPage {
       this.hasUnsavedChanges.set(this.form.dirty);
     });
     this.form.controls.draft_slug.disable({ emitEvent: false });
+    void this.loadProductsIfNeeded();
   }
 
   protected async load(): Promise<void> {
@@ -170,6 +196,7 @@ export class CmsPostEditorPage {
         draft_seo_title: post.draft_seo_title || '',
         draft_seo_description: post.draft_seo_description || '',
         draft_seo_tags: post.draft_seo_tags || '',
+        draft_product_ids: post.draft_product_ids || [],
       });
       this.cardImagePreviewUrl.set(
         post.draft_card_image_id ? this.cmsImagesService.rawUrl(post.draft_card_image_id) : null
@@ -184,6 +211,7 @@ export class CmsPostEditorPage {
       this.form.controls.draft_slug.disable({ emitEvent: false });
       this.form.markAsPristine();
       this.hasUnsavedChanges.set(false);
+      await this.loadProductsIfNeeded();
     } catch (error) {
       this.errorMessage.set(processApiError(error));
       this.post.set(null);
@@ -219,6 +247,83 @@ export class CmsPostEditorPage {
       }
     }
     return 'Revise o conteúdo deste campo.';
+  }
+
+  protected updateProductsSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement | null)?.value ?? '';
+    this.productsSearch.set(value);
+  }
+
+  protected isProductSelected(id: string): boolean {
+    return this.selectedProductIDs().includes(id);
+  }
+
+  protected toggleProductSelection(id: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement | null)?.checked ?? false;
+    const current = this.selectedProductIDs();
+    if (checked) {
+      if (!current.includes(id)) {
+        this.form.controls.draft_product_ids.setValue([...current, id]);
+        this.form.markAsDirty();
+      }
+      return;
+    }
+    if (current.includes(id)) {
+      this.form.controls.draft_product_ids.setValue(current.filter((item) => item !== id));
+      this.form.markAsDirty();
+    }
+  }
+
+  protected moveSelectedProduct(id: string, direction: -1 | 1): void {
+    const current = this.selectedProductIDs();
+    const index = current.indexOf(id);
+    if (index < 0) {
+      return;
+    }
+    const nextIndex = index + direction;
+    if (nextIndex < 0 || nextIndex >= current.length) {
+      return;
+    }
+    const next = [...current];
+    [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
+    this.form.controls.draft_product_ids.setValue(next);
+    this.form.markAsDirty();
+  }
+
+  protected removeSelectedProduct(id: string): void {
+    const current = this.selectedProductIDs();
+    if (!current.includes(id)) {
+      return;
+    }
+    this.form.controls.draft_product_ids.setValue(current.filter((item) => item !== id));
+    this.form.markAsDirty();
+  }
+
+  protected selectedProductName(id: string): string {
+    return this.productsById().get(id)?.nome_exibicao || 'Produto não encontrado';
+  }
+
+  protected selectedProductSlug(id: string): string {
+    return this.productsById().get(id)?.slug || '';
+  }
+
+  private async loadProductsIfNeeded(): Promise<void> {
+    if (!this.isLandingProdutos()) {
+      return;
+    }
+    if (this.productsLoading() || this.products().length) {
+      return;
+    }
+    this.productsLoading.set(true);
+    this.productsLoadError.set('');
+    try {
+      this.products.set(await this.lojaService.listProducts());
+    } catch (error) {
+      this.products.set([]);
+      this.productsLoadError.set(processApiError(error));
+    } finally {
+      this.productsLoading.set(false);
+    }
   }
 
   protected async handleCoverDesktopSelected(event: Event): Promise<void> {
@@ -450,6 +555,10 @@ export class CmsPostEditorPage {
         return 'contos';
       case 'ARTIGO':
         return 'artigos';
+      case 'PAGINA':
+        return 'paginas';
+      case 'LANDING_PRODUTOS':
+        return 'landing-produtos';
       default:
         return 'blog';
     }

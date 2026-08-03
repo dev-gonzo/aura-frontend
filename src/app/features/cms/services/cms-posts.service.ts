@@ -37,6 +37,7 @@ export interface CmsPostDetail {
   draft_seo_title: string;
   draft_seo_description: string;
   draft_seo_tags: string;
+  draft_product_ids?: string[];
   draft_review_notes: string;
   draft_updated_at: string;
   draft_submitted_at: string;
@@ -52,6 +53,7 @@ export interface CmsPostDetail {
   published_seo_title: string;
   published_seo_description: string;
   published_seo_tags: string;
+  published_product_ids?: string[];
   published_at: string;
   archived_at: string;
 }
@@ -71,6 +73,7 @@ export interface UpdateCmsPostRequest {
   draft_seo_title: string;
   draft_seo_description: string;
   draft_seo_tags: string;
+  draft_product_ids?: string[];
 }
 
 @Injectable({ providedIn: 'root' })
