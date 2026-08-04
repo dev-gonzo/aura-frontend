@@ -133,7 +133,7 @@
                 }
               </app-button>
 
-              <a [href]="previewUrl()" target="_blank" rel="noreferrer" class="sidebar-link-button">
+              <a [href]="previewUrl()" target="_blank" class="sidebar-link-button" (click)="openPreview($event)">
                 Abrir preview do contato
               </a>
             </div>

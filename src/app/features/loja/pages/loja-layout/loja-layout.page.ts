@@ -6,6 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { startWith } from 'rxjs';
 
+import { AdminPreviewSsoService } from '../../../../auth/service/admin-preview-sso.service';
 import { processApiError } from '../../../../core/utils/process-api-error';
 import { digitsOnly } from '../../../../core/utils/masks';
 import { StoreColorFieldComponent } from '../../components/store-color-field/store-color-field.component';
@@ -274,6 +275,7 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly lojaService = inject(LojaService);
   private readonly tenantService = inject(TenantService);
+  private readonly previewSsoService = inject(AdminPreviewSsoService);
   private readonly document = inject(DOCUMENT);
   private readonly priceFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -870,6 +872,11 @@ export class LojaLayoutPage implements OnInit, OnDestroy {
   protected readonly previewHighlightFontFamily = computed(() =>
     this.toCssFontStack(this.form.controls.font_highlight_family.value || this.form.controls.font_family.value)
   );
+
+  protected async openPreview(event: Event): Promise<void> {
+    event.preventDefault();
+    await this.previewSsoService.open(this.previewUrl());
+  }
 
   async ngOnInit(): Promise<void> {
     globalThis.window?.addEventListener('message', this.handleCustomBlockFrameMessage);

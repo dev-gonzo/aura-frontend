@@ -57,29 +57,7 @@ export class AuthLayoutComponent implements OnInit {
       },
     ];
 
-    if (this.authService.hasRole('ADMIN') || this.authService.hasRole('EDITOR')) {
-      sections.push({
-        title: 'Conteúdo',
-        items: [
-          { label: 'Contos', route: '/painel/cms/contos' },
-          { label: 'Artigos', route: '/painel/cms/artigos' },
-          { label: 'Blog', route: '/painel/cms/blog' },
-          { label: 'Páginas', route: '/painel/cms/paginas' },
-          { label: 'Landing de produtos', route: '/painel/cms/landing-produtos' },
-        ],
-      });
-    }
-
     if (this.authService.isAdmin()) {
-      sections.push({
-        title: 'Catálogo',
-        items: [
-          { label: 'Autores', route: '/painel/autores' },
-          { label: 'Livros', route: '/painel/livros' },
-          { label: 'Editais', route: '/painel/editais' },
-          { label: 'Usuários', route: '/painel/usuarios' },
-        ],
-      });
       sections.push({
         title: 'Loja',
         items: [
@@ -93,6 +71,15 @@ export class AuthLayoutComponent implements OnInit {
         ],
       });
       sections.push({
+        title: 'Catálogo',
+        items: [
+          { label: 'Autores', route: '/painel/autores' },
+          { label: 'Livros', route: '/painel/livros' },
+          { label: 'Editais', route: '/painel/editais' },
+          { label: 'Usuários', route: '/painel/usuarios' },
+        ],
+      });
+      sections.push({
         title: 'Configurações',
         items: [
           { label: 'Integrações', route: '/painel/loja/integracoes' },
@@ -100,6 +87,19 @@ export class AuthLayoutComponent implements OnInit {
           { label: 'Logística', route: '/painel/logistica/configuracao' },
           { label: 'Pagamentos', route: '/painel/pagamentos/configuracao' },
           { label: 'Checkout', route: '/painel/pagamentos/checkout' },
+        ],
+      });
+    }
+
+    if (this.authService.hasRole('ADMIN') || this.authService.hasRole('EDITOR')) {
+      sections.splice(this.authService.isAdmin() ? 3 : 1, 0, {
+        title: 'Conteúdo',
+        items: [
+          { label: 'Contos', route: '/painel/cms/contos' },
+          { label: 'Artigos', route: '/painel/cms/artigos' },
+          { label: 'Blog', route: '/painel/cms/blog' },
+          { label: 'Páginas', route: '/painel/cms/paginas' },
+          { label: 'Landing de produtos', route: '/painel/cms/landing-produtos' },
         ],
       });
     }

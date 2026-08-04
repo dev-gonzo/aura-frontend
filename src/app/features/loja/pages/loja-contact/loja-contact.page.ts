@@ -8,6 +8,7 @@ import { ButtonComponent } from '../../../../shared/components/actions/button/bu
 import { FormInputComponent } from '../../../../shared/components/forms/input/form-input.component';
 import { FormTextareaComponent } from '../../../../shared/components/forms/textarea/form-textarea.component';
 import { PageHeaderComponent } from '../../../../shared/components/layout/page-header/page-header.component';
+import { AdminPreviewSsoService } from '../../../../auth/service/admin-preview-sso.service';
 import { LojaService, StoreContactSettingsPayload, StoreSettingsResponse } from '../../services/loja.service';
 import { TenantService } from '../../services/tenant.service';
 
@@ -29,6 +30,7 @@ export class LojaContactPage implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly lojaService = inject(LojaService);
   private readonly tenantService = inject(TenantService);
+  private readonly previewSsoService = inject(AdminPreviewSsoService);
 
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
@@ -75,6 +77,11 @@ export class LojaContactPage implements OnInit {
   protected formatContactCnpjInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.form.controls.contact_cnpj.setValue(formatCnpj(digitsOnly(input.value)), { emitEvent: false });
+  }
+
+  protected async openPreview(event: Event): Promise<void> {
+    event.preventDefault();
+    await this.previewSsoService.open(this.previewUrl());
   }
 
   protected async submit(): Promise<void> {
